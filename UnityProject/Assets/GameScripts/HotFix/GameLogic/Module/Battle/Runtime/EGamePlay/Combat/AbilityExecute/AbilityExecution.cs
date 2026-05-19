@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using EGamePlay.Combat;
-using ET;
 using Log = EGamePlay.Log;
 using System;
+using GameLogic.Battle.Runtime.Compat;
 
 #if EGAMEPLAY_ET
 using Unity.Mathematics;

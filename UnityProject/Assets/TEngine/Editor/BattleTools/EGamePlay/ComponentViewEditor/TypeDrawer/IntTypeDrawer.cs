@@ -1,7 +1,7 @@
 using System;
 using UnityEditor;
 
-namespace ET
+namespace TEngine.Editor.BattleTools.EGamePlay.ComponentViewEditor
 {
     [TypeDrawer]
     public class IntTypeDrawer: ITypeDrawer

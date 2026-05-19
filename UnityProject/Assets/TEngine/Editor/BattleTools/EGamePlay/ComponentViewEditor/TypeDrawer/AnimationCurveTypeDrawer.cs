@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace ET
+namespace TEngine.Editor.BattleTools.EGamePlay.ComponentViewEditor
 {
     [TypeDrawer]
     public class AnimationCurveTypeDrawer: ITypeDrawer

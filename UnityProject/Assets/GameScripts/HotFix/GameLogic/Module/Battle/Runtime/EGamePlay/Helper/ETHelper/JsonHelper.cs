@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ET
+namespace GameLogic.Battle.Runtime.Compat
 {
     public static class JsonHelper
     {

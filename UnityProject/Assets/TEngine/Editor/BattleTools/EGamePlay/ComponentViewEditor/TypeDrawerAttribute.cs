@@ -1,6 +1,6 @@
 using System;
 
-namespace ET
+namespace TEngine.Editor.BattleTools.EGamePlay.ComponentViewEditor
 {
     public class TypeDrawerAttribute: Attribute
     {

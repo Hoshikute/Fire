@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
+using GameLogic.Battle.Runtime.Compat;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using UnityEditor;
 using UnityEngine;
 
-namespace ET
+namespace TEngine.Editor.BattleTools.ExcelExporter
 {
     public struct CellInfo
     {
@@ -53,12 +55,29 @@ namespace ET
 
         private ExcelMD5Info md5Info;
 
+        private static string ComputeFileMd5(string filePath)
+        {
+            using (var stream = File.OpenRead(filePath))
+            using (var md5 = MD5.Create())
+            {
+                byte[] hash = md5.ComputeHash(stream);
+                StringBuilder builder = new StringBuilder(hash.Length * 2);
+                foreach (byte item in hash)
+                {
+                    builder.Append(item.ToString("x2"));
+                }
+
+                return builder.ToString();
+            }
+        }
+
         // Update is called once per frame
         private void OnGUI()
         {
             try
             {
-                const string clientPath = "./Assets/EGamePlay/Config/Texts";
+                const string clientPath = "./Assets/AssetRaw/BattleExamples/Configs/Resources/Texts";
+                const string clientScriptPath = "./Assets/GameScripts/HotFix/GameProto/Battle/Scripts";
 
                 if (GUILayout.Button("导出客户端配置"))
                 {
@@ -66,7 +85,7 @@ namespace ET
                     Log.Debug($"{ExcelPath}");
                     ExportAll(clientPath);
 
-                    ExportAllClass(@"./Assets/EGamePlay/Config/Scripts", "namespace ET\n{\n"); //using MongoDB.Bson.Serialization.Attributes;\n\n
+                    ExportAllClass(clientScriptPath, "namespace GameLogic.Battle.Config\n{\n"); //using MongoDB.Bson.Serialization.Attributes;\n\n
 
                     Log.Info($"导出客户端配置完成!");
                 }
@@ -77,7 +96,7 @@ namespace ET
 
                 //    ExportAll(ServerConfigPath);
 
-                //    ExportAllClass(@"../Server/Model/Config", "using MongoDB.Bson.Serialization.Attributes;\n\nnamespace ET\n{\n");
+                //    ExportAllClass(@"../Server/Model/Config", "using MongoDB.Bson.Serialization.Attributes;\n\nnamespace Server.Model.Config\n{\n");
 
                 //    Log.Info($"导出服务端配置完成!");
                 //}
@@ -208,7 +227,7 @@ namespace ET
 
                 string fileName = Path.GetFileName(filePath);
                 string oldMD5   = this.md5Info.Get(fileName);
-                string md5      = MD5Helper.FileMD5(filePath);
+                string md5      = ComputeFileMd5(filePath);
                 this.md5Info.Add(fileName, md5);
                 // if (md5 == oldMD5)
                 // {

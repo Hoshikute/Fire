@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using ET;
+using GameLogic.Battle.Runtime.Compat;
 
 #if EGAMEPLAY_ET
 using Unity.Mathematics;

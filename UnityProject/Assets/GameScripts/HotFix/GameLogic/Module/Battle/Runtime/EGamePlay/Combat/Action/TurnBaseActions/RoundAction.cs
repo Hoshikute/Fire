@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EGamePlay;
 using EGamePlay.Combat;
-using ET;
+using Cysharp.Threading.Tasks;
 
 namespace EGamePlay.Combat
 {
@@ -57,7 +57,7 @@ namespace EGamePlay.Combat
 
         }
 
-        public async ETTask ApplyRound()
+        public async UniTask ApplyRound()
         {
             PreProcess();
 

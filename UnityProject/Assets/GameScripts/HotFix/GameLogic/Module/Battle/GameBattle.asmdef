@@ -3,7 +3,8 @@
     "rootNamespace": "GameLogic.Battle",
     "references": [
         "GameProto",
-        "TEngine.Runtime"
+        "TEngine.Runtime",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

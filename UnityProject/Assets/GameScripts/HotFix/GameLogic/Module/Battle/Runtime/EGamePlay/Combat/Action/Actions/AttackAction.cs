@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using EGamePlay;
 using EGamePlay.Combat;
-using ET;
+using Cysharp.Threading.Tasks;
+using GameLogic.Battle.Runtime.Compat;
 
 namespace EGamePlay.Combat
 {
@@ -57,7 +58,7 @@ namespace EGamePlay.Combat
             Target.GetComponent<BehaviourPointComponent>().TriggerActionPoint(ActionPointType.PreSufferAttack, this);
         }
 
-        public async ETTask ApplyAttackAwait()
+        public async UniTask ApplyAttackAwait()
         {
             PreProcess();
 

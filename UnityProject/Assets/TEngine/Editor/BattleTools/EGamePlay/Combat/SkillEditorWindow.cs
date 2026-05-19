@@ -8,9 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Object = UnityEngine.Object;
-using ET;
 using EGamePlay.Combat;
 using Sirenix.OdinInspector;
+using GameLogic.Battle.Config;
 
 public enum AbilityType
 {
@@ -56,16 +56,17 @@ public class SkillEditorWindow : OdinMenuEditorWindow
         tree.Config.DrawSearchToolbar = true;
 
         var configsPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/AssetRaw/BattleExamples/Configs/Resources/Configs.prefab");
-        var assembly = System.Reflection.Assembly.GetAssembly(typeof(TimerManager));
         var configsCollector = configsPrefab.GetComponent<ReferenceCollector>();
         if (configsCollector != null)
         {
             var configText = configsCollector.Get<TextAsset>("AbilityConfig");
-            var configTypeName = $"ET.AbilityConfig";
-            var configType = assembly.GetType(configTypeName);
-            var typeName = $"ET.AbilityConfigCategory";
-            var configCategoryType = assembly.GetType(typeName);
-            var configCategory = Activator.CreateInstance(configCategoryType) as ET.AbilityConfigCategory;
+            var configCategoryType = FindType("GameLogic.Battle.Config.AbilityConfigCategory");
+            if (configText == null || configCategoryType == null)
+            {
+                throw new InvalidOperationException("Battle config setup is incomplete. Please verify Configs.prefab and GameLogic.Battle.Config.AbilityConfigCategory.");
+            }
+
+            var configCategory = Activator.CreateInstance(configCategoryType) as AbilityConfigCategory;
             configCategory.ConfigText = configText.text;
             configCategory.BeginInit();
             SkillConfigCategory = configCategory;
@@ -104,6 +105,14 @@ public class SkillEditorWindow : OdinMenuEditorWindow
         //tree.EnumerateTree().AddIcons<Item>(x => x.Icon);
 
         return tree;
+    }
+
+    private static Type FindType(string fullName)
+    {
+        return AppDomain.CurrentDomain
+            .GetAssemblies()
+            .Select(assembly => assembly.GetType(fullName, false))
+            .FirstOrDefault(type => type != null);
     }
 
     private AbilityType enumType = AbilityType.Skill;
@@ -150,7 +159,12 @@ public class SkillEditorWindow : OdinMenuEditorWindow
 
         SirenixEditorGUI.BeginHorizontalToolbar(toolbarHeight);
         {
-            var data = ExecutionObjects[selected?.Name];
+            ExecutionObject data = null;
+            if (!string.IsNullOrEmpty(selected?.Name))
+            {
+                ExecutionObjects.TryGetValue(selected.Name, out data);
+            }
+
             if (data != null)
             {
                 EditorGUILayout.ObjectField(data, typeof(ExecutionObject), false);

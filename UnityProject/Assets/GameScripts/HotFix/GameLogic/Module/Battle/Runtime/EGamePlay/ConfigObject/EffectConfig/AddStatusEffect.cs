@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using ET;
+using GameLogic.Battle.Config;
 
 #if EGAMEPLAY_ET
 using Unity.Mathematics;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EGamePlay;
 using EGamePlay.Combat;
-using ET;
+using Cysharp.Threading.Tasks;
 
 #if EGAMEPLAY_ET
 using Unity.Mathematics;
@@ -51,7 +51,7 @@ namespace EGamePlay.Combat
         public Vector3 InputPoint { get; set; }
         public Vector3 InputDirection { get; set; }
         public float InputRadian { get; set; }
-        public ETTask Task { get; set; }
+        public UniTask Task { get; set; }
 
         /// 行动能力
         public Entity ActionAbility { get; set; }

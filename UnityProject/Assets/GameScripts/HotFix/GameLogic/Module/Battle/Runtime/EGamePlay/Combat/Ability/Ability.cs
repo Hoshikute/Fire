@@ -1,8 +1,8 @@
 ﻿using System;
 using GameUtils;
-using ET;
 using System.Collections.Generic;
 using UnityEngine;
+using GameLogic.Battle.Config;
 #if EGAMEPLAY_ET
 using SkillConfig = cfg.Skill.SkillCfg;
 using AO;

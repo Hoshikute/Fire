@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace ET
+namespace TEngine.Editor.BattleTools.EGamePlay.ComponentViewEditor
 {
     public static class Styles
     {

@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ET;
 using System;
 using System.Linq;
+using GameLogic.Battle.Config;
 
 #if !EGAMEPLAY_ET
 namespace EGamePlay.Combat
@@ -38,9 +38,9 @@ namespace EGamePlay.Combat
 
             foreach (var item in configsCollector.data)
             {
-                var configTypeName     = $"ET.{item.gameObject.name}";
+                var configTypeName     = $"GameLogic.Battle.Config.{item.gameObject.name}";
                 var configType         = FindType(configTypeName);
-                var typeName           = $"ET.{item.gameObject.name}Category";
+                var typeName           = $"GameLogic.Battle.Config.{item.gameObject.name}Category";
                 var configCategoryType = FindType(typeName);
                 if (configType == null || configCategoryType == null)
                 {

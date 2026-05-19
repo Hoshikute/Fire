@@ -39,11 +39,7 @@ namespace EGamePlay.Combat
     }
 
     [Serializable]
-#if UNITY
     public abstract class ItemEffect
-#else
-    public class ItemEffect : ET.Object
-#endif
     {
         [HideInInspector]
         public virtual string Label => "Event";

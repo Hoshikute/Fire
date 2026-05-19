@@ -1,5 +1,7 @@
 ﻿using System;
 
+using TEngine;
+
 namespace EGamePlay
 {
 #if !NOT_UNITY
@@ -7,7 +9,7 @@ namespace EGamePlay
     {
         public static void Console(string log)
         {
-            ET.Log.Debug(log);
+            TEngine.Log.Debug(log);
         }
 
         public static void Debug(string log)
@@ -21,12 +23,12 @@ namespace EGamePlay
 
         public static void Error(string log)
         {
-            UnityEngine.Debug.LogError(log);
+            TEngine.Log.Error(log);
         }
 
         public static void Error(Exception e)
         {
-            UnityEngine.Debug.LogException(e);
+            TEngine.Log.Error(e);
         }
     }
 #else
@@ -34,22 +36,22 @@ namespace EGamePlay
     {
         public static void Console(string log)
         {
-            ET.Log.Console(log);
+            TEngine.Log.Debug(log);
         }
 
         public static void Debug(string log)
         {
-            ET.Log.Console(log);
+            TEngine.Log.Debug(log);
         }
 
         public static void Error(string log)
         {
-            ET.Log.Error(log);
+            TEngine.Log.Error(log);
         }
 
         public static void Error(Exception e)
         {
-            ET.Log.Error(e);
+            TEngine.Log.Error(e);
         }
     }
 #endif

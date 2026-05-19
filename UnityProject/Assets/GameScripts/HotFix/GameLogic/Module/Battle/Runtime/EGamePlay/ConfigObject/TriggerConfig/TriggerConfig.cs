@@ -15,11 +15,7 @@ namespace EGamePlay.Combat
     }
 
     [Serializable]
-#if UNITY
-    public class TriggerConfig : System.Object
-#else
-    public class TriggerConfig : ET.Object
-#endif
+    public class TriggerConfig
     {
         [HideInInspector]
         public string Label => TriggerType == EffectTriggerType.ExecuteTrigger ? "主动触发" : "被动触发";

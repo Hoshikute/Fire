@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ET;
+using EGamePlay;
 using UnityEditor;
 using UnityEngine;
 
-namespace EGamePlay
+namespace TEngine.Editor.BattleTools.EGamePlay.ComponentViewEditor
 {
     [CustomEditor(typeof (ComponentView))]
-    public class ComponentViewEditor: Editor
+    public class ComponentViewEditor: UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {

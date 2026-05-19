@@ -1,4 +1,4 @@
-namespace ET
+namespace GameLogic.Battle.Config
 {
     /// <summary>
     /// Battle legacy config compatibility interface.

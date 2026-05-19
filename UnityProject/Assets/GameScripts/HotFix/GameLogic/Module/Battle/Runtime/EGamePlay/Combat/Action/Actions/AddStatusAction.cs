@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using EGamePlay.Combat;
-using ET;
 using GameUtils;
+using GameLogic.Battle.Config;
 
 namespace EGamePlay.Combat
 {
@@ -31,7 +31,7 @@ namespace EGamePlay.Combat
     }
 
     /// <summary>
-    /// Ê©¼Ó×´Ì¬ĞĞ¶¯
+    /// æ–½åŠ çŠ¶æ€è¡ŒåŠ¨
     /// </summary>
     public class AddStatusAction : Entity, IActionExecute
     {
@@ -39,13 +39,13 @@ namespace EGamePlay.Combat
         public AddStatusEffect AddStatusEffect => SourceAssignAction.AbilityEffect.EffectConfig as AddStatusEffect;
         public Ability BuffAbility { get; set; }
 
-        /// ĞĞ¶¯ÄÜÁ¦
+        /// è¡ŒåŠ¨èƒ½åŠ›
         public Entity ActionAbility { get; set; }
-        /// Ğ§¹û¸³¸øĞĞ¶¯Ô´
+        /// æ•ˆæœèµ‹ç»™è¡ŒåŠ¨æº
         public EffectAssignAction SourceAssignAction { get; set; }
-        /// ĞĞ¶¯ÊµÌå
+        /// è¡ŒåŠ¨å®ä½“
         public CombatEntity Creator { get; set; }
-        /// Ä¿±ê¶ÔÏó
+        /// ç›®æ ‡å¯¹è±¡
         public Entity Target { get; set; }
 
 
@@ -54,7 +54,7 @@ namespace EGamePlay.Combat
             Entity.Destroy(this);
         }
 
-        //Ç°ÖÃ´¦Àí
+        //å‰ç½®å¤„ç†
         private void PreProcess()
         {
 
@@ -66,7 +66,7 @@ namespace EGamePlay.Combat
 
 //#if EGAMEPLAY_EXCEL
 //            var statusConfig = AddStatusEffect.AddStatusConfig;
-//            var canStack = statusConfig.CanStack == "ÊÇ";
+//            var canStack = statusConfig.CanStack == "æ˜¯";
 //            var enabledLogicTrigger = statusConfig.EnabledLogicTrigger();
 //#else
             var buffObject = AddStatusEffect.AddStatus;
@@ -76,7 +76,7 @@ namespace EGamePlay.Combat
                 buffObject = AssetUtils.LoadObject<AbilityConfigObject>($"{AbilityManagerObject.BuffResFolder}/Buff_{statusId}");
             }
             var buffConfig = AbilityConfigCategory.Instance.Get(buffObject.Id);
-            var canStack = buffConfig.CanStack == "ÊÇ";
+            var canStack = buffConfig.CanStack == "æ˜¯";
 //#endif
             var statusComp = Target.GetComponent<StatusComponent>();
             if (canStack == false)
@@ -113,14 +113,14 @@ namespace EGamePlay.Combat
             FinishAction();
         }
 
-        //ºóÖÃ´¦Àí
+        //åç½®å¤„ç†
         private void PostProcess()
         {
             Creator.TriggerActionPoint(ActionPointType.PostExecuteStatus, this);
             Target.GetComponent<BehaviourPointComponent>().TriggerActionPoint(ActionPointType.PostSufferStatus, this);
         }
 
-        /// ÕâÀï´¦Àí¼¼ÄÜ´«ÈëµÄ²ÎÊıÊıÖµÌæ»»
+        /// è¿™é‡Œå¤„ç†æŠ€èƒ½ä¼ å…¥çš„å‚æ•°æ•°å€¼æ›¿æ¢
         public void ProcessInputKVParams(Ability ability, Dictionary<string, string> Params)
         {
             foreach (var abilityTrigger in ability.GetComponent<AbilityTriggerComponent>().AbilityTriggers)

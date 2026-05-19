@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameUtils;
-using ET;
 using System.Linq;
+using GameLogic.Battle.Runtime.Compat;
 
 namespace EGamePlay.Combat
 {

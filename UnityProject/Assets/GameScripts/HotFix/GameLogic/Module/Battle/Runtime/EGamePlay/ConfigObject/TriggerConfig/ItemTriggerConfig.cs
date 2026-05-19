@@ -12,11 +12,7 @@ namespace EGamePlay.Combat
     }
 
     [Serializable]
-#if UNITY
-    public class ItemTriggerConfig : System.Object
-#else
-    public class ItemTriggerConfig : ET.Object
-#endif
+    public class ItemTriggerConfig
     {
         [HideInInspector]
         public string Label => TriggerType switch

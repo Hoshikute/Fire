@@ -1,6 +1,6 @@
 using EGamePlay.Combat;
-using ET;
 using System.IO;
+using GameLogic.Battle.Runtime.Compat;
 
 namespace GameUtils
 {

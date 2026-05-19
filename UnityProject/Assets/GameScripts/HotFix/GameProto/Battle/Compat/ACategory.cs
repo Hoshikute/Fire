@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace ET
+namespace GameLogic.Battle.Config
 {
     /// <summary>
     /// Battle legacy config compatibility category base.

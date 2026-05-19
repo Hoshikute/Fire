@@ -1,6 +1,8 @@
 ﻿using System;
 
-namespace ET
+using Cysharp.Threading.Tasks;
+
+namespace GameLogic.Battle.Runtime.Compat
 {
 	public static class TimeHelper
 	{
@@ -25,9 +27,9 @@ namespace ET
 			return ClientNow();
 		}
 
-		public static async ETTask WaitAsync(int time)
+		public static UniTask WaitAsync(int time)
         {
-			await TimerManager.Instance.WaitAsync(time);
+			return UniTask.Delay(time);
         }
     }
 }

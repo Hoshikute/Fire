@@ -1,7 +1,6 @@
-using System.Threading;
 using EGamePlay;
 using EGamePlay.Combat;
-using ET;
+using GameLogic.Battle.Config;
 using TEngine;
 using UnityEngine;
 
@@ -29,11 +28,9 @@ namespace GameLogic.Battle
                 return;
             }
 
-            SynchronizationContext.SetSynchronizationContext(ThreadSynchronizationContext.Instance);
             Entity.EnableLog = false;
 
             ECSNode ecsNode = ECSNode.Create();
-            ecsNode.AddChild<TimerManager>();
             Context = ecsNode.AddChild<CombatContext>();
 
             GameObject configsPrefab = Resources.Load<GameObject>(ConfigsPrefabPath);
@@ -51,9 +48,7 @@ namespace GameLogic.Battle
                 return;
             }
 
-            ThreadSynchronizationContext.Instance.Update();
             ECSNode.Instance?.Update();
-            TimerManager.Instance?.Update();
             ECSNode.Instance?.FixedUpdate();
         }
 

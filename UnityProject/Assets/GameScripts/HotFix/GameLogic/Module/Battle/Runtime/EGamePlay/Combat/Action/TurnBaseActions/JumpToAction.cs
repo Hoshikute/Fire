@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using EGamePlay;
 using EGamePlay.Combat;
-using ET;
+using Cysharp.Threading.Tasks;
+using GameLogic.Battle.Runtime.Compat;
 
 namespace EGamePlay.Combat
 {
@@ -52,7 +53,7 @@ namespace EGamePlay.Combat
             Creator.TriggerActionPoint(ActionPointType.PreExecuteJumpTo, this);
         }
 
-        public async ETTask ApplyJumpTo()
+        public async UniTask ApplyJumpTo()
         {
             PreProcess();
 

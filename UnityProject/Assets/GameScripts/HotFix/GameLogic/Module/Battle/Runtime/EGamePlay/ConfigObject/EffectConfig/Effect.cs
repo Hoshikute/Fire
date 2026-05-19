@@ -39,11 +39,7 @@ namespace EGamePlay.Combat
     }
 
     [Serializable]
-#if UNITY
     public abstract class Effect
-#else
-    public class Effect : ET.Object
-#endif
     {
         [HideInInspector]
         public bool IsSkillEffect;

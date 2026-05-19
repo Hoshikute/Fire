@@ -1,4 +1,4 @@
-namespace ET
+namespace GameLogic.Battle.Config
 {
 	[Config]
 	public partial class AbilityConfigCategory : ACategory<AbilityConfig>
