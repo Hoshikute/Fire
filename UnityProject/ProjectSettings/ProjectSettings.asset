@@ -792,22 +792,22 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Android: ENABLE_LOG;TextMeshPro
-    EmbeddedLinux: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro
-    GameCoreXboxOne: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro
+    Android: ENABLE_LOG;TextMeshPro;ENVIRO_3
+    EmbeddedLinux: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro;ENVIRO_3
+    GameCoreXboxOne: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro;ENVIRO_3
     Lumin: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro
-    Nintendo Switch: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro
-    PS4: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro
-    PS5: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro
-    QNX: TextMeshPro
-    Stadia: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro
-    Standalone: ENABLE_LOG;TextMeshPro;ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3
-    VisionOS: TextMeshPro
-    WebGL: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro;ENABLE_LOG
+    Nintendo Switch: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro;ENVIRO_3
+    PS4: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro;ENVIRO_3
+    PS5: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro;ENVIRO_3
+    QNX: TextMeshPro;ENVIRO_3
+    Stadia: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro;ENVIRO_3
+    Standalone: ENABLE_LOG;TextMeshPro;ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_INSPECTOR_3_2;ODIN_INSPECTOR_3_3;ENVIRO_3
+    VisionOS: TextMeshPro;ENVIRO_3
+    WebGL: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro;ENABLE_LOG;ENVIRO_3
     Windows Store Apps: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro;ENABLE_LOG
-    XboxOne: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro
+    XboxOne: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro;ENVIRO_3
     iPhone: ENABLE_LOG;TextMeshPro
-    tvOS: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro
+    tvOS: UNITY_POST_PROCESSING_STACK_V2;TextMeshPro;ENVIRO_3
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}
@@ -912,7 +912,7 @@ PlayerSettings:
   hmiLogStartupTiming: 0
   hmiCpuConfiguration: 
   apiCompatibilityLevel: 6
-  activeInputHandler: 0
+  activeInputHandler: 2
   windowsGamepadBackendHint: 0
   cloudProjectId: 
   framebufferDepthMemorylessMode: 0

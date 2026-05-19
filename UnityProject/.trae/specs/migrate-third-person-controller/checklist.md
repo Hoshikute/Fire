@@ -1,0 +1,6 @@
+- [x] 迁入资源完成后，工程无 Missing Script / Missing GUID 导致的报错（允许少量可选功能被移除，但需有替代或明确说明）
+- [x] 迁入资源目录符合约定：`Assets/AssetArt/ThirdPersonController/...` 与 `Assets/AssetRaw/ThirdPersonController/...`
+- [x] 新增 HotFix 角色模块可编译并能在运行时初始化（不破坏现有 Battle/UIModule 等模块）
+- [x] 输入映射复用现有 InputSystem 体系，工程内不出现互相冲突的重复 InputActions 入口
+- [x] 最小验证场景可运行：角色可移动/转向，镜头可跟随/旋转，动画状态能随移动切换
+- [x] 资源加载与释放遵循项目规范（不引入同步 Resources.Load 作为默认路径）

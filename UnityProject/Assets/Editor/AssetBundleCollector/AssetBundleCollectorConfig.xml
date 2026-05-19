@@ -5,6 +5,9 @@
     <Group GroupActiveRule="EnableGroup" GroupName="Actor" GroupDesc="" AssetTags="">
       <Collector CollectPath="Assets/AssetRaw/Actor" CollectGUID="9c67ce0c9edfd4e4aa1006ee39846d66" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackDirectory" FilterRule="CollectAll" UserData="" AssetTags="" />
     </Group>
+    <Group GroupActiveRule="EnableGroup" GroupName="ThirdPersonController" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/AssetRaw/ThirdPersonController" CollectGUID="d3b44a8d0c9b4a2f8eac3b2a6f3c5d1e" CollectType="MainAssetCollector" AddressRule="AddressByFolderAndFileName" PackRule="PackDirectory" FilterRule="CollectAll" UserData="" AssetTags="" />
+    </Group>
     <Group GroupActiveRule="EnableGroup" GroupName="Audios" GroupDesc="" AssetTags="">
       <Collector CollectPath="Assets/AssetRaw/Audios" CollectGUID="8ef7a411b66e70f4cb65c2233c9a0868" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackDirectory" FilterRule="CollectAll" UserData="" AssetTags="" />
     </Group>

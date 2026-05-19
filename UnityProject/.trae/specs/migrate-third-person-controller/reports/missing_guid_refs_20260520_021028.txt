@@ -1,0 +1,813 @@
+GUID: 7e5debf235ac2d54397a268de3328672  Refs: 504
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: f780aa281814f9842a7c076d436932e7  Refs: 91
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+GUID: 0000000000000000e000000000000000  Refs: 80
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Box_100x100x100_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Environment_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Environment_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Environment_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Environment_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Environment_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Environment_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Environment_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+GUID: 0000000000000000f000000000000000  Refs: 75
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Art\Skybox\SkyboxLite.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Art\Skybox\SkyboxLiteWarm.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: c5a8877f26e7a6a43aaf06fade1a064a  Refs: 59
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\PlayerIdleLoop.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\PlayerMoveEnd_L.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\PlayerMoveEnd_R.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\PlayerMoveLoop.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Climb\LedgeClimb.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Lock\MoveCrouchEnd_L_Lock.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Lock\MoveCrouchEnd_R_Lock.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Lock\MoveCrouchLoop_Lock.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Lock\MoveEnd_L_Lock.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Lock\MoveEnd_R_Lock.asset
+GUID: db0e58d0841b90c478cc919c554c298c  Refs: 51
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\AmplifyAnimationPack\Animations\ObstaclesWallpoints\SK_Mannequin@Obstacle_Bump.fbx.meta
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\AmplifyAnimationPack\Animations\ObstaclesWallpoints\SK_Mannequin@Obstacle_Climb_Down.fbx.meta
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\AmplifyAnimationPack\Animations\ObstaclesWallpoints\SK_Mannequin@Obstacle_Climb_Loop.fbx.meta
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\AmplifyAnimationPack\Animations\ObstaclesWallpoints\SK_Mannequin@Obstacle_Climb_onTop.fbx.meta
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\AmplifyAnimationPack\Animations\ObstaclesWallpoints\SK_Mannequin@Obstacle_Climb_Start.fbx.meta
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\AmplifyAnimationPack\Animations\ObstaclesWallpoints\SK_Mannequin@Obstacle_ClimbM.fbx.meta
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\AmplifyAnimationPack\Animations\ObstaclesWallpoints\SK_Mannequin@Obstacle_Corner_Inside_L.fbx.meta
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\AmplifyAnimationPack\Animations\ObstaclesWallpoints\SK_Mannequin@Obstacle_Corner_Inside_R.fbx.meta
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\AmplifyAnimationPack\Animations\ObstaclesWallpoints\SK_Mannequin@Obstacle_Corner_Outside_L.fbx.meta
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\AmplifyAnimationPack\Animations\ObstaclesWallpoints\SK_Mannequin@Obstacle_Corner_Outside_R.fbx.meta
+GUID: fe87c0e1cc204ed48ad3b37840f39efc  Refs: 32
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: d0353a89b1f911e48b9e16bdc9f2e058  Refs: 29
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Model\New Material.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Material\Rusk_Alpha.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Material\Rusk_Body.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Material\Rusk_Costume.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Material\Rusk_Face.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Material\Rusk_Hair.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Rusk_Alpha.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Rusk_Body.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Rusk_Costume.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Rusk_Face.mat
+GUID: 31321ba15b8f8eb4c954353edc038b1d  Refs: 26
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+GUID: b4c11ff25089a324daf359f4b0629b33  Refs: 22
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+GUID: ac39bd03fca81b849929b9c966f1836a  Refs: 22
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 3300a5c4710bac244815734e484b3b90  Refs: 21
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Prefabs\Structure_Prefab.prefab
+GUID: 67cc4cb7839cd3741b63733d5adf0442  Refs: 19
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 5f7201a12d95ffc409449d95f23cf332  Refs: 17
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: 933532a4fcc9baf4fa0491de14d08ed7  Refs: 16
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Model\New Material.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Rusk_Alpha.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Rusk_Body.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Rusk_Costume.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Rusk_Face.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Rusk_Hair.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Art\Materials\Blue_Mat.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Art\Materials\GreyBlue_Mat.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Art\Materials\GridBlue_01_Mat.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Environment\Art\Materials\GridOrange_01_Mat.mat
+GUID: 3c25f9a310357dc4d857376a700f6758  Refs: 12
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 9145c6654ec80054aa42bf7a76165903  Refs: 10
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: d7fd9488000d3734a9e00ee676215985  Refs: 8
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\SampleSceneProfile.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Profiles\HDRP\Enviro HDRP Sky and Fog Volume.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Global Volume Profile 1.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Global Volume Profile.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile 1.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile 2.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_URP\Global Volume Profile.asset
+GUID: 4d26ada6b8b155b4cbf61e26d6fc9a06  Refs: 8
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Parameter\CancelClimbEvent.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Parameter\Lock_X_Value.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Parameter\Lock_Y_Value.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Parameter\LockValue.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Parameter\MoveInterruptEvent.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Parameter\RotationValue.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Parameter\SpeedValue.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\PlayerAnimacer\Parameter\StandValue.asset
+GUID: a971fa2e110a0ac42ac1d8dae408704b  Refs: 7
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 5188989f1cb2a0044ad31e4838c9e014  Refs: 5
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Other\GameChapter\GameChapterRegister.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Other\GameChapter\GameChapterRegister.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Other\GameChapter\GameChapterRegister.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Other\GameChapter\GameChapterRegister.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Other\GameChapter\GameChapterRegister.asset
+GUID: 650dd9526735d5b46b79224bc6e94025  Refs: 5
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Materials\Rusk_Alpha.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Materials\Rusk_Body.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Materials\Rusk_Costume.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Materials\Rusk_Face.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Texture\Materials\Rusk_Hair.mat
+GUID: a9f9544b71b7dab44a4644b6807e8bf6  Refs: 4
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 0d7593b3a9277ac4696b20006c21dde2  Refs: 4
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Profiles\HDRP\Enviro HDRP Sky and Fog Volume.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile 1.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile 2.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile.asset
+GUID: 5265657162cc1a241bba03a3b0476d99  Refs: 4
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 01ec2c1930009b04ea08905b47262415  Refs: 4
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: cfabb0440166ab443bba8876756fdfa9  Refs: 4
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: b4830721211d64b4d95148caf14d638b  Refs: 4
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 330e0fca1717dde4aaa144f48232aa64  Refs: 4
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 2a4db7a114972834c8e4117be1d82ba3  Refs: 4
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: 953beb541740ddc499d005ee80c9ff29  Refs: 4
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Profiles\HDRP\Enviro HDRP Sky and Fog Volume.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile 1.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile 2.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile.asset
+GUID: 9085046f02f69544eb97fd06b6048fe2  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: f9ee4ed84c1d10c49aabb9b210b0fc44  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant.asset
+GUID: e3d24661c1e055f45a7560c033dbb837  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant.asset
+GUID: cf852408f2e174538bcd9b7fda1c5ae7  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant-Renderer.asset
+GUID: 5fd9a8feb75a4b5894c241777f519d4e  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant-Renderer.asset
+GUID: 41439944d30ece34e96484bdb6645b55  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant-Renderer.asset
+GUID: c17132b1f77d20942aa75f8429c0f8bc  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant-Renderer.asset
+GUID: 04c410c9937594faa893a11dceb85f7e  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant-Renderer.asset
+GUID: d6dae50ee9e1bfa4db75f19f99355220  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant-Renderer.asset
+GUID: 474bcb49853aa07438625e644c072ee6  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_URP.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\industrial_zone\scene_day.unity
+GUID: de640fe3d0db1804a85f9fc8f5cadab6  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant-Renderer.asset
+GUID: 31a19414c41e5ae4aae2af33fee712f6  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: 71c1514a6bd24e1e882cebbe1904ce04  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Font\SourceHanSansCN-Normal SDF.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\TextMesh Pro\Resources\Fonts & Materials\LiberationSans SDF - Fallback.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\TextMesh Pro\Resources\Fonts & Materials\LiberationSans SDF.asset
+GUID: bf2edee5c58d82540a51f03df9d42094  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant.asset
+GUID: 2d08ce26990eb1a4a9177b860541e702  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Profiles\HDRP\Enviro HDRP Sky and Fog Volume.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Global Volume Profile 1.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile 1.asset
+GUID: e9155b26e1bc55942a41e518703fe304  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant-Renderer.asset
+GUID: 1aa08ab6e0800fa44ae55d278d1423e3  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: e6e9a19c3678ded42a3bc431ebef7dbd  Refs: 3
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Performant-Renderer.asset
+GUID: c117b74c5c58db542bffe25c78fe92db  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 5a68ce82240dcc848bea1c46faeb90d3  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: cdedf23966a15a5408db1293649dbdda  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: b658310f3202fc64aac64aa6e603b79a  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 903ce375d5f609d44b9f00b425d6eda9  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 7d4c867f6b72b714dbb5fd1780afe208  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: d01270efd3285ea4a9d6c555cb0a8027  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 54a3a0570aebe8949bec4966f1376581  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile 1.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile.asset
+GUID: b2b8bad9583e56a46a3e21795e96ad92  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 7ff0199655202a04eb175de45a6e078a  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 81435368fed3f9d44b98ac6b56148f6d  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 790b757e20c0f2c42b5a4e1817ea5efd  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 9956086b52aebe1449639a9ac65802c2  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: c82227d5759e296488798b1554a72a15  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: c079bc84df7c7e94f88c8ae0d1b0691d  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 98d5ecfa67305c34985745094ade494c  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 97c23e3b12dc18c42a140437e53d3951  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\SampleSceneProfile.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_URP\Global Volume Profile.asset
+GUID: 73a13919d81fb7444849bae8b5c812a2  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 63b0ddbffebc232408a0ddca24e4ca47  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Animancer Settings.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\Animancer Settings.asset
+GUID: bd76ddf346046e346bee29d1d6f95a5d  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 7211ec78594d763469fea2ea79965f00  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Enviro 3.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Enviro 3.prefab
+GUID: 70a331b1d86cc8d4aa106ccbe0da5852  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: a79441f348de89743a2939f4d699eac1  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_URP.unity
+GUID: 8d2bb70cbf9db8d4da26e15b26e74248  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\industrial_zone\Materials\Industrial_Fence.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\industrial_zone\Materials\vegetation.mat
+GUID: 682c3a0e246b2504e8a08314905d2104  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile 1.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile.asset
+GUID: 6844dcb6a866ab34fa96c67e39eab693  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 76f778ff57c4e8145b9681fe3268d8e9  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 8b1ca40feaf10b54fa6aeb188dbd005d  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Animancer Settings.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\Animancer Settings.asset
+GUID: d04d29c3051acd947b4074f55ba43358  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material.mat
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material.mat
+GUID: d16c6aeaef944094b9a1633041804207  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 2dc095764ededfa4bb32fa602511ea4b  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 2bd397d5afcbb3647b149cb8bc1a03ee  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 21f1794db57c81e4ba477c2e7d90a19f  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Enviro 3.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Enviro 3.prefab
+GUID: f05c6884b705ce14d82ae720f0ec209f  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: f2389561bcb0fe0438c64adac803a8aa  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_URP.unity
+GUID: 18bd840b706853d4a934ec3199f63a41  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Animancer Settings.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\Animancer Settings.asset
+GUID: 172515602e62fb746b5d573b38a5fe58  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_URP.unity
+GUID: 2dc9666c890a37946b1fbb67941e523d  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 14980fc5fe40191418954549174fe63e  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 1046234e7eb7e384cb43ce2d5cae2850  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Animancer Settings.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\Animancer Settings.asset
+GUID: f62c9c65cf3354c93be831c8bc075510  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-Balanced-Renderer.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 0d0b652f32a2cc243917e4028fa0f046  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: f68759077adc0b143b6e1c101e82065e  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 0b2db86121404754db890f4c8dfe81b2  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\SampleSceneProfile.asset
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_URP\Global Volume Profile.asset
+GUID: 08c0ae90c5f9e56428799dc10c4c53c5  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: 081ffb0090424ba4cb05370a42ead6b9  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 12cd9f87c1f675b4685e0848a464d0cf  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: e5dce54ae3368c042b26ab1f305e15b2  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 9dfea48843f53fc438eabc12a3a30abc  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: d78581a96eae8bf4398c282eb0b098bd  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 467d24c372e24834d8fe12b28efe5de2  Refs: 2
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_Gesture.controller
+GUID: db83d73a067c73a40addcda91cf410aa  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material.mat
+GUID: d82512f9c8e5d4a4d938b575d47f88d4  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_BuiltIn.unity
+GUID: adb84e30e02715445aeb9959894e3b4d  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Enviro Post Effect.asset
+GUID: f5270bb7f9f146f409ff8c180ff94363  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\TransitionStage\FadeAlphaOnEnter.asset
+GUID: ac0b09e7857660247b1477e93731de29  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Prefab\CameraController.prefab
+GUID: ab2114bdc8544297b417dfefe9f1e410  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\TextMesh Pro\Resources\Style Sheets\Default Style Sheet.asset
+GUID: d5534bdd4162f3b43bcab655da355821  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: d3df2358223ed7643a6106c9778ed930  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: a89bee29cffa951418fc1e2da94d1959  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: d0414a1ea455aab4dad8e8823d2c1020  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: a811bde74b26b53498b4f6d872b09b6d  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\DOTweenSettings.asset
+GUID: d3be6198ace0ba14cb05762000ca9853  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material.mat
+GUID: d2def4c0241744649a168eda8dde7558  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 9e4f9b704d4c6a545863111b7ab9bb51  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Enviro 3.prefab
+GUID: f6a1524323f57554492c86586bdea3ab  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material.mat
+GUID: a615719cf3c86674685cce6511721a66  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: a2f4a105ea3373542ab3263c7ec4462e  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: d0775973747245e4ca8d1c67339f1df0  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: a27b6cd880f319446a44daf0b7fdb46d  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material.mat
+GUID: a1fa2885d7aaa864581e92b910047834  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Other\Collection\CollectionRegister.asset
+GUID: fabbfb32108af8047878b5fd3c852f30  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: d0ef8dc2c2eabfa4e8cb77be57a837c0  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP.unity
+GUID: fb7194dc27b9df64c8beca7482ee8e0d  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Prefab\CameraController.prefab
+GUID: fcdb8977884db9243b22b1d30b840272  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: a186f8a87ca4f4d3aa864638ad5dfb65  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\TutorialInfo\Scripts\Readme.cs.meta
+GUID: 9e7db0857f326ec43bee6a2676df0912  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: b26b786a2500b2d46968badf9cd3b47f  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: d8517ceb8d5c1f7438725a28bf158e76  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: cb76dd40fa7654f9587f6a344f125c9a  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: b3f6f3f7c722b4544b97e3c75840aa33  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Enviro Post Effect.asset
+GUID: c56b7e0d4c7cb484e959caeeedae9bbf  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: dc42784cf147c0c48a680349fa168899  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: c252a748c7cf7fa46a5eb29e03159e75  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: e32226222ff144b24bf3a5a451de54bc  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: c1cb7e9e120078f43bce4f0b1be547a7  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Enviro Post Effect.asset
+GUID: e3f09fd6e74d1584791995c33df307b1  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Stage\StageConfig.asset
+GUID: e501d18bb52cf8c40b1853ca4904654f  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Prefab\CameraController.prefab
+GUID: e5a9269edb7754f4d878425f1f63f675  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: e5b4678f303752941bb8c9c875e6d3a2  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: db0c7cc1f802f814e8228b6a1e687d15  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: c0b35e57f8d718a4b91909a68a158dac  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: da692e001514ec24dbc4cca1949ff7e8  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material HDRP.mat
+GUID: c06cc21c692f94f5fb5206247191eeee  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: c6cbe5e8052c76b4b9bd5f865f5923e6  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: d8d96493a36446e449dc89497e3f4975  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: e5ecd12b06b5ee549967cfcef8526ff0  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: e6b381331d6322840b63a9eba21940ad  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: d877ec3e844f2ca46830012e8e79319b  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Sky and Fog Settings Profile 2.asset
+GUID: e8f2b4a846fd4c14a893cde576ad172b  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Rain.vfx
+GUID: d104b2fc1ca6445babb8e90b0758136b  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: eb607f5e8fc16e140b732f33d26c8c31  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material HDRP.mat
+GUID: b98286464b8813f45a70e092ba7d88e1  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: ef27db9c97ec9c14894d3def4d1815d6  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Other\Collection\CollectionRegister.asset
+GUID: b94fcd11afffcb142908bfcb1e261fba  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Enviro Post Effect.asset
+GUID: efccd1d29435eb04c866ec3c754a494f  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: cb1bebb7140997d40842d68cfffeda7f  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Enviro 3.prefab
+GUID: f02b28c19a309304fa3facce8c00fa05  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: f034cba68ab55e046ae1445a42f18c0e  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Profiles\HDRP\Enviro HDRP Sky and Fog Volume.asset
+GUID: be9beb52b1b2e274f8149dd47b9728d2  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Other\GameChapter\GameChapterRegister.asset
+GUID: bb755e1812c9ff845a3bae86aed951ab  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 7f888aff2ac86494babad1c2c5daeee2  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 9b506dbe2557886448f9bb34290d8cd1  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Stage\01\StageAIContainer.asset
+GUID: 3302065f671a8450b82c9ddf07426f3a  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 3699b3ce8a6f3ae429f1e9307679efaa  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 36f118343fc974119bee3d09e2111500  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 380275f82c72e0549a86f4d5a242d343  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Stage\StageConfig.asset
+GUID: 3c1775c77cd8f4442a4233e48c4b2c8d  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 3c9beda531928fc40968802117a5d256  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Prefab\CameraController.prefab
+GUID: 3d176ca409891554c9c7c578cffc73b8  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 3e25258eedb15964e8d6651c9982a7a6  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: 3e3f628d80ffceb489beac74258f9cf7  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 321644b98c7b1a1458736b54fb2b9541  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: 40b924e2dad56384a8df2a1e111bb675  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Enviro Post Effect.asset
+GUID: 421815712ee5317449eeef6d06fac4a3  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Enviro 3.prefab
+GUID: 42ef2681fa3dc8c4fa031f044e68c63f  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP\Global Volume Profile.asset
+GUID: 441482e8936e35048a1dffac814e3ef8  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP.unity
+GUID: 447008c3b9ac11848b2dcf9a5fdf12f8  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 44a17a5b205fcd349a24700e6f5615bd  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\StarterAssets\Readme.asset
+GUID: 45e653bab7fb20e499bda25e1b646fea  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Prefab\CameraController.prefab
+GUID: 47a30922189aa9d46aa529a62a55ef7e  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 48a79b01ea5641d4aa6daa2e23605641  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Enviro Post Effect.asset
+GUID: 49b51f13056c65d4ba07d798e90c756d  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 41b3fc8439ede3d4fa71b4e5fb84b6cd  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: 30f12e0386cf06346a9a35b6a51a9077  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Stage\01\StageRoleConfig.asset
+GUID: 2ec995e51a6e251468d2a3fd8a686257  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\UniversalRenderPipelineGlobalSettings.asset
+GUID: 2e76901888c6ffc41a4cfa1ac7209cbd  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material.mat
+GUID: 057b1bbfca48d4642b1821cfa0b2b9d7  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 05df0775421984448b00976dd67be3e6  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 0849e84e3d62649e8882e9d6f056a017  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 085d159075de2ea4783dad6db6926305  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Stage\StageConfig.asset
+GUID: 0875e312e2778aa498ecf50c9e711735  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Role\RoleConfigSO.asset
+GUID: 0ad50f81b1d25c441943c37a89ba23f6  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Prefab\Player.prefab
+GUID: 0cd44c1031e13a943bb63640046fad76  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: 0e8f0bf51e9547d4d92885e7b0e8aba9  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\TransitionStage\FadeAlphaOnExit.asset
+GUID: 15f7abd5e82aacb4ca3aa24d2a2d1dec  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: 198545d8ce5e33a409cb2dc74535d034  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Role\AIConfigSO.asset
+GUID: 1a9e0469feeaf37469d6866e84785f53  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 1b38a8e4b08771846a740d16d639448f  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\TransitionStage\LoadSceneFXRegister.asset
+GUID: 1d493f8644831674ab2e2bb32f5e0875  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: 238e30133334c1244bfd3d1295de8d9a  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material.mat
+GUID: 23c1ce4fb46143f46bc5cb5224c934f6  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP.unity
+GUID: 2705215ac5b84b70bacc50632be6e391  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\TextMesh Pro\Resources\TMP Settings.asset
+GUID: 275f7334b25c94ff299627ea720661b4  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material.mat
+GUID: 27b834a48f9909243ac06c6f3f8e209a  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material.mat
+GUID: 2a02432966727384b82a32b8286e0b56  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Other\Collection\CollectionRegister.asset
+GUID: 2ca5024b28eb1c84e9fa880c532aa99d  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 2ce432aa11c14c3428b7b8e6192996e6  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_BuiltIn.unity
+GUID: 4b7b083e6b6734e8bb2838b0b50a0bc8  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 4d246e354feb93041a837a9ef59437cb  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 4d95a0a4461f4bb429b5a7dc4a6e310c  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 4def5c54774934f4bb6ae2581b5dcf3e  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 78540acf2be3289499193aa63706ae76  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Other\Collection\CollectionRegister.asset
+GUID: 7a34fa72bd4185749832024e9c8010bf  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Enviro Post Effect.asset
+GUID: 7a68c43fe1f2a47cfa234b5eeaa98012  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP.unity
+GUID: 7b3ede40266cd49a395def176e1bc486  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 7b822449692f29f479697b3a59897694  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: fe830b22ce4676d41b9e9b85eba97182  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 00293e14dbd47de46ba79d7780409960  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 824ed910db84bc1449b2cd543fa991ff  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 8404be70184654265930450def6a9037  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scripts\Service\GameService\InputService\InputMap.inputactions.meta
+GUID: 84a92b25f83d49b9bc132d206b370281  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\TextMesh Pro\Resources\Sprite Assets\EmojiOne.asset
+GUID: 885a6c9ce99659b4b898720b19ab8230  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Stage\01\StageAIConfig.asset
+GUID: 899c54efeace73346a0a16faa3afe726  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\SampleSceneProfile.asset
+GUID: 89cc64d817b36ec4ca1c35e36c475efc  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: 8b9a305e18de0c04dbd257a21cd47087  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_BuiltIn.unity
+GUID: 8e6292b2c06870d4495f009f912b9600  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Enviro Post Effect.asset
+GUID: 90d24a5d34f24c9438d2ece3efc64b38  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 9191aec90ae808243abe5adaecbdd3b1  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Camera\CameraConfigSO.asset
+GUID: 9240203da3ba2584a942239d1c1df6ae  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 93446b5c5339d4f00b85c159e1159b7c  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 948f4100a11a5c24981795d21301da5c  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_BuiltIn.unity
+GUID: 9959667bd831385439630a220586b519  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 76c392e42b5098c458856cdf6ecaaaa1  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: 9b77c5407dc277943b591ade9e6b18c5  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Enviro Post Effect.asset
+GUID: 72ece51f2901e7445ab60da3685d6b5f  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Scenes\Game.unity
+GUID: 6f58c347d528fa847b6cd13218eae9c4  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 4f231c4fb786f3946a6b90b886c48677  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: 532e5fe9801d6e04792bd6c13adafb8f  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: 54464011a698dc746a79d576dcedd018  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Stage\StageConfig.asset
+GUID: 556797029e73b2347956b6579e77e05b  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Enviro Post Effect.asset
+GUID: 56a77a3e8d64f47b6afe9e3c95cb57d5  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 573620ae32aec764abd4d728906d2587  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 58a0176c26315c84380711352213cd14  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 59b4ba5c58224a34994884594ddff991  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 59f8146938fff824cb5fd77236b75775  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: 6050e2d5de785ce4d931e4dbdbf2d755  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Enviro Post Effect.asset
+GUID: 60e1133243b97e347b653163a8c01b64  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 625f186215c104763be7675aa2d941aa  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Resources\Shader\Particles\EnviroParticles.shadergraph.meta
+GUID: 63716c0daf1806941a123003dc6d7398  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Prefabs\VFX Graph\Snow.vfx
+GUID: 63dba5a337ea04c4b840c0c3c80c4fd4  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material.mat
+GUID: 65598b9f46021804287643ed06098046  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Arts\Rusk\Animations\Controllers\Rusk_FX.controller
+GUID: 67db9e8f0e2ae9c40bc1e2b64352a6b4  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Prefab\UI Sample.prefab
+GUID: 69c1f799e772cb6438f56c23efccb782  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Materials\Terrain Material URP.mat
+GUID: 6ad980451443d70438faac0bc6c235a0  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Prefab\CameraController.prefab
+GUID: 6b35cc6899fff02448041643089f1095  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Other\GameChapter\GameChapterRegister.asset
+GUID: 6bb226f0f5d6b0e449d02351e20dfcf0  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Audio\AudioRegister.asset
+GUID: 6cda457ac28612740adb23da5d39ea92  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\Settings\URP-HighFidelity-Renderer.asset
+GUID: 725b7774b0b12a8448b395de0d3e5890  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetArt\ThirdPersonController\Arts\Scenes\Enviro 3 - Sky and Weather\Sample\Scene\Sample_HDRP.unity
+GUID: 01368a6497913ee4bb2aefeab85f03af  Refs: 1
+  D:\UGitD\Fire\UnityProject\Assets\AssetRaw\ThirdPersonController\AnimancerController\Resources\Config\Stage\StageConfig.asset

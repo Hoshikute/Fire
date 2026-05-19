@@ -1,4 +1,5 @@
 ﻿using GameLogic;
+using GameLogic.Character;
 using TEngine;
 using GameLogic.Battle;
 using Object = UnityEngine.Object;
@@ -92,6 +93,10 @@ public class GameModule
     public static IBattleModule Battle => _battle ??= Get<IBattleModule>();
 
     private static IBattleModule _battle;
+
+    public static ICharacterModule Character => _character ??= Get<ICharacterModule>();
+
+    private static ICharacterModule _character;
     #endregion
     
     /// <summary>
@@ -123,5 +128,6 @@ public class GameModule
         _timer = null;
         _localization = null;
         _battle = null;
+        _character = null;
     }
 }
