@@ -1,15 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+
 using UnityEngine;
 /**************************************************************************
-×÷Õß: HuHu
-ÓÊÏä: 3112891874@qq.com
-¹¦ÄÜ: ÓÐÏÞ×´Ì¬»ú£¬»º´æ×´Ì¬£¬Çý¶¯¸üÐÂ×´Ì¬Àà
+ï¿½ï¿½ï¿½ï¿½: HuHu
+ï¿½ï¿½ï¿½ï¿½: 3112891874@qq.com
+ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½
 **************************************************************************/
 public class PlayerStateMachine : StateMachineBase
 {
-   //»º´æ×´Ì¬
+   //ï¿½ï¿½ï¿½ï¿½×´Ì¬
     public Player player;
     public PlayerIdleState idleState;
     public PlayerMoveStartState moveStartState;

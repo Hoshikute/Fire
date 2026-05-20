@@ -1,6 +1,6 @@
-﻿using Animancer;
+using Animancer;
 using System;
-using Unity.VisualScripting;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -42,14 +42,14 @@ public class PlayerLedgeClimbState : PlayerMovementState
         //添加更小的碰撞体
         if (!player.transform.TryGetComponent(out capsuleCollider))
         {
-            capsuleCollider = player.AddComponent<CapsuleCollider>();
+            capsuleCollider = player.gameObject.AddComponent<CapsuleCollider>();
             capsuleCollider.radius = player.controller.radius * CCRadiusMult;
             capsuleCollider.height = player.controller.height/2f ;
             capsuleCollider.center = player.controller.center;
         }
         if (!player.transform.TryGetComponent(out rigidbody))
         {
-            rigidbody = player.AddComponent<Rigidbody>();
+            rigidbody = player.gameObject.AddComponent<Rigidbody>();
             rigidbody.useGravity = false;
             rigidbody.constraints = RigidbodyConstraints.FreezeRotationZ;
             rigidbody.constraints = RigidbodyConstraints.FreezeRotationX;
