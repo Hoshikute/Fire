@@ -80,6 +80,58 @@ TEngine 基于 HybridCLR + YooAsset + UniTask + Luban 构建。
 
 ---
 
+## 🔌 Coplay Unity MCP 工具
+
+> **Coplay Unity MCP** 是连接 Claude Code 与 Unity 编辑器的桥梁，支持场景操作、GameObject 管理、UI 创建、脚本编辑等。
+
+### 连接验证
+
+运行 `/mcp` 命令，确认 `coplay-mcp: ✓ Connected` 即表示连接成功。
+
+### 核心工具
+
+| 工具类别 | 主要工具 | 用途 |
+|---------|---------|------|
+| **场景** | `manage_scene` | 加载/保存场景、获取层级、截图 |
+| **GameObject** | `manage_gameobject`, `find_gameobjects` | 创建/修改/删除/查找对象 |
+| **组件** | `manage_components` | 添加/删除/设置组件属性 |
+| **UI** | `manage_ui`, `manage_prefabs` | 创建 UI 节点、保存 Prefab |
+| **脚本** | `manage_script`, `apply_text_edits` | 创建/编辑 C# 脚本 |
+| **编辑器** | `manage_editor`, `execute_menu_item` | Play/Pause/Stop、执行菜单 |
+| **调试** | `read_console`, `run_tests` | 读取日志、运行测试 |
+
+### 批量操作优先
+
+多对象操作必须用 `batch_execute`，比单次调用快 10~100 倍：
+
+```json
+{
+  "tool": "batch_execute",
+  "commands": [
+    { "tool": "manage_gameobject", "params": { "action": "create", "name": "Root" } },
+    { "tool": "manage_ui", "params": { "action": "create_button", "name": "m_btn_OK", "parent": "Root" } }
+  ],
+  "failFast": true
+}
+```
+
+### 使用时机
+
+| 场景 | 推荐工具 |
+|------|---------|
+| 创建 UI Prefab 骨架 | `batch_execute` + `manage_ui` + `manage_prefabs` |
+| 修改场景中的 GameObject | `manage_gameobject` / `manage_components` |
+| 精确编辑脚本代码 | `apply_text_edits`（需先 `get_sha`） |
+| 运行调试查看错误 | `manage_editor` play → `read_console` |
+| 执行 TEngine 菜单命令 | `execute_menu_item` |
+
+### 详细文档
+
+- **场景/GameObject/UI/脚本/测试**：[mcp-tools.md](.claude/skills/tengine-dev/references/mcp-tools.md)
+- **材质/Shader/VFX/动画**：[mcp-visual.md](.claude/skills/tengine-dev/references/mcp-visual.md)
+
+---
+
 ## 📚 References 参考文档
 
 > **AI 唯一权威来源：`.claude/skills/tengine-dev/references/`**

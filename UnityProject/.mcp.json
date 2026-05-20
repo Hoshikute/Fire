@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "coplay-unity": {
+      "command": "npx",
+      "args": ["-y", "@coplaydev/coplay-unity-plugin"],
+      "env": {}
+    }
+  }
+}

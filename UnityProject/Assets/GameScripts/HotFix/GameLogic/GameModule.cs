@@ -97,6 +97,20 @@ public class GameModule
     public static ICharacterModule Character => _character ??= Get<ICharacterModule>();
 
     private static ICharacterModule _character;
+
+    /// <summary>
+    /// 获取输入模块。
+    /// </summary>
+    public static IInputModule Input => _input ??= Get<IInputModule>();
+
+    private static IInputModule _input;
+
+    /// <summary>
+    /// 获取相机模块。
+    /// </summary>
+    public static ICameraModule Camera => _camera ??= Get<ICameraModule>();
+
+    private static ICameraModule _camera;
     #endregion
     
     /// <summary>
@@ -129,5 +143,7 @@ public class GameModule
         _localization = null;
         _battle = null;
         _character = null;
+        _input = null;
+        _camera = null;
     }
 }

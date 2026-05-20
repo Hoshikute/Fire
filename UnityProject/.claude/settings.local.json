@@ -6,7 +6,9 @@
       "Bash(openspec status:*)",
       "Bash(openspec instructions:*)",
       "Bash(msbuild:*)",
-      "Bash(openspec:*)"
+      "Bash(openspec:*)",
+      "Skill(update-config)",
+      "Skill(keybindings-help)"
     ]
   }
 }

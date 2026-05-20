@@ -6,19 +6,19 @@ public class GetSceneObjectPath : Editor
 {
     static string objPath = string.Empty;
 
-    [MenuItem("GameObject/»ñÈ¡¸ÃÎïÌåµÄÂ·¾¶")]
+    [MenuItem("GameObject/è·å–è¯¥ç‰©ä½“çš„è·¯å¾„")]
     static void GetPath()
     {
         objPath = string.Empty;
         GameObject gameObject = Selection.objects.First() as GameObject;
         GetPathString(gameObject.transform);
-        if (objPath.EndsWith("/"))//ÒÆ³ı×îºóÒ»Î»µÄ/
+        if (objPath.EndsWith("/"))//ç§»é™¤æœ€åä¸€ä½çš„/
         {
             objPath=objPath.Remove(objPath.Length - 1);
         }
         GUIUtility.systemCopyBuffer = objPath;
         Debug.Log(objPath);
-        Debug.Log("³É¹¦¸´ÖÆÂ·¾¶£¡");
+        Debug.Log("æˆåŠŸå¤åˆ¶è·¯å¾„ï¼");
     }
    
     private static void GetPathString(Transform obj)
