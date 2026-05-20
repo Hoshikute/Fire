@@ -1,4 +1,4 @@
-﻿#if !UNITY_6000_3_OR_NEWER
+#if !UNITY_6000_3_OR_NEWER
 
 #if UNITY_EDITOR
 using System.Collections.Generic;

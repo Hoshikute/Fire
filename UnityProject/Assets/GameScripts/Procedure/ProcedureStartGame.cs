@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Cysharp.Threading.Tasks;
 using Launcher;
 using TEngine;
@@ -20,7 +20,7 @@ namespace Procedure
             await UniTask.Yield();
             LauncherMgr.HideAllUI();
             _ = GameModule.Character;
-            await GameModule.Scene.LoadSceneAsync("Scenes_Game");
+            await GameModule.Scene.LoadSceneAsync("Game");
         }
     }
 }
