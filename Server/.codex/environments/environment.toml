@@ -1,0 +1,12 @@
+version = 1
+name = "Server"
+
+[setup]
+script = ""
+
+[[actions]]
+name = "启动Server"
+icon = "run"
+command = '''
+powershell -ExecutionPolicy Bypass -File D:\UGitD\Fire\Server\scripts\start-server.ps1
+'''
