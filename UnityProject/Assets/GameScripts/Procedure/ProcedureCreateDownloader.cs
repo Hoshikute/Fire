@@ -42,7 +42,7 @@ namespace Procedure
         {
             await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
 
-            _downloader = _resourceModule.CreateResourceDownloader();
+            _downloader = ResourceModule.CreateResourceDownloader();
 
             if (_downloader.TotalDownloadCount == 0)
             {

@@ -18,7 +18,7 @@ namespace Procedure
             LauncherMgr.ShowUI<LoadUpdateUI>($"下载完成...");
 
             // 下载完成之后再保存本地版本。
-            Utility.PlayerPrefs.SetString("GAME_VERSION", _resourceModule.PackageVersion);
+            Utility.PlayerPrefs.SetString("GAME_VERSION", ResourceModule.PackageVersion);
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)

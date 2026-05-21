@@ -20,7 +20,7 @@ namespace Procedure
 
             LauncherMgr.ShowUI<LoadUpdateUI>($"清理未使用的缓存文件...");
 
-            var operation = _resourceModule.ClearCacheFilesAsync();
+            var operation = ResourceModule.ClearCacheFilesAsync();
             operation.Completed += Operation_Completed;
         }
 

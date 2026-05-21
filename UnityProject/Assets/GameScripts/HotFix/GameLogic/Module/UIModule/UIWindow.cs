@@ -330,6 +330,8 @@ namespace GameLogic
             }
             else
             {
+                // 特殊情况：FromResources = true 时从 Resources 文件夹加载 UI
+                // 大多数 UI 应通过 YooAsset 加载（FromResources = false 分支）
                 GameObject panel = Object.Instantiate(Resources.Load<GameObject>(location), UIModule.UIRoot);
                 Handle_Completed(panel);
             }
@@ -516,7 +518,7 @@ namespace GameLogic
             IsHide = false;
             if (HideTimerId > 0)
             {
-                ModuleSystem.GetModule<ITimerModule>().RemoveTimer(HideTimerId);
+                GameModule.Timer.RemoveTimer(HideTimerId);
                 HideTimerId = 0;
             }
         }

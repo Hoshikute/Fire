@@ -9,7 +9,10 @@ namespace Procedure
         /// 在一些特殊的流程（如游戏逻辑对话框资源更新完成前的流程）中，可以考虑调用原生对话框进行消息提示行为
         /// </summary>
         public abstract bool UseNativeDialog { get; }
-        
-        protected readonly IResourceModule _resourceModule = ModuleSystem.GetModule<IResourceModule>();
+
+        /// <summary>
+        /// 获取资源模块（通过 GameModule 访问）
+        /// </summary>
+        protected IResourceModule ResourceModule => GameModule.Resource;
     }
 }

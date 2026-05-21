@@ -111,6 +111,20 @@ public class GameModule
     public static ICameraModule Camera => _camera ??= Get<ICameraModule>();
 
     private static ICameraModule _camera;
+
+    /// <summary>
+    /// 获取网络模块。
+    /// </summary>
+    public static INetworkModule Network => _network ??= Get<INetworkModule>();
+
+    private static INetworkModule _network;
+
+    /// <summary>
+    /// 获取帧同步模块。
+    /// </summary>
+    public static IFrameSyncModule FrameSync => _frameSync ??= Get<IFrameSyncModule>();
+
+    private static IFrameSyncModule _frameSync;
     #endregion
     
     /// <summary>
@@ -145,5 +159,7 @@ public class GameModule
         _character = null;
         _input = null;
         _camera = null;
+        _network = null;
+        _frameSync = null;
     }
 }

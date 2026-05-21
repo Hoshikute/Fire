@@ -161,6 +161,11 @@ namespace TEngine
             foreach (var guid in guids)
             {
                 var scenePath = AssetDatabase.GUIDToAssetPath(guid);
+
+                // 过滤 Package 场景
+                if (scenePath.StartsWith("Packages/") || scenePath.Contains("/Packages/"))
+                    continue;
+
                 var sceneName = Path.GetFileNameWithoutExtension(scenePath);
                 allScenes.Add((sceneName, scenePath));
             }

@@ -5,10 +5,7 @@ public class GameEntry : MonoBehaviour
 {
     void Awake()
     {
-        ModuleSystem.GetModule<IUpdateDriver>();
-        ModuleSystem.GetModule<IResourceModule>();
-        ModuleSystem.GetModule<IDebuggerModule>();
-        ModuleSystem.GetModule<IFsmModule>();
+        // 模块访问统一通过 GameModule 静态类，首次访问时自动初始化
         Settings.ProcedureSetting.StartProcedure().Forget();
         DontDestroyOnLoad(this);
     }

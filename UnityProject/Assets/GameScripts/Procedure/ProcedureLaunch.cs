@@ -11,19 +11,16 @@ namespace Procedure
     public class ProcedureLaunch : ProcedureBase
     {
         public override bool UseNativeDialog => true;
-        
-        private IAudioModule _audioModule;
 
         protected override void OnInit(ProcedureOwner procedureOwner)
         {
-            _audioModule = ModuleSystem.GetModule<IAudioModule>();
             base.OnInit(procedureOwner);
         }
 
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
-            
+
             //热更新UI初始化
             LauncherMgr.Initialize();
 
@@ -44,14 +41,13 @@ namespace Procedure
 
         private void InitLanguageSettings()
         {
-            if (_resourceModule.PlayMode == EPlayMode.EditorSimulateMode && RootModule.Instance.EditorLanguage == Language.Unspecified)
+            if (ResourceModule.PlayMode == EPlayMode.EditorSimulateMode && RootModule.Instance.EditorLanguage == Language.Unspecified)
             {
                 // 编辑器资源模式直接使用 Inspector 上设置的语言
                 return;
             }
-            
-            ILocalizationModule localizationModule = ModuleSystem.GetModule<ILocalizationModule>();
-            Language language = localizationModule.Language;
+
+            Language language = GameModule.Localization.Language;
             if (Utility.PlayerPrefs.HasSetting(Constant.Setting.Language))
             {
                 try
@@ -64,30 +60,30 @@ namespace Procedure
                     Log.Error("Init language error, reason {0}",exception.ToString());
                 }
             }
-            
+
             if (language != Language.English
                 && language != Language.ChineseSimplified
                 && language != Language.ChineseTraditional)
             {
                 // 若是暂不支持的语言，则使用英语
                 language = Language.English;
-            
+
                 Utility.PlayerPrefs.SetString(Constant.Setting.Language, language.ToString());
                 Utility.PlayerPrefs.Save();
             }
-            
-            localizationModule.Language = language;
+
+            GameModule.Localization.Language = language;
             Log.Info("Init language settings complete, current language is '{0}'.", language.ToString());
         }
 
         private void InitSoundSettings()
         {
-            _audioModule.MusicEnable = !Utility.PlayerPrefs.GetBool(Constant.Setting.MusicMuted, false);
-            _audioModule.MusicVolume = Utility.PlayerPrefs.GetFloat(Constant.Setting.MusicVolume, 1f);
-            _audioModule.SoundEnable = !Utility.PlayerPrefs.GetBool(Constant.Setting.SoundMuted, false);
-            _audioModule.SoundVolume = Utility.PlayerPrefs.GetFloat(Constant.Setting.SoundVolume, 1f);
-            _audioModule.UISoundEnable = !Utility.PlayerPrefs.GetBool(Constant.Setting.UISoundMuted, false);
-            _audioModule.UISoundVolume = Utility.PlayerPrefs.GetFloat(Constant.Setting.UISoundVolume, 1f);
+            GameModule.Audio.MusicEnable = !Utility.PlayerPrefs.GetBool(Constant.Setting.MusicMuted, false);
+            GameModule.Audio.MusicVolume = Utility.PlayerPrefs.GetFloat(Constant.Setting.MusicVolume, 1f);
+            GameModule.Audio.SoundEnable = !Utility.PlayerPrefs.GetBool(Constant.Setting.SoundMuted, false);
+            GameModule.Audio.SoundVolume = Utility.PlayerPrefs.GetFloat(Constant.Setting.SoundVolume, 1f);
+            GameModule.Audio.UISoundEnable = !Utility.PlayerPrefs.GetBool(Constant.Setting.UISoundMuted, false);
+            GameModule.Audio.UISoundVolume = Utility.PlayerPrefs.GetFloat(Constant.Setting.UISoundVolume, 1f);
             Log.Info("Init sound settings complete.");
         }
     }

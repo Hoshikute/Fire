@@ -67,7 +67,7 @@ namespace Procedure
                 _loadMetadataAssemblyComplete = true;
             }
 
-            if (!_setting.Enable || _resourceModule.PlayMode == EPlayMode.EditorSimulateMode)
+            if (!_setting.Enable || ResourceModule.PlayMode == EPlayMode.EditorSimulateMode)
             {
                 _mainLogicAssembly = GetMainLogicAssembly();
             }
@@ -89,7 +89,7 @@ namespace Procedure
 
                         Log.Debug($"LoadAsset: [ {assetLocation} ]");
                         _loadAssetCount++;
-                        var result = await _resourceModule.LoadAssetAsync<TextAsset>(assetLocation);
+                        var result = await ResourceModule.LoadAssetAsync<TextAsset>(assetLocation);
                         LoadAssetSuccess(result);
                     }
 
@@ -214,7 +214,7 @@ namespace Procedure
             {
                 _loadAssemblyComplete = _loadAssemblyWait && 0 == _loadAssetCount;
             }
-            _resourceModule.UnloadAsset(textAsset);
+            ResourceModule.UnloadAsset(textAsset);
         }
 
         /// <summary>
@@ -248,7 +248,7 @@ namespace Procedure
 
                 Log.Debug($"LoadMetadataAsset: [ {assetLocation} ]");
                 _loadMetadataAssetCount++;
-                _resourceModule.LoadAsset<TextAsset>(assetLocation, LoadMetadataAssetSuccess);
+                ResourceModule.LoadAsset<TextAsset>(assetLocation, LoadMetadataAssetSuccess);
             }
             _loadMetadataAssemblyWait = true;
         }
@@ -288,7 +288,7 @@ namespace Procedure
             {
                 _loadMetadataAssemblyComplete = _loadMetadataAssemblyWait && 0 == _loadMetadataAssetCount;
             }
-            _resourceModule.UnloadAsset(textAsset);
+            ResourceModule.UnloadAsset(textAsset);
         }
     }
 }

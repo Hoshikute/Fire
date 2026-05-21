@@ -66,8 +66,7 @@ namespace ThirdPersonController
             ReusableLogic = new PlayerReusableLogic(this);
 
             // 使用 TEngine FsmModule 创建状态机
-            var fsmModule = ModuleSystem.GetModule<IFsmModule>();
-            StateMachine = fsmModule.CreateFsm("PlayerFSM", this,
+            StateMachine = GameModule.Fsm.CreateFsm("PlayerFSM", this,
                 new PlayerIdleState(),
                 new PlayerMoveStartState(),
                 new PlayerMoveLoopState(),
@@ -132,8 +131,7 @@ namespace ThirdPersonController
         {
             if (StateMachine != null)
             {
-                var fsmModule = ModuleSystem.GetModule<IFsmModule>();
-                fsmModule?.DestroyFsm(StateMachine);
+                GameModule.Fsm.DestroyFsm(StateMachine);
             }
         }
     }

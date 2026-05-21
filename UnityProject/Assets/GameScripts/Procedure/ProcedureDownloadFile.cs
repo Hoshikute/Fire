@@ -24,8 +24,8 @@ namespace Procedure
             get
             {
                 float interval = Math.Max(Time.deltaTime, 0.01f); // 防止deltaTime过小
-                var sizeDiff = _resourceModule.Downloader.CurrentDownloadBytes - _lastUpdateDownloadedSize;
-                _lastUpdateDownloadedSize = _resourceModule.Downloader.CurrentDownloadBytes;
+                var sizeDiff = ResourceModule.Downloader.CurrentDownloadBytes - _lastUpdateDownloadedSize;
+                _lastUpdateDownloadedSize = ResourceModule.Downloader.CurrentDownloadBytes;
                 var speed = sizeDiff / interval;
 
                 // 使用滑动窗口计算平均速度
@@ -48,7 +48,7 @@ namespace Procedure
 
         private async UniTaskVoid BeginDownload()
         {
-            var downloader = _resourceModule.Downloader;
+            var downloader = ResourceModule.Downloader;
 
             // 注册下载回调
             downloader.DownloadErrorCallback = OnDownloadErrorCallback;
@@ -73,7 +73,7 @@ namespace Procedure
         {
             string currentSizeMb = (downloadUpdateData.CurrentDownloadBytes / 1048576f).ToString("f1");
             string totalSizeMb = (downloadUpdateData.TotalDownloadBytes / 1048576f).ToString("f1");
-            float progressPercentage = _resourceModule.Downloader.Progress * 100;
+            float progressPercentage = ResourceModule.Downloader.Progress * 100;
             string speed = Utility.File.GetLengthString((int)CurrentSpeed);
 
             string line1 = Utility.Text.Format("正在更新，已更新 {0}/{1} ({2:F2}%)", downloadUpdateData.CurrentDownloadCount,
@@ -83,7 +83,7 @@ namespace Procedure
                 GetRemainingTime(downloadUpdateData.TotalDownloadBytes, downloadUpdateData.CurrentDownloadBytes,
                     CurrentSpeed));
 
-            LauncherMgr.RefreshProgress(_resourceModule.Downloader.Progress);
+            LauncherMgr.RefreshProgress(ResourceModule.Downloader.Progress);
             LauncherMgr.ShowUI<LoadUpdateUI>($"{line1}\n{line2}\n{line3}");
 
             Log.Info($"{line1} {line2} {line3}");

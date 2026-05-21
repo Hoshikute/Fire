@@ -305,6 +305,7 @@ namespace GameLogic
             
             _isInit = true;
 
+            // IUpdateDriver 是独立模块，通过属性缓存避免重复查找
             _updateDriver ??= ModuleSystem.GetModule<IUpdateDriver>();
             _updateDriver.AddUpdateListener(OnUpdate);
             _updateDriver.AddFixedUpdateListener(OnFixedUpdate);
@@ -314,7 +315,7 @@ namespace GameLogic
             _updateDriver.AddOnDrawGizmosSelectedListener(OnDrawGizmosSelected);
 #endif
         }
-        
+
         private static void DeInit()
         {
             if (_isInit == false)
@@ -324,7 +325,6 @@ namespace GameLogic
 
             _isInit = false;
 
-            _updateDriver ??= ModuleSystem.GetModule<IUpdateDriver>();
             _updateDriver.RemoveUpdateListener(OnUpdate);
             _updateDriver.RemoveFixedUpdateListener(OnFixedUpdate);
             _updateDriver.RemoveLateUpdateListener(OnLateUpdate);

@@ -32,14 +32,14 @@ namespace Procedure
         {
             try
             {
-                var initializationOperation = await _resourceModule.InitPackage(_resourceModule.DefaultPackageName);
+                var initializationOperation = await ResourceModule.InitPackage(ResourceModule.DefaultPackageName);
 
                 if (initializationOperation.Status == EOperationStatus.Succeed)
                 {
                     //热更新阶段文本初始化
                     LoadText.Instance.InitConfigData(null);
 
-                    EPlayMode playMode = _resourceModule.PlayMode;
+                    EPlayMode playMode = ResourceModule.PlayMode;
 
                     // 编辑器模式。
                     if (playMode == EPlayMode.EditorSimulateMode)

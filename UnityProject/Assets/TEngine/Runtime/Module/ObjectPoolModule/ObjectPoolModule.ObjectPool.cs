@@ -152,6 +152,23 @@ namespace TEngine
                     throw new GameFrameworkException("Object is invalid.");
                 }
 
+                // 检查是否已存在同名对象
+                if (_objects.Contains(obj.Name))
+                {
+                    // 已存在，尝试获取并返回
+                    if (_objects.TryGetValue(obj.Name, out var existingRange))
+                    {
+                        foreach (var internalObj in existingRange)
+                        {
+                            if (!internalObj.IsInUse)
+                            {
+                                internalObj.Spawn();
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 Object<T> internalObject = Object<T>.Create(obj, spawned);
                 _objects.Add(obj.Name, internalObject);
                 _objectMap.Add(obj.Target, internalObject);

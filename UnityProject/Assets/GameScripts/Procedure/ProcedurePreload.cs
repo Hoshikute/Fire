@@ -125,18 +125,18 @@ namespace Procedure
 
         private void LoadAllConfig()
         {
-            if (_resourceModule.PlayMode == EPlayMode.EditorSimulateMode)
+            if (ResourceModule.PlayMode == EPlayMode.EditorSimulateMode)
             {
                 return;
             }
 
-            AssetInfo[] assetInfos = _resourceModule.GetAssetInfos("PRELOAD");
+            AssetInfo[] assetInfos = ResourceModule.GetAssetInfos("PRELOAD");
             foreach (var assetInfo in assetInfos)
             {
                 PreLoad(assetInfo.Address);
             }
 #if UNITY_WEBGL
-            AssetInfo[] webAssetInfos = _resourceModule.GetAssetInfos("WEBGL_PRELOAD");
+            AssetInfo[] webAssetInfos = ResourceModule.GetAssetInfos("WEBGL_PRELOAD");
             foreach (var assetInfo in webAssetInfos)
             {
                 PreLoad(assetInfo.Address);
@@ -152,7 +152,7 @@ namespace Procedure
         private void PreLoad(string location)
         {
             _loadedFlag.Add(location, false);
-            _resourceModule.LoadAssetAsync(location, 100, m_PreLoadAssetCallbacks, null);
+            ResourceModule.LoadAssetAsync(location, 100, m_PreLoadAssetCallbacks, null);
         }
 
         private void OnPreLoadAssetFailure(string assetName, LoadResourceStatus status, string errormessage, object userdata)
