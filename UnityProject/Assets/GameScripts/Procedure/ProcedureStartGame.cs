@@ -1,8 +1,6 @@
-using System;
 using Cysharp.Threading.Tasks;
 using Launcher;
 using TEngine;
-using UnityEngine;
 
 namespace Procedure
 {
@@ -24,25 +22,11 @@ namespace Procedure
             // 场景加载前清理多余相机
             GameModule.Camera.CleanupExtraCameras();
 
-            _ = GameModule.Character;
+            // 加载 Game 场景
             await GameModule.Scene.LoadSceneAsync("Game");
 
-            // 场景加载后初始化游戏相机
-            SetupGameCamera();
-        }
-
-        private void SetupGameCamera()
-        {
-            var mainCameras = GameObject.FindGameObjectsWithTag("MainCamera");
-            foreach (var go in mainCameras)
-            {
-                var cam = go.GetComponent<Camera>();
-                if (cam != null && cam.enabled)
-                {
-                    GameModule.Camera.SetMainCamera(cam);
-                    return;
-                }
-            }
+            // 通过 TPBattleContext 初始化场景（相机设置 → Player 动态加载）
+            await GameModule.TPBattleContext.InitializeGameScene();
         }
     }
 }

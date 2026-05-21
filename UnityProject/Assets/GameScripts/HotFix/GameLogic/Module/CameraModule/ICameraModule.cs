@@ -22,8 +22,9 @@ namespace GameLogic
         /// <summary>
         /// 绑定 Cinemachine 虚拟相机到 Player。
         /// </summary>
-        /// <param name="playerTransform">Player 的 Transform。</param>
-        void BindCinemachineToPlayer(Transform playerTransform);
+        /// <param name="followTarget">相机 Follow 目标。</param>
+        /// <param name="lookAtTarget">相机 LookAt 目标。</param>
+        void BindCinemachineToPlayer(Transform followTarget, Transform lookAtTarget);
 
         /// <summary>
         /// 清理场景中多余的相机（场景切换前调用）。

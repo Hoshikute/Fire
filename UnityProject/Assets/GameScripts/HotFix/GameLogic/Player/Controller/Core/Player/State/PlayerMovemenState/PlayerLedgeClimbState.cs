@@ -2,7 +2,6 @@ using Animancer;
 using System;
 using TEngine;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace ThirdPersonController
 {
@@ -28,6 +27,7 @@ namespace ThirdPersonController
         private CapsuleCollider capsuleCollider;
         private Rigidbody rigidbody;
         private Vector3 matchSpeed = Vector3.zero;
+        private bool hadMoveInput;
 
         protected internal override void OnInit(IFsm<Player> fsm)
         {
@@ -62,6 +62,7 @@ namespace ThirdPersonController
             isHandingRotation.Value = false;
             isClimbUp = false;
             isHangOut = false;
+            hadMoveInput = inputServer.Move != Vector2.zero;
 
             handHight = Mathf.Abs(HangWallData.hightAndForwardOffSet.x) + detectionOffset;
             targetPoint = reusableData.hit.point + Vector3.up * HangWallData.hightAndForwardOffSet.x + reusableData.hit.normal * (HangWallData.hightAndForwardOffSet.y);
@@ -72,18 +73,12 @@ namespace ThirdPersonController
         protected override void AddEventListening()
         {
             base.AddEventListening();
-            inputServer.inputMap.Player.Move.started += OnMove;
-            inputServer.inputMap.Player.Move.canceled += MoveEnd;
-            inputServer.inputMap.Player.Jump.started += OnJump;
             isHandingRotation.ValueChanged += HandRotaion;
         }
 
         protected override void RemoveEventListening()
         {
             base.RemoveEventListening();
-            inputServer.inputMap.Player.Move.started -= OnMove;
-            inputServer.inputMap.Player.Move.canceled -= MoveEnd;
-            inputServer.inputMap.Player.Jump.started -= OnJump;
             isHandingRotation.ValueChanged -= HandRotaion;
             reusableLogic.RemoveClimbTarget_Y_Task();
         }
@@ -107,7 +102,7 @@ namespace ThirdPersonController
             }
         }
 
-        private void OnMove(InputAction.CallbackContext context)
+        private void OnMove()
         {
             if (isInitMatchTargeting) return;
             if (isClimbUpCancel) return;
@@ -151,7 +146,7 @@ namespace ThirdPersonController
             }
         }
 
-        private void OnJump(InputAction.CallbackContext context)
+        private void OnJump()
         {
             float angle = GetTargetAngle();
             if (inputServer.Move == Vector2.zero)
@@ -193,7 +188,7 @@ namespace ThirdPersonController
             }
         }
 
-        private void MoveEnd(InputAction.CallbackContext context)
+        private void MoveEnd()
         {
             if (isClimbUp) return;
             if (isInitMatchTargeting) return;
@@ -213,6 +208,24 @@ namespace ThirdPersonController
         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+
+            bool hasMoveInput = inputServer.Move != Vector2.zero;
+            if (inputServer.GetButtonDown(InputButtonType.Jump))
+            {
+                OnJump();
+                return;
+            }
+
+            if (hasMoveInput && !hadMoveInput)
+            {
+                OnMove();
+            }
+            else if (!hasMoveInput && hadMoveInput)
+            {
+                MoveEnd();
+            }
+            hadMoveInput = hasMoveInput;
+
             climbUpTask?.Invoke();
             handRotaionTask?.Invoke();
             if (isClimbUp) return;

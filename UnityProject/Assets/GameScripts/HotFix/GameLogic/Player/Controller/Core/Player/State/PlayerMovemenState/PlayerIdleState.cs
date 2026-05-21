@@ -1,5 +1,4 @@
 using TEngine;
-using UnityEngine.InputSystem;
 
 namespace ThirdPersonController
 {
@@ -28,9 +27,6 @@ namespace ThirdPersonController
         protected override void AddEventListening()
         {
             base.AddEventListening();
-            inputServer.inputMap.Player.Move.started += MoveStart;
-            inputServer.inputMap.Player.Jump.started += OnJumpStart;
-            inputServer.inputMap.Player.Crouch.started += OnCrouch;
             player.IsOnGround.ValueChanged += OnCheckFall;
             reusableData.lockValueParameter.Parameter.OnValueChanged += LockValueChange;
         }
@@ -38,9 +34,6 @@ namespace ThirdPersonController
         protected override void RemoveEventListening()
         {
             base.RemoveEventListening();
-            inputServer.inputMap.Player.Move.started -= MoveStart;
-            inputServer.inputMap.Player.Jump.started -= OnJumpStart;
-            inputServer.inputMap.Player.Crouch.started -= OnCrouch;
             player.IsOnGround.ValueChanged -= OnCheckFall;
             reusableData.lockValueParameter.Parameter.OnValueChanged -= LockValueChange;
         }
@@ -53,14 +46,27 @@ namespace ThirdPersonController
             }
         }
 
-        private void MoveStart(InputAction.CallbackContext context)
-        {
-            SwitchState<PlayerMoveStartState>();
-        }
-
         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+
+            if (inputServer.GetButtonDown(InputButtonType.Jump))
+            {
+                OnJumpStart();
+                return;
+            }
+
+            if (inputServer.GetButtonDown(InputButtonType.Crouch))
+            {
+                OnCrouch();
+            }
+
+            if (inputServer.Move != UnityEngine.Vector2.zero)
+            {
+                SwitchState<PlayerMoveStartState>();
+                return;
+            }
+
             UpdateCashVelocity(player.AnimationVelocity);
             UpdateSpeed();
         }

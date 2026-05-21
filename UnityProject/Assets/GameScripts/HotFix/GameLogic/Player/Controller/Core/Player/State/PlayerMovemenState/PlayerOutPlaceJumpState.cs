@@ -1,5 +1,4 @@
 using TEngine;
-using UnityEngine.InputSystem;
 
 namespace ThirdPersonController
 {
@@ -34,13 +33,16 @@ namespace ThirdPersonController
         {
             base.RemoveEventListening();
             player.IsOnGround.ValueChanged -= OnLandGround;
-            inputServer.inputMap.Player.Jump.started -= OnJumpStart;
-            inputServer.inputMap.Player.Move.started -= OnMoveStart;
         }
 
         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+
+            if (inputServer.Move != UnityEngine.Vector2.zero)
+            {
+                SwitchState<PlayerMoveStartState>();
+            }
         }
 
         protected internal override void OnLeave(IFsm<Player> fsm, bool isShutdown)
@@ -57,11 +59,6 @@ namespace ThirdPersonController
                 state.Events(player).SetCallback(playerSO.playerParameterData.moveInterruptEvent, () => OnInputInterruption(currentFsm));
                 state.Events(player).OnEnd = () => SwitchState<PlayerIdleState>();
             }
-        }
-
-        private void OnMoveStart(InputAction.CallbackContext context)
-        {
-            SwitchState<PlayerMoveStartState>();
         }
     }
 }

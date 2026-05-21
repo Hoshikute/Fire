@@ -1,6 +1,5 @@
 using Animancer;
 using TEngine;
-using UnityEngine.InputSystem;
 
 namespace ThirdPersonController
 {
@@ -71,24 +70,13 @@ namespace ThirdPersonController
         protected override void AddEventListening()
         {
             base.AddEventListening();
-            inputServer.inputMap.Player.Jump.started += OnJumpStart;
-            inputServer.inputMap.Player.Move.canceled += OnCheckMoveEnd;
-            inputServer.inputMap.Player.Crouch.started += OnCrouch;
             player.IsOnGround.ValueChanged += OnCheckFall;
         }
 
         protected override void RemoveEventListening()
         {
             base.RemoveEventListening();
-            inputServer.inputMap.Player.Jump.started -= OnJumpStart;
-            inputServer.inputMap.Player.Move.canceled -= OnCheckMoveEnd;
-            inputServer.inputMap.Player.Crouch.started -= OnCrouch;
             player.IsOnGround.ValueChanged -= OnCheckFall;
-        }
-
-        private void OnCheckMoveEnd(InputAction.CallbackContext context)
-        {
-            OnCheckInput();
         }
 
         private void OnCheckInput()
@@ -115,6 +103,19 @@ namespace ThirdPersonController
         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+
+            if (inputServer.GetButtonDown(InputButtonType.Jump))
+            {
+                OnJumpStart();
+                return;
+            }
+
+            if (inputServer.GetButtonDown(InputButtonType.Crouch))
+            {
+                OnCrouch();
+            }
+
+            OnCheckInput();
             UpdateCashVelocity(player.AnimationVelocity);
             if (state.NormalizedTime > 0.4f || isForwardMove)
             {

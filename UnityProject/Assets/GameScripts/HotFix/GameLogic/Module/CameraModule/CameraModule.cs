@@ -14,6 +14,7 @@ namespace GameLogic
     /// </summary>
     public class CameraModule : Module, ICameraModule
     {
+        private const string TRACE_HEADER = "[TPC_CAM_TRACE][CameraModule]";
         private Camera _mainCamera;
         private Camera _uiCamera;
         private CinemachineVirtualCamera _virtualCamera;
@@ -27,6 +28,9 @@ namespace GameLogic
         public override void OnInit()
         {
             FindUICamera();
+            string uiCameraName = _uiCamera != null ? _uiCamera.name : "null";
+            string mainCameraName = Camera.main != null ? Camera.main.name : "null";
+            Log.Info($"{TRACE_HEADER}[OnInit] uiCamera={uiCameraName}, cameraMain={mainCameraName}");
         }
 
         private void FindUICamera()
@@ -45,9 +49,18 @@ namespace GameLogic
         public void SetMainCamera(Camera camera)
         {
             if (_mainCamera == camera)
+            {
+                Log.Info($"{TRACE_HEADER}[SetMainCamera] skip duplicate registration. camera={GetCameraName(camera)}");
+                if (_mainCamera != null)
+                {
+                    EnsureSingleAudioListener(_mainCamera);
+                }
+
                 return;
+            }
 
             _mainCamera = camera;
+            Log.Info($"{TRACE_HEADER}[SetMainCamera] incoming camera={GetCameraName(camera)}, tag={camera?.tag ?? "null"}");
 
             if (_mainCamera != null)
             {
@@ -61,11 +74,70 @@ namespace GameLogic
                     _mainCamera.cullingMask = ~(1 << uiLayer);
                 }
 
-                // 从主相机子对象查找 CinemachineVirtualCamera
+                // 优先从主相机子对象查找，其次全局搜索
                 var virtualCameras = _mainCamera.GetComponentsInChildren<CinemachineVirtualCamera>(true);
                 _virtualCamera = virtualCameras.Length > 0 ? virtualCameras[0] : null;
 
+                // 如果子对象没找到，尝试全局搜索（CinemachineBrain 会自动控制场景中的虚拟相机）
+                if (_virtualCamera == null)
+                {
+                    var allVirtualCameras = Object.FindObjectsOfType<CinemachineVirtualCamera>(true);
+                    if (allVirtualCameras.Length > 0)
+                    {
+                        _virtualCamera = allVirtualCameras[0];
+                        Log.Info($"{TRACE_HEADER}[SetMainCamera] virtual camera found globally. vcam={_virtualCamera.name}");
+                    }
+                    else
+                    {
+                        Log.Warning($"{TRACE_HEADER}[SetMainCamera] no virtual camera found in scene. Please ensure CameraController prefab is instantiated.");
+                    }
+                }
+                else
+                {
+                    Log.Info($"{TRACE_HEADER}[SetMainCamera] virtual camera registered from child. vcam={_virtualCamera.name}");
+                }
+
+                EnsureSingleAudioListener(_mainCamera);
                 ConfigureMainCameraStack();
+            }
+            else
+            {
+                Log.Warning($"{TRACE_HEADER}[SetMainCamera] received null main camera.");
+            }
+        }
+
+        private void EnsureSingleAudioListener(Camera targetCamera)
+        {
+            if (targetCamera == null)
+            {
+                return;
+            }
+
+            var targetListener = targetCamera.GetComponent<AudioListener>();
+            if (targetListener == null)
+            {
+                targetListener = targetCamera.gameObject.AddComponent<AudioListener>();
+                Log.Warning($"[CameraModule] Main camera '{targetCamera.name}' was missing AudioListener. Added one automatically.");
+            }
+
+            if (!targetListener.enabled)
+            {
+                targetListener.enabled = true;
+            }
+
+            var listeners = Object.FindObjectsOfType<AudioListener>(true);
+            foreach (var listener in listeners)
+            {
+                if (listener == null || !listener.gameObject.scene.IsValid())
+                {
+                    continue;
+                }
+
+                bool shouldEnable = listener == targetListener;
+                if (listener.enabled != shouldEnable)
+                {
+                    listener.enabled = shouldEnable;
+                }
             }
         }
 
@@ -134,13 +206,35 @@ namespace GameLogic
 #endif
         }
 
-        public void BindCinemachineToPlayer(Transform playerTransform)
+        public void BindCinemachineToPlayer(Transform followTarget, Transform lookAtTarget)
         {
-            if (_virtualCamera != null && playerTransform != null)
+            Log.Info($"{TRACE_HEADER}[Bind] mainCamera={GetCameraName(_mainCamera)}, virtualCamera={GetVirtualCameraName()}, follow={GetTransformName(followTarget)}, lookAt={GetTransformName(lookAtTarget)}");
+
+            if (_virtualCamera == null)
             {
-                _virtualCamera.Follow = playerTransform;
-                _virtualCamera.LookAt = playerTransform;
+                Log.Error($"{TRACE_HEADER}[Bind] abort: virtual camera is null, SetMainCamera may never have been called.");
+                return;
             }
+
+            if (followTarget == null || lookAtTarget == null)
+            {
+                Log.Error($"{TRACE_HEADER}[Bind] abort: follow or lookAt target is null.");
+                return;
+            }
+
+            if (_virtualCamera != null && followTarget != null && lookAtTarget != null)
+            {
+                _virtualCamera.Follow = followTarget;
+                _virtualCamera.LookAt = lookAtTarget;
+                ApplyGameplayCursorState(true);
+                Log.Info($"{TRACE_HEADER}[Bind] success. follow={followTarget.name}, lookAt={lookAtTarget.name}, cursorLock={Cursor.lockState}, cursorVisible={Cursor.visible}");
+            }
+        }
+
+        private void ApplyGameplayCursorState(bool lockCursor)
+        {
+            Cursor.lockState = lockCursor ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = !lockCursor;
         }
 
         public void CleanupExtraCameras()
@@ -160,9 +254,25 @@ namespace GameLogic
 
         public override void Shutdown()
         {
+            ApplyGameplayCursorState(false);
             _mainCamera = null;
             _uiCamera = null;
             _virtualCamera = null;
+        }
+
+        private static string GetCameraName(Camera camera)
+        {
+            return camera != null ? camera.name : "null";
+        }
+
+        private string GetVirtualCameraName()
+        {
+            return _virtualCamera != null ? _virtualCamera.name : "null";
+        }
+
+        private static string GetTransformName(Transform target)
+        {
+            return target != null ? target.name : "null";
         }
     }
 }

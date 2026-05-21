@@ -1,7 +1,7 @@
 using Cinemachine;
-using System;
 using UnityEngine;
 using UnityEngine.Playables;
+using TEngine;
 
 namespace ThirdPersonController
 {
@@ -16,11 +16,11 @@ namespace ThirdPersonController
 
         private CinemachineFramingTransposer virtualCamera;
         private PlayableDirector playableDirector;
-        private InputService inputService;
+        private IInputModule inputModule;
 
         private void Awake()
         {
-            inputService = InputService.Instance;
+            inputModule = GameModule.Input;
             virtualCamera = GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineFramingTransposer>();
             playableDirector = transform.GetComponent<PlayableDirector>();
             currentDistance = defaultDistance;
@@ -30,8 +30,6 @@ namespace ThirdPersonController
         private void Update()
         {
             GetMouseScroll();
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
         }
 
         private void LateUpdate()
@@ -41,7 +39,12 @@ namespace ThirdPersonController
 
         private void GetMouseScroll()
         {
-            currentDistance -= inputService.inputMap.Player.Scroll.ReadValue<Vector2>().y * Time.deltaTime * sensitivity;
+            if (inputModule == null || Cursor.lockState != CursorLockMode.Locked)
+            {
+                return;
+            }
+
+            currentDistance -= inputModule.Scroll.y * Time.deltaTime * sensitivity;
             currentDistance = Mathf.Clamp(currentDistance, minDistance, maxDistance);
         }
 

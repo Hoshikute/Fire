@@ -11,6 +11,7 @@ namespace TEngine
     internal sealed class InputModule : Module, IInputModule, IUpdateModule,
         InputSystem_Actions.IPlayerActions
     {
+        private const string TRACE_HEADER = "[TPC_CAM_TRACE][InputModule]";
         #region 常量
 
         private const string KEYBOARD_MOUSE_SCHEME = "Keyboard&Mouse";
@@ -67,6 +68,7 @@ namespace TEngine
             EnablePlayerInput(true);
 
             Log.Info("[InputModule] Initialized");
+            Log.Info($"{TRACE_HEADER}[OnInit] playerEnabled={_actions.Player.enabled}, controlScheme={_currentControlScheme}");
         }
 
         public override void Shutdown()
@@ -229,6 +231,7 @@ namespace TEngine
                 _actions.bindingMask = InputBinding.MaskByGroup(schemeName);
                 _currentControlScheme = schemeName;
                 Log.Info($"[InputModule] Switched to control scheme: {schemeName}");
+                Log.Info($"{TRACE_HEADER}[SwitchControlScheme] scheme={schemeName}");
             }
             else
             {

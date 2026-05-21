@@ -1,7 +1,6 @@
 using Animancer;
 using TEngine;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace ThirdPersonController
 {
@@ -33,6 +32,11 @@ namespace ThirdPersonController
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
 
+            if (inputServer.GetButtonDown(InputButtonType.Lock))
+            {
+                ToggleLock();
+            }
+
             // 检查平台跳跃请求
             if (reusableData.platformJumpRequested)
             {
@@ -56,19 +60,17 @@ namespace ThirdPersonController
 
         protected override void AddEventListening()
         {
-            inputServer.inputMap.Player.Lock.started += OnLock;
         }
 
         protected override void RemoveEventListening()
         {
-            inputServer.inputMap.Player.Lock.started -= OnLock;
         }
 
         #endregion
 
         #region 锁定相关
 
-        private void OnLock(InputAction.CallbackContext context)
+        protected void ToggleLock()
         {
             reusableData.lockValueParameter.TargetValue = reusableData.lockValueParameter.TargetValue == 0 ? 1 : 0;
             if (reusableData.lockValueParameter.TargetValue == 1)
@@ -166,7 +168,7 @@ namespace ThirdPersonController
 
         #region 跳跃与下落
 
-        protected void OnJumpStart(InputAction.CallbackContext context)
+        protected void OnJumpStart()
         {
             reusableLogic.OnJump();
         }
@@ -217,7 +219,7 @@ namespace ThirdPersonController
 
         #region 辅助方法
 
-        protected void OnCrouch(InputAction.CallbackContext context)
+        protected void OnCrouch()
         {
             reusableData.standValueParameter.TargetValue = reusableData.standValueParameter.TargetValue == 0 ? 1 : 0;
         }

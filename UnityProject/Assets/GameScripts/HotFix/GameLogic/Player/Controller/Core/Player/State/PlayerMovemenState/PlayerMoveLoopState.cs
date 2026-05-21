@@ -1,6 +1,5 @@
 using TEngine;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace ThirdPersonController
 {
@@ -29,6 +28,19 @@ namespace ThirdPersonController
         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+
+            if (inputServer.GetButtonDown(InputButtonType.Jump))
+            {
+                OnJumpStart();
+                return;
+            }
+
+            if (inputServer.GetButtonDown(InputButtonType.Crouch))
+            {
+                OnCrouch();
+            }
+
+            OnCheckInput();
             UpdateCashVelocity(player.AnimationVelocity);
 
             if (reusableData.lockValueParameter.TargetValue == 1)
@@ -63,18 +75,12 @@ namespace ThirdPersonController
         protected override void AddEventListening()
         {
             base.AddEventListening();
-            inputServer.inputMap.Player.Jump.started += OnJumpStart;
-            inputServer.inputMap.Player.Move.canceled += OnCheckMoveEnd;
-            inputServer.inputMap.Player.Crouch.started += OnCrouch;
             player.IsOnGround.ValueChanged += OnCheckFall;
         }
 
         protected override void RemoveEventListening()
         {
             base.RemoveEventListening();
-            inputServer.inputMap.Player.Jump.started -= OnJumpStart;
-            inputServer.inputMap.Player.Move.canceled -= OnCheckMoveEnd;
-            inputServer.inputMap.Player.Crouch.started -= OnCrouch;
             player.IsOnGround.ValueChanged -= OnCheckFall;
         }
 
@@ -82,11 +88,6 @@ namespace ThirdPersonController
         {
             base.OnLeave(fsm, isShutdown);
             timerService.RemoveTimer(tid);
-        }
-
-        private void OnCheckMoveEnd(InputAction.CallbackContext context)
-        {
-            OnCheckInput();
         }
 
         private void OnCheckInput()

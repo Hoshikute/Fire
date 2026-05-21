@@ -1,6 +1,5 @@
 using TEngine;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace ThirdPersonController
 {
@@ -69,31 +68,38 @@ namespace ThirdPersonController
         protected override void AddEventListening()
         {
             base.AddEventListening();
-            inputServer.inputMap.Player.Jump.started += OnJumpStart;
-            inputServer.inputMap.Player.Move.started += OnMoveStart;
-            inputServer.inputMap.Player.Crouch.started += OnCrouch;
             player.IsOnGround.ValueChanged += OnCheckFall;
         }
 
         protected override void RemoveEventListening()
         {
             base.RemoveEventListening();
-            inputServer.inputMap.Player.Jump.started -= OnJumpStart;
-            inputServer.inputMap.Player.Move.started -= OnMoveStart;
-            inputServer.inputMap.Player.Crouch.started -= OnCrouch;
             player.IsOnGround.ValueChanged -= OnCheckFall;
         }
 
         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+
+            if (inputServer.GetButtonDown(InputButtonType.Jump))
+            {
+                OnJumpStart();
+                return;
+            }
+
+            if (inputServer.GetButtonDown(InputButtonType.Crouch))
+            {
+                OnCrouch();
+            }
+
+            if (inputServer.Move != Vector2.zero)
+            {
+                SwitchState<PlayerMoveStartState>();
+                return;
+            }
+
             reusableData.rotationValueParameter.TargetValue = angle;
             reusableData.speedValueParameter.TargetValue = speed;
-        }
-
-        private void OnMoveStart(InputAction.CallbackContext context)
-        {
-            SwitchState<PlayerMoveStartState>();
         }
 
         private void OnCheckFall(bool isGround)

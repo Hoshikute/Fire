@@ -8,10 +8,12 @@ namespace ThirdPersonController
     [RequireComponent(typeof(AnimancerComponent))]
     public class Player : CharacterBase
     {
+        private const string TRACE_HEADER = "[TPC_CAM_TRACE][Player]";
         public PlayerSO playerSO;
 
         [Header("Camera")]
         [SerializeField] private Transform _cameraTransform;
+        [SerializeField] private Transform _lookAtTarget;
 
         public AnimancerComponent Animancer { get; private set; }
         public IFsm<Player> StateMachine { get; private set; }
@@ -29,6 +31,7 @@ namespace ThirdPersonController
             base.Awake();
             InputService = InputService.Instance;
             TimerService = TimerService.Instance;
+            Debug.Log($"{TRACE_HEADER}[Awake] moduleMainCamera={(GameModule.Camera.MainCamera != null ? GameModule.Camera.MainCamera.name : "null")}, cameraMain={(Camera.main != null ? Camera.main.name : "null")}");
 
             // 三层回退逻辑，确保 CamTransform 不为 null
             if (_cameraTransform != null)
@@ -50,11 +53,8 @@ namespace ThirdPersonController
                 }
             }
 
-            // 绑定 Cinemachine 到 Player（仅当相机有效时）
-            if (CamTransform != null)
-            {
-                GameModule.Camera.BindCinemachineToPlayer(transform);
-            }
+            // 相机绑定延迟到 Start，确保 CameraModule 已完成初始化
+            _pendingCameraBind = true;
 
             Animancer = GetComponent<AnimancerComponent>();
             if (Animancer == null)
@@ -83,6 +83,29 @@ namespace ThirdPersonController
             );
 
             StateMachine.Start<PlayerIdleState>();
+        }
+
+        private bool _pendingCameraBind;
+
+        protected virtual void Start()
+        {
+            // 在 Start 中执行相机绑定，此时场景加载已完成，CameraModule 应该已初始化
+            if (_pendingCameraBind)
+            {
+                TryBindCamera();
+            }
+        }
+
+        private void TryBindCamera()
+        {
+            Transform followTarget = ResolveCameraAnchor();
+            Transform lookAtTarget = followTarget;
+            if (followTarget != null && lookAtTarget != null)
+            {
+                Debug.Log($"{TRACE_HEADER}[BindRequest] follow={followTarget.name}, lookAt={lookAtTarget.name}, moduleMainCamera={(GameModule.Camera.MainCamera != null ? GameModule.Camera.MainCamera.name : "null")}");
+                GameModule.Camera.BindCinemachineToPlayer(followTarget, lookAtTarget);
+                _pendingCameraBind = false;
+            }
         }
 
         protected override void Update()
@@ -133,6 +156,34 @@ namespace ThirdPersonController
             {
                 GameModule.Fsm.DestroyFsm(StateMachine);
             }
+        }
+
+        private Transform ResolveCameraAnchor()
+        {
+            if (_lookAtTarget != null)
+            {
+                Debug.Log($"{TRACE_HEADER}[ResolveCameraAnchor] use serialized LookAt target={_lookAtTarget.name}");
+                return _lookAtTarget;
+            }
+
+            Transform lookAt = transform.Find("LookAt");
+            if (lookAt != null)
+            {
+                _lookAtTarget = lookAt;
+                Debug.Log($"{TRACE_HEADER}[ResolveCameraAnchor] use prefab LookAt target={_lookAtTarget.name}");
+                return _lookAtTarget;
+            }
+
+            if (_cameraTransform != null)
+            {
+                Debug.LogWarning($"{TRACE_HEADER}[ResolveCameraAnchor] fallback to _cameraTransform={_cameraTransform.name}, LookAt anchor missing.");
+                Debug.LogWarning("[Player] 未找到 LookAt 锚点，回退使用 _cameraTransform 作为相机锚点。");
+                return _cameraTransform;
+            }
+
+            Debug.LogWarning($"{TRACE_HEADER}[ResolveCameraAnchor] fallback to player root={transform.name}, LookAt anchor missing.");
+            Debug.LogWarning("[Player] 未找到 LookAt 锚点，回退绑定到玩家根节点。");
+            return transform;
         }
     }
 }

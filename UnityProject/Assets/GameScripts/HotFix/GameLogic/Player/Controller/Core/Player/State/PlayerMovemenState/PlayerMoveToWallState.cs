@@ -1,6 +1,5 @@
 using TEngine;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace ThirdPersonController
 {
@@ -18,22 +17,28 @@ namespace ThirdPersonController
         protected override void AddEventListening()
         {
             base.AddEventListening();
-            inputServer.inputMap.Player.Move.started += OnMove;
         }
 
         protected override void RemoveEventListening()
         {
             base.RemoveEventListening();
-            inputServer.inputMap.Player.Move.started -= OnMove;
         }
 
-        private void OnMove(InputAction.CallbackContext context)
+        protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
         {
+            base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+
+            if (inputServer.Move == Vector2.zero)
+            {
+                return;
+            }
+
             Vector3 dir = GetTargetDir();
             if (Physics.Raycast(player.transform.position + Vector3.up, dir, 1, player.whatIsGround))
             {
                 return;
             }
+
             SwitchState<PlayerMoveStartState>();
         }
     }

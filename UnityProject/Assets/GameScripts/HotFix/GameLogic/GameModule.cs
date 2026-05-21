@@ -125,6 +125,13 @@ public class GameModule
     public static IFrameSyncModule FrameSync => _frameSync ??= Get<IFrameSyncModule>();
 
     private static IFrameSyncModule _frameSync;
+
+    /// <summary>
+    /// 获取 Game 世界控制器。
+    /// </summary>
+    public static ITPBattleContext TPBattleContext => _tpBattleContext ??= Get<ITPBattleContext>();
+
+    private static ITPBattleContext _tpBattleContext;
     #endregion
     
     /// <summary>
@@ -161,5 +168,6 @@ public class GameModule
         _camera = null;
         _network = null;
         _frameSync = null;
+        _tpBattleContext = null;
     }
 }
