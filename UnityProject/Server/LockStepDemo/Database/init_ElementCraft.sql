@@ -1,0 +1,18 @@
+CREATE DATABASE IF NOT EXISTS ElementCraft
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+CREATE USER IF NOT EXISTS 'lockstep'@'localhost'
+  IDENTIFIED BY 'lockstep_dev';
+
+GRANT ALL PRIVILEGES ON ElementCraft.* TO 'lockstep'@'localhost';
+FLUSH PRIVILEGES;
+
+USE ElementCraft;
+
+CREATE TABLE IF NOT EXISTS PlayerTable (
+  ID VARCHAR(64) NOT NULL PRIMARY KEY,
+  NickName VARCHAR(64) NULL,
+  CharacterID VARCHAR(64) NULL DEFAULT '1',
+  OwnCharacter VARCHAR(255) NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
