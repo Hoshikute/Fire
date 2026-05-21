@@ -1,14 +1,16 @@
 using Cinemachine;
 using TEngine;
 using UnityEngine;
+#if ENABLE_URP
+using UnityEngine.Rendering.Universal;
+#endif
 using Object = UnityEngine.Object;
 
 namespace GameLogic
 {
     /// <summary>
     /// 相机管理模块。
-    /// 负责管理游戏相机、UI 相机的生命周期和渲染顺序。
-    /// UI相机保持为Base类型，通过Depth和ClearFlags实现与游戏画面叠加。
+    /// 负责管理游戏相机、UI 相机的生命周期和 URP 相机堆栈。
     /// </summary>
     public class CameraModule : Module, ICameraModule
     {
@@ -16,7 +18,7 @@ namespace GameLogic
         private Camera _uiCamera;
         private CinemachineVirtualCamera _virtualCamera;
 
-        // 渲染顺序：游戏相机先渲染(Depth小)，UI相机后渲染(Depth大)
+        // 保留 Depth 作为运行时兜底排序，实际叠加关系由 URP Camera Stack 决定。
         private const int UI_CAMERA_DEPTH = 2;
         private const int GAME_CAMERA_DEPTH = 0;
 
@@ -35,17 +37,7 @@ namespace GameLogic
                 _uiCamera = uiRoot.GetComponentInChildren<Camera>();
                 if (_uiCamera != null)
                 {
-                    // UI相机配置：
-                    // - Depth = 2 (后渲染，叠加在游戏画面上)
-                    // - ClearFlags = Depth Only (不清除颜色缓冲，保留游戏画面)
-                    // - CullingMask = UI层 (只渲染UI)
-                    _uiCamera.depth = UI_CAMERA_DEPTH;
-                    _uiCamera.clearFlags = CameraClearFlags.Depth;
-                    int uiLayer = LayerMask.NameToLayer("UI");
-                    if (uiLayer >= 0)
-                    {
-                        _uiCamera.cullingMask = 1 << uiLayer;
-                    }
+                    ConfigureUICamera();
                 }
             }
         }
@@ -72,7 +64,74 @@ namespace GameLogic
                 // 从主相机子对象查找 CinemachineVirtualCamera
                 var virtualCameras = _mainCamera.GetComponentsInChildren<CinemachineVirtualCamera>(true);
                 _virtualCamera = virtualCameras.Length > 0 ? virtualCameras[0] : null;
+
+                ConfigureMainCameraStack();
             }
+        }
+
+        private void ConfigureUICamera()
+        {
+            if (_uiCamera == null)
+            {
+                return;
+            }
+
+            _uiCamera.depth = UI_CAMERA_DEPTH;
+            _uiCamera.clearFlags = CameraClearFlags.Depth;
+            _uiCamera.orthographic = true;
+
+            int uiLayer = LayerMask.NameToLayer("UI");
+            if (uiLayer >= 0)
+            {
+                _uiCamera.cullingMask = 1 << uiLayer;
+            }
+
+#if ENABLE_URP
+            var uiCameraData = _uiCamera.GetUniversalAdditionalCameraData();
+            uiCameraData.renderType = CameraRenderType.Overlay;
+            uiCameraData.renderPostProcessing = false;
+#endif
+        }
+
+        private void ConfigureMainCameraStack()
+        {
+#if !ENABLE_URP
+            return;
+#else
+            if (_mainCamera == null)
+            {
+                return;
+            }
+
+            if (_uiCamera == null)
+            {
+                FindUICamera();
+            }
+
+            if (_uiCamera == null || _uiCamera == _mainCamera)
+            {
+                return;
+            }
+
+            ConfigureUICamera();
+
+            var mainCameraData = _mainCamera.GetUniversalAdditionalCameraData();
+            mainCameraData.renderType = CameraRenderType.Base;
+
+            var cameraStack = mainCameraData.cameraStack;
+            for (int i = cameraStack.Count - 1; i >= 0; i--)
+            {
+                if (cameraStack[i] == null)
+                {
+                    cameraStack.RemoveAt(i);
+                }
+            }
+
+            if (!cameraStack.Contains(_uiCamera))
+            {
+                cameraStack.Add(_uiCamera);
+            }
+#endif
         }
 
         public void BindCinemachineToPlayer(Transform playerTransform)
