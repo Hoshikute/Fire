@@ -39,7 +39,7 @@ namespace ThirdPersonController
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
 
-            if (inputServer.Move != UnityEngine.Vector2.zero)
+            if (GameModule.Input.Move != UnityEngine.Vector2.zero)
             {
                 SwitchState<PlayerMoveStartState>();
             }

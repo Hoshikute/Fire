@@ -21,14 +21,11 @@ namespace ThirdPersonController
         public PlayerReusableLogic ReusableLogic { get; private set; }
         public Transform CamTransform { get; private set; }
 
-        public InputService InputService { get; private set; }
-
         private PlayerFsmState _currentState;
 
         protected override void Awake()
         {
             base.Awake();
-            InputService = InputService.Instance;
             Debug.Log($"{TRACE_HEADER}[Awake] moduleMainCamera={(GameModule.Camera.MainCamera != null ? GameModule.Camera.MainCamera.name : "null")}, cameraMain={(Camera.main != null ? Camera.main.name : "null")}");
 
             // 三层回退逻辑，确保 CamTransform 不为 null

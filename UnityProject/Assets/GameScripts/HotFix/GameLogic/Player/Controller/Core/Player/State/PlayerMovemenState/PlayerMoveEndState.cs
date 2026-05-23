@@ -87,18 +87,18 @@ namespace ThirdPersonController
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
 
-            if (inputServer.GetButtonDown(InputButtonType.Jump))
+            if (GameModule.Input.GetButtonDown(InputButtonType.Jump))
             {
                 OnJumpStart();
                 return;
             }
 
-            if (inputServer.GetButtonDown(InputButtonType.Crouch))
+            if (GameModule.Input.GetButtonDown(InputButtonType.Crouch))
             {
                 OnCrouch();
             }
 
-            if (inputServer.Move != Vector2.zero)
+            if (GameModule.Input.Move != Vector2.zero)
             {
                 SwitchState<PlayerMoveStartState>();
                 return;

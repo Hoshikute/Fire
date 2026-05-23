@@ -38,7 +38,7 @@ namespace ThirdPersonController
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
 
-            if (inputServer.GetButtonDown(InputButtonType.Lock))
+            if (GameModule.Input.GetButtonDown(InputButtonType.Lock))
             {
                 ToggleLock();
             }
@@ -91,8 +91,8 @@ namespace ThirdPersonController
 
         private void UpdateLockValue()
         {
-            reusableData.lock_X_ValueParameter.TargetValue = inputServer.Move.x * reusableData.speedValueParameter.TargetValue;
-            reusableData.lock_Y_ValueParameter.TargetValue = inputServer.Move.y * reusableData.speedValueParameter.TargetValue;
+            reusableData.lock_X_ValueParameter.TargetValue = GameModule.Input.Move.x * reusableData.speedValueParameter.TargetValue;
+            reusableData.lock_Y_ValueParameter.TargetValue = GameModule.Input.Move.y * reusableData.speedValueParameter.TargetValue;
         }
 
         protected void UpdateLockRotation(float rotationSize, Transform lockTarget = null)
@@ -130,7 +130,7 @@ namespace ThirdPersonController
 
         protected float UpdateSpeed()
         {
-            return reusableData.speedValueParameter.TargetValue = inputServer.Shift ? 2 : 1;
+            return reusableData.speedValueParameter.TargetValue = GameModule.Input.GetButton(InputButtonType.Shift) ? 2 : 1;
         }
 
         protected float UpdateRotation(bool isUpdateRotationParameter = true, float rotationSmoothTime = 0.7f, bool isRotationCompensation = true, float rotationSize = 1.4f)
@@ -141,7 +141,7 @@ namespace ThirdPersonController
                 reusableData.rotationValueParameter.SmoothTime = rotationSmoothTime;
                 reusableData.rotationValueParameter.TargetValue = angle * Mathf.Deg2Rad;
             }
-            if (inputServer.Move != Vector2.zero)
+            if (GameModule.Input.Move != Vector2.zero)
             {
                 if (isRotationCompensation)
                 {
@@ -165,9 +165,9 @@ namespace ThirdPersonController
             if (cam == null)
             {
                 // 回退：使用世界坐标系方向
-                return new Vector3(inputServer.Move.x, 0, inputServer.Move.y);
+                return new Vector3(GameModule.Input.Move.x, 0, GameModule.Input.Move.y);
             }
-            return Quaternion.Euler(0, cam.eulerAngles.y, 0) * new Vector3(inputServer.Move.x, 0, inputServer.Move.y);
+            return Quaternion.Euler(0, cam.eulerAngles.y, 0) * new Vector3(GameModule.Input.Move.x, 0, GameModule.Input.Move.y);
         }
 
         #endregion
@@ -210,7 +210,7 @@ namespace ThirdPersonController
             {
                 return;
             }
-            reusableData.horizontalSpeed = Mathf.Lerp(reusableData.horizontalSpeed, inputServer.Move != Vector2.zero ? 2 : 0, 1 - Mathf.Exp(-8 * Time.deltaTime));
+            reusableData.horizontalSpeed = Mathf.Lerp(reusableData.horizontalSpeed, GameModule.Input.Move != Vector2.zero ? 2 : 0, 1 - Mathf.Exp(-8 * Time.deltaTime));
             if (reusableData.lockValueParameter.TargetValue == 1)
             {
                 player.AddHorizontalVelocityInAir(GetTargetDir() * reusableData.horizontalSpeed * reusableData.currentMidInAirMultiplier + reusableData.currentInertialVelocity / Time.deltaTime);
@@ -263,7 +263,7 @@ namespace ThirdPersonController
         {
             reusableData.inputInterruptionCB = () =>
             {
-                if (inputServer.Move != Vector2.zero)
+                if (GameModule.Input.Move != Vector2.zero)
                 {
                     if (player.IsOnGround.Value)
                     {

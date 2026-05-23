@@ -107,7 +107,7 @@ namespace ThirdPersonController
                     cancelClimbTask = null;
                 }
                 float angle = GetTargetAngle();
-                if (inputServer.Move != Vector2.zero && Mathf.Abs(angle) > 100)
+                if (GameModule.Input.Move != Vector2.zero && Mathf.Abs(angle) > 100)
                 {
                     Debug.Log("开始取消攀爬");
                     float currentTime = animancerState.NormalizedTime;

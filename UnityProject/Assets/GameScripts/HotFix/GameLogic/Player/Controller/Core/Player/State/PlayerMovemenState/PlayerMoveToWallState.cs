@@ -28,7 +28,7 @@ namespace ThirdPersonController
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
 
-            if (inputServer.Move == Vector2.zero)
+            if (GameModule.Input.Move == Vector2.zero)
             {
                 return;
             }

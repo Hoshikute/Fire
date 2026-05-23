@@ -62,7 +62,7 @@ namespace ThirdPersonController
             isHandingRotation.Value = false;
             isClimbUp = false;
             isHangOut = false;
-            hadMoveInput = inputServer.Move != Vector2.zero;
+            hadMoveInput = GameModule.Input.Move != Vector2.zero;
 
             handHight = Mathf.Abs(HangWallData.hightAndForwardOffSet.x) + detectionOffset;
             targetPoint = reusableData.hit.point + Vector3.up * HangWallData.hightAndForwardOffSet.x + reusableData.hit.normal * (HangWallData.hightAndForwardOffSet.y);
@@ -96,7 +96,7 @@ namespace ThirdPersonController
 
         private void HangWallStartEnd()
         {
-            if (inputServer.Move == Vector2.zero)
+            if (GameModule.Input.Move == Vector2.zero)
             {
                 animancer.Play(HangWallData.hang_wall_idle);
             }
@@ -123,7 +123,7 @@ namespace ThirdPersonController
                     {
                         climbUpTask = null;
                     }
-                    if (inputServer.Move == Vector2.zero)
+                    if (GameModule.Input.Move == Vector2.zero)
                     {
                         animancer.Play(HangWallData.hang_wall_idle_inertia_01);
                         targetPoint = reusableData.hit.point + Vector3.up * HangWallData.hightAndForwardOffSet.x + reusableData.hit.normal * (HangWallData.hightAndForwardOffSet.y);
@@ -149,7 +149,7 @@ namespace ThirdPersonController
         private void OnJump()
         {
             float angle = GetTargetAngle();
-            if (inputServer.Move == Vector2.zero)
+            if (GameModule.Input.Move == Vector2.zero)
             {
                 HangJumpOut();
                 reusableData.currentInertialVelocity = Vector3.zero;
@@ -209,8 +209,8 @@ namespace ThirdPersonController
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
 
-            bool hasMoveInput = inputServer.Move != Vector2.zero;
-            if (inputServer.GetButtonDown(InputButtonType.Jump))
+            bool hasMoveInput = GameModule.Input.Move != Vector2.zero;
+            if (GameModule.Input.GetButtonDown(InputButtonType.Jump))
             {
                 OnJump();
                 return;

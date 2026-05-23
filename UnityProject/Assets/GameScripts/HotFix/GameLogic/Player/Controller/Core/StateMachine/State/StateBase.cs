@@ -5,7 +5,6 @@ namespace ThirdPersonController
 {
     public abstract class StateBase : IState
     {
-        protected InputService inputServer;
         protected Player player;
         protected AnimancerComponent animancer;
         public PlayerReusableData reusableData;
@@ -31,7 +30,6 @@ namespace ThirdPersonController
         public StateBase(Player player)
         {
             this.player = player;
-            inputServer = player.InputService;
             reusableData = player.ReusableData;
             cam = player.CamTransform;
             animancer = player.Animancer;

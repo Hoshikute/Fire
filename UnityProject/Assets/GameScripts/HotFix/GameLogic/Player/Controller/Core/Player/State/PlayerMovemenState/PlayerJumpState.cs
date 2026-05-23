@@ -26,7 +26,7 @@ namespace ThirdPersonController
             player.ChangeVerticalSpeed(ToolFunction.GetJumpInitVelocity(0.8f, player.gravity));
             player.IgnoreRootMotionY = false;
 
-            if (inputServer.Move == Vector2.zero)
+            if (GameModule.Input.Move == Vector2.zero)
             {
                 animancer.Play(jumpFallAndLandData.placeJumpStart).Events(player).OnEnd = OnEnterFall;
                 reusableData.isInPlaceJump = true;
