@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 using GameLogic;
 #if ENABLE_OBFUZ
 using Obfuz;
@@ -36,8 +37,9 @@ public partial class GameApp
     private static void StartGameLogic()
     {
         GameModule.Battle.EnsureInitialized();
-        // GameEvent.Get<ILoginUI>().ShowLoginUI();
-        GameModule.UI.ShowUIAsync<TestWindow>();
+
+        // 显示登录界面（鼠标控制在 LoginUI.OnCreate 中）
+        GameModule.UI.ShowUIAsync<LoginUI>();
     }
     
     private static void Release()

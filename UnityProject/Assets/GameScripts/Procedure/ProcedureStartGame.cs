@@ -22,11 +22,8 @@ namespace Procedure
             // 场景加载前清理多余相机
             GameModule.Camera.CleanupExtraCameras();
 
-            // 加载 Game 场景
-            await GameModule.Scene.LoadSceneAsync("Game");
-
-            // 通过 TPBattleContext 初始化场景（相机设置 → Player 动态加载）
-            await GameModule.TPBattleContext.InitializeGameScene();
+            // Game 场景由 LoginUI 点击服务器后加载
+            // LoginUI.LoadGameScene() 负责场景加载和初始化
         }
     }
 }

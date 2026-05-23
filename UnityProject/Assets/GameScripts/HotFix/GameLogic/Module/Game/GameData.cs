@@ -12,6 +12,11 @@ namespace GameLogic.Game
             set { s_choiceList = value; }
         }
 
+        // 服务器连接信息
+        public static string ServerAddress { get; set; } = "127.0.0.1";
+        public static int ServerPort { get; set; } = 7500;
+        public static string PlayerName { get; set; } = "Player";
+
         public static void Init()
         {
         }
