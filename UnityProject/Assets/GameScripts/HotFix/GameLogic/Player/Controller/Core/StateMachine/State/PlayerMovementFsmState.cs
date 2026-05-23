@@ -11,6 +11,7 @@ namespace ThirdPersonController
     public abstract class PlayerMovementFsmState : PlayerFsmState
     {
         protected PlayerSO playerSO;
+        protected int _fallCheckTimerId;
 
         protected internal override void OnInit(IFsm<Player> fsm)
         {
@@ -26,6 +27,11 @@ namespace ThirdPersonController
         protected internal override void OnLeave(IFsm<Player> fsm, bool isShutdown)
         {
             base.OnLeave(fsm, isShutdown);
+            if (_fallCheckTimerId != 0)
+            {
+                GameModule.Timer.RemoveTimer(_fallCheckTimerId);
+                _fallCheckTimerId = 0;
+            }
         }
 
         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
@@ -228,7 +234,7 @@ namespace ThirdPersonController
         {
             if (!isGround)
             {
-                timerService.AddTimer(50, () => OnLandToFall(fsm));
+                _fallCheckTimerId = GameModule.Timer.AddTimer((timer) => OnLandToFall(fsm), time: 0.05f);
             }
         }
 

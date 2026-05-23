@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using GameLogic.Common.Resource;
 using GameLogic.Common.Pool;
-using GameLogic.Common.Timer;
+using TEngine;
 
 namespace GameLogic.Common.GameObjectPool
 {
@@ -165,10 +165,10 @@ namespace GameLogic.Common.GameObjectPool
 
         public static void DestroyGameObjectByPool(GameObject go, float time)
         {
-            global::GameLogic.Common.Timer.Timer.DelayCallBack(time, (object[] obj) =>
+            GameModule.Timer.AddTimer((timer) =>
             {
                 DestroyGameObjectByPool(go);
-            });
+            }, time: time);
         }
 
         /// <summary>
@@ -370,10 +370,10 @@ namespace GameLogic.Common.GameObjectPool
 
         public static void DestroyPoolObject(PoolObject go, float time)
         {
-            global::GameLogic.Common.Timer.Timer.DelayCallBack(time, (object[] obj) =>
+            GameModule.Timer.AddTimer((timer) =>
             {
                 DestroyPoolObject(go);
-            });
+            }, time: time);
         }
 
         /// <summary>

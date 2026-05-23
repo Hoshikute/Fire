@@ -11,7 +11,6 @@ namespace ThirdPersonController
     public abstract class PlayerFsmState : FsmState<Player>
     {
         protected InputService inputServer;
-        protected TimerService timerService;
         protected Player player;
         protected AnimancerComponent animancer;
         protected PlayerReusableData reusableData;
@@ -42,7 +41,6 @@ namespace ThirdPersonController
         {
             player = fsm.Owner;
             inputServer = player.InputService;
-            timerService = player.TimerService;
             reusableData = player.ReusableData;
             cam = player.CamTransform;
             animancer = player.Animancer;

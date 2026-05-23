@@ -11,6 +11,7 @@ namespace ThirdPersonController
         private PlayerMoveEndData moveEndData;
         private float angle;
         private float speed;
+        private int _fallCheckTid;
 
         protected internal override void OnInit(IFsm<Player> fsm)
         {
@@ -75,6 +76,11 @@ namespace ThirdPersonController
         {
             base.RemoveEventListening();
             player.IsOnGround.ValueChanged -= OnCheckFall;
+            if (_fallCheckTid != 0)
+            {
+                GameModule.Timer.RemoveTimer(_fallCheckTid);
+                _fallCheckTid = 0;
+            }
         }
 
         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
@@ -106,13 +112,13 @@ namespace ThirdPersonController
         {
             if (!isGround)
             {
-                timerService.AddTimer(50, () =>
+                _fallCheckTid = GameModule.Timer.AddTimer((timer) =>
                 {
                     if (!player.IsOnGround.Value)
                     {
                         SwitchState<PlayerFallLoopState>();
                     }
-                });
+                }, time: 0.05f);
             }
         }
     }

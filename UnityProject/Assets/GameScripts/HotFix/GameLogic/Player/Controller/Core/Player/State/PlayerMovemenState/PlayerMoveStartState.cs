@@ -91,7 +91,11 @@ namespace ThirdPersonController
         protected internal override void OnLeave(IFsm<Player> fsm, bool isShutdown)
         {
             base.OnLeave(fsm, isShutdown);
-            timerService.RemoveTimer(tid);
+            if (tid != 0)
+            {
+                GameModule.Timer.RemoveTimer(tid);
+                tid = 0;
+            }
             isForwardMove = false;
         }
 
@@ -128,13 +132,13 @@ namespace ThirdPersonController
         {
             if (!isGround)
             {
-                timerService.AddTimer(50, () =>
+                tid = GameModule.Timer.AddTimer((timer) =>
                 {
                     if (!player.IsOnGround.Value)
                     {
                         SwitchState<PlayerFallLoopState>();
                     }
-                });
+                }, time: 0.05f);
             }
         }
     }

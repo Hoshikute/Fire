@@ -22,7 +22,6 @@ namespace ThirdPersonController
         public Transform CamTransform { get; private set; }
 
         public InputService InputService { get; private set; }
-        public TimerService TimerService { get; private set; }
 
         private PlayerFsmState _currentState;
 
@@ -30,7 +29,6 @@ namespace ThirdPersonController
         {
             base.Awake();
             InputService = InputService.Instance;
-            TimerService = TimerService.Instance;
             Debug.Log($"{TRACE_HEADER}[Awake] moduleMainCamera={(GameModule.Camera.MainCamera != null ? GameModule.Camera.MainCamera.name : "null")}, cameraMain={(Camera.main != null ? Camera.main.name : "null")}");
 
             // 三层回退逻辑，确保 CamTransform 不为 null
