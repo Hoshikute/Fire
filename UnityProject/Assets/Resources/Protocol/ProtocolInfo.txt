@@ -1,0 +1,29 @@
+// 协议定义文件示例
+// 格式类似 Protocol Buffers，用于定义消息结构
+
+// 登录请求（客户端发送）
+message m_LoginRequest_s
+{
+    required string username = 1;
+    required string password = 2;
+}
+
+// 登录响应（服务器返回）
+message m_LoginRequest_c
+{
+    required int32 code = 1;
+    required string message = 2;
+    required string token = 3;
+}
+
+// 心跳请求
+message m_HeartBeat_s
+{
+    required int64 timestamp = 1;
+}
+
+// 心跳响应
+message m_HeartBeat_c
+{
+    required int64 timestamp = 1;
+}

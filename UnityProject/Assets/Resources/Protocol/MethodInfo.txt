@@ -1,0 +1,7 @@
+// 消息号与消息名映射
+// 格式: 消息号,消息名
+
+101,LoginRequest
+102,HeartBeat
+201,PlayerInfo
+202,PlayerMove

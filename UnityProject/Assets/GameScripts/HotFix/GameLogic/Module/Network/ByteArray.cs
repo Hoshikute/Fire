@@ -1,15 +1,20 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace GameLogic
 {
     /// <summary>
-    /// 字节数组工具类
+    /// 二进制数据读写工具类
+    /// 支持多种基础类型的序列化与反序列化
     /// </summary>
     public class ByteArray
     {
         public List<byte> bytes = new List<byte>();
 
+        /// <summary>
+        /// 添加字节数组到缓冲区
+        /// </summary>
         public void Add(byte[] buffer)
         {
             for (int i = 0; i < buffer.Length; i++)
@@ -18,29 +23,43 @@ namespace GameLogic
             }
         }
 
+        /// <summary>
+        /// 获取缓冲区长度
+        /// </summary>
         public int Length
         {
             get { return bytes.Count; }
         }
 
+        /// <summary>
+        /// 清空缓冲区并重置位置
+        /// </summary>
         public void clear()
         {
             Postion = 0;
             bytes.Clear();
         }
 
+        /// <summary>
+        /// 当前读写位置
+        /// </summary>
         public int Postion { get; set; }
 
+        /// <summary>
+        /// 获取缓冲区数据副本
+        /// </summary>
         public byte[] Buffer
         {
             get { return bytes.ToArray(); }
         }
 
+        #region 读取方法
+
         public bool ReadBoolean()
         {
             byte b = bytes[Postion];
             Postion += 1;
-            return b == (byte)0 ? false : true;
+            return b != 0;
         }
 
         public byte ReadByte()
@@ -61,26 +80,6 @@ namespace GameLogic
             return result;
         }
 
-        public void WriteInt(int value)
-        {
-            bytes.Add((byte)(value >> 24));
-            bytes.Add((byte)(value >> 16));
-            bytes.Add((byte)(value >> 8));
-            bytes.Add((byte)(value));
-        }
-
-        public void WriteShort(int value)
-        {
-            short tmp = (short)value;
-            bytes.Add((byte)(tmp >> 8));
-            bytes.Add((byte)(tmp));
-        }
-
-        public void WriteInt8(int value)
-        {
-            bytes.Add((byte)(value));
-        }
-
         public int ReadUInt()
         {
             int result = bytes[3 + Postion] | (bytes[2 + Postion] << 8) | (bytes[1 + Postion] << 16) | (bytes[0 + Postion] << 24);
@@ -95,7 +94,7 @@ namespace GameLogic
             return result;
         }
 
-        byte[] int32Cache = new byte[4];
+        private byte[] int32Cache = new byte[4];
         public int ReadInt32()
         {
             int32Cache[3] = bytes[Postion];
@@ -103,18 +102,18 @@ namespace GameLogic
             int32Cache[1] = bytes[Postion + 2];
             int32Cache[0] = bytes[Postion + 3];
 
-            int result = System.BitConverter.ToInt32(int32Cache, 0);
+            int result = BitConverter.ToInt32(int32Cache, 0);
             Postion += 4;
             return result;
         }
 
-        byte[] int16Catch = new byte[2];
+        private byte[] int16Cache = new byte[2];
         public int ReadInt16()
         {
-            int16Catch[1] = bytes[Postion];
-            int16Catch[0] = bytes[Postion + 1];
+            int16Cache[1] = bytes[Postion];
+            int16Cache[0] = bytes[Postion + 1];
 
-            int result = System.BitConverter.ToInt16(int16Catch, 0);
+            int result = BitConverter.ToInt16(int16Cache, 0);
             Postion += 2;
             return result;
         }
@@ -126,15 +125,15 @@ namespace GameLogic
             return result;
         }
 
-        byte[] b = new byte[8];
+        private byte[] doubleCache = new byte[8];
         public double ReadDouble()
         {
             for (int i = 0; i < 8; i++)
             {
-                b[7 - i] = bytes[i + Postion];
+                doubleCache[7 - i] = bytes[i + Postion];
             }
             Postion += 8;
-            return System.BitConverter.ToDouble(b, 0);
+            return BitConverter.ToDouble(doubleCache, 0);
         }
 
         public string ReadUTFBytes(uint length)
@@ -151,6 +150,31 @@ namespace GameLogic
 
             string decodedString = Encoding.UTF8.GetString(b);
             return decodedString;
+        }
+
+        #endregion
+
+        #region 写入方法
+
+        public void WriteInt(int value)
+        {
+            bytes.Add((byte)(value >> 24));
+            bytes.Add((byte)(value >> 16));
+            bytes.Add((byte)(value >> 8));
+            bytes.Add((byte)(value));
+        }
+
+        public void WriteShort(int value)
+        {
+            short tmp = (short)value;
+
+            bytes.Add((byte)(tmp >> 8));
+            bytes.Add((byte)(tmp));
+        }
+
+        public void WriteInt8(int value)
+        {
+            bytes.Add((byte)(value));
         }
 
         public void WriteALLBytes(byte[] bs)
@@ -170,14 +194,14 @@ namespace GameLogic
 
         public void WriteDouble(double v)
         {
-            byte[] temp = System.BitConverter.GetBytes(v);
+            byte[] temp = BitConverter.GetBytes(v);
 
             for (int i = 0; i < 8; i++)
             {
-                b[7 - i] = temp[i];
+                doubleCache[7 - i] = temp[i];
             }
 
-            bytes.AddRange(b);
+            bytes.AddRange(doubleCache);
         }
 
         public void WriteString(string content)
@@ -191,5 +215,7 @@ namespace GameLogic
             WriteShort(bs.Length);
             WriteALLBytes(bs);
         }
+
+        #endregion
     }
 }
