@@ -38,8 +38,8 @@ public partial class GameApp
     {
         GameModule.Battle.EnsureInitialized();
 
-        // 显示登录界面（鼠标控制在 LoginUI.OnCreate 中）
-        GameModule.UI.ShowUIAsync<LoginUI>();
+        // 显示选服界面（鼠标控制在 SelectServerWindow.OnCreate 中）
+        GameModule.UI.ShowUIAsync<SelectServerWindow>();
     }
     
     private static void Release()
