@@ -222,6 +222,8 @@ public static class ProtocolAnalysisService
 		Dictionary<string, object> data = new Dictionary<string, object>();
 		data.Add("code0", msg.code0);
 		data.Add("content", msg.content);
+		data.Add("playerid", msg.playerID);
+		data.Add("nickname", msg.nickName);
 		data.Add("characterid", msg.characterID);
 		session.SendMsg("playerloginmsg",data);
 	}
@@ -476,7 +478,6 @@ public static class ProtocolAnalysisService
 	static void RecevicePlayerLoginMsg_s(SyncSession session ,ProtocolRequestBase e)
 	{
 		PlayerLoginMsg_s msg = new PlayerLoginMsg_s();
-		msg.playerID = e.m_data["playerid"].ToString();
 		
 		EventService.DispatchTypeEvent(session,msg);
 	}

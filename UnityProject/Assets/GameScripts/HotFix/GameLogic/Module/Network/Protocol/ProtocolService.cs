@@ -192,7 +192,17 @@ namespace GameLogic
                 m_Socket = new Socket(AddressFamily.InterNetwork, socketType, m_protocolType);
                 IPAddress ip = IPAddress.Parse(m_IPaddress);
                 IPEndPoint ipe = new IPEndPoint(ip, m_port);
-                m_Socket.Connect(ipe);
+
+                // 异步连接 + 5秒超时
+                IAsyncResult asyncResult = m_Socket.BeginConnect(ipe, null, null);
+                if (!asyncResult.AsyncWaitHandle.WaitOne(5000))
+                {
+                    m_Socket.Close();
+                    m_Socket = null;
+                    throw new SocketException((int)SocketError.TimedOut);
+                }
+                m_Socket.EndConnect(asyncResult);
+
                 isConnect = true;
                 StartReceive();
 

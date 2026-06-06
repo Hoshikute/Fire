@@ -14,6 +14,9 @@ namespace GameLogic
         private bool m_isConnect;
 
         public bool IsConnected => m_isConnect;
+        public bool IsInitialized => m_network != null;
+        public event Action<NetworkState> StatusChanged;
+        public event Action<NetWorkMessage> MessageReceived;
 
         private List<NetworkState> m_statusList = new List<NetworkState>();
         private List<NetWorkMessage> m_messageList = new List<NetWorkMessage>();
@@ -26,12 +29,14 @@ namespace GameLogic
         {
             m_network?.Close();
             m_network = null;
+            m_isConnect = false;
             m_messageList.Clear();
             m_statusList.Clear();
         }
 
         public void Init<T>(ProtocolType protocolType = ProtocolType.Tcp) where T : INetworkInterface, new()
         {
+            m_network?.Close();
             m_network = new T();
             m_network.m_protocolType = protocolType;
             m_network.Init();
@@ -54,6 +59,7 @@ namespace GameLogic
         {
             Log.Info("断开连接");
             m_network?.Close();
+            m_isConnect = false;
         }
 
         public void SendMessage(string messageType, Dictionary<string, object> data)
@@ -129,8 +135,7 @@ namespace GameLogic
         {
             try
             {
-                // TODO: 通过事件系统分发消息
-                // GameModule.Event.Fire(msg);
+                MessageReceived?.Invoke(msg);
                 Log.Debug($"收到消息: {msg.m_MessageType}");
             }
             catch (Exception e)
@@ -150,8 +155,7 @@ namespace GameLogic
                 m_isConnect = false;
             }
 
-            // TODO: 通过事件系统分发状态变化
-            // GameModule.Event.Fire(new NetworkStatusChangeEvent(status));
+            StatusChanged?.Invoke(status);
             Log.Info($"网络状态变化: {status}");
         }
     }

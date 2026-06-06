@@ -13,7 +13,6 @@ public abstract class ProtocolMessage : CsharpProtocolInterface
 [MessageMode(SendMode.ToServer)]
 public class PlayerLoginMsg_s : ProtocolMessage
 {
-    public string playerID;
 }
 
 [MessageMode(SendMode.ToClient)]
@@ -21,7 +20,8 @@ public class PlayerLoginMsg_c : ProtocolMessage
 {
     public int code0;
     public string content;
-
+    public string playerID;
+    public string nickName;
     public string characterID; //玩家选择的角色
 }
 

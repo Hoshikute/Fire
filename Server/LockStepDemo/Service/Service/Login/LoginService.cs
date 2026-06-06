@@ -1,14 +1,8 @@
-﻿using CDatabase;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SuperSocket.SocketBase;
 
 public class LoginService : ServiceBase
 {
-    const string c_playerTableName = "PlayerTable";
-
     public override void OnInit()
     {
         EventService.AddTypeEvent<PlayerLoginMsg_s>(RecevicePlayerLogin);
@@ -22,10 +16,6 @@ public class LoginService : ServiceBase
             return;
         }
 
-        //保存玩家数据
-        SavePlayerData(session.player);
-
-        //玩家退出登陆
         m_service.OnPlayerLogout(session.player);
     }
 
@@ -33,36 +23,17 @@ public class LoginService : ServiceBase
     {
         Debug.Log("RecevicePlayerLogin");
 
-        if(session.player != null)
+        if (session.player != null)
         {
-            Debug.Log(""+ session.player.playerID +" 已经登录，不需要重复登录！ ");
+            Debug.Log("" + session.player.playerID + " 已经登录，不需要重复登录！ ");
+            SendLoginSuccess(session, session.player);
+            return;
         }
 
-        if (DataBaseService.IsAvailable)
-        {
-            try
-            {
-                LoadPlayerFromDatabase(session, e.playerID);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError(ex.ToString());
-                Debug.LogWarning("读取数据库玩家失败，改用临时玩家数据。");
-                session.player = GetNewPlayer(e.playerID);
-            }
-        }
-        else
-        {
-            session.player = GetNewPlayer(e.playerID);
-        }
-
-        session.player.playerID = e.playerID;
+        session.player = CreateTemporaryPlayer(session);
         session.player.session = session;
 
-        PlayerLoginMsg_c msg = new PlayerLoginMsg_c();
-        ProtocolAnalysisService.SendMsg(session,msg);
-
-        //派发玩家登陆事件
+        SendLoginSuccess(session, session.player);
         m_service.OnPlayerLogin(session.player);
     }
 
@@ -83,45 +54,11 @@ public class LoginService : ServiceBase
         ProtocolAnalysisService.SendMsg(session, msg);
     }
 
-    void LoadPlayerFromDatabase(SyncSession session, string playerID)
+    Player CreateTemporaryPlayer(SyncSession session)
     {
-        string clauseContent = "ID ='" + playerID + "'";
-        var result = DataBaseService.database.Query(c_playerTableName, null, clauseContent, null, null, null, null);
+        string playerID = $"guest_{session.SessionID}_{DateTime.UtcNow.Ticks}";
 
-        if (result.MoveToNext())
-        {
-            Debug.Log("查询到记录！ ");
-            session.player = GetOldPlayer(result);
-            result.Close();
-        }
-        else
-        {
-            result.Close();
-            Debug.Log("未查询到记录！");
-
-            session.player = GetNewPlayer(playerID);
-
-            Dictionary<string, string> value = new Dictionary<string, string>();
-            value.Add("ID", playerID);
-            DataBaseService.database.Insert(c_playerTableName, null, value);
-        }
-    }
-
-    Player GetOldPlayer(ICursor data)
-    {
         Player player = new Player();
-
-        player.characterID = data.GetString("CharacterID");
-        player.OwnCharacter = data.GetString("OwnCharacter");
-        player.nickName = data.GetString("NickName");
-
-        return player;
-    }
-
-    Player GetNewPlayer(string playerID)
-    {
-        Player player = new Player();
-
         player.playerID = playerID;
         player.characterID = "1";
         player.OwnCharacter = "1";
@@ -130,28 +67,14 @@ public class LoginService : ServiceBase
         return player;
     }
 
-    void SavePlayerData(Player player)
+    void SendLoginSuccess(SyncSession session, Player player)
     {
-        if (!DataBaseService.IsAvailable)
-        {
-            return;
-        }
-
-        string clauseContent = "ID ='" + player.playerID + "'";
-
-        Dictionary<string, string> value = new Dictionary<string, string>();
-        value.Add("ID", player.playerID);
-        value.Add("NickName", player.nickName);
-        value.Add("CharacterID", player.characterID);
-        value.Add("OwnCharacter", player.OwnCharacter);
-
-        try
-        {
-            DataBaseService.database.Update(c_playerTableName, value, clauseContent, null);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e.ToString());
-        }
+        PlayerLoginMsg_c msg = new PlayerLoginMsg_c();
+        msg.code0 = 0;
+        msg.content = "anonymous-session-ready";
+        msg.playerID = player.playerID;
+        msg.nickName = player.nickName;
+        msg.characterID = player.characterID;
+        ProtocolAnalysisService.SendMsg(session, msg);
     }
 }

@@ -16,6 +16,8 @@ namespace GameLogic.Game
         public static string ServerAddress { get; set; } = "127.0.0.1";
         public static int ServerPort { get; set; } = 7500;
         public static string PlayerName { get; set; } = "Player";
+        public static string PlayerId { get; set; } = string.Empty;
+        public static string PlayerCharacterId { get; set; } = "1";
 
         public static void Init()
         {
@@ -24,6 +26,8 @@ namespace GameLogic.Game
         public static void ClearData()
         {
             s_choiceList.Clear();
+            PlayerId = string.Empty;
+            PlayerCharacterId = "1";
         }
 
         public static void Dispose()

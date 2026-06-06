@@ -1,31 +1,24 @@
+using System.Collections.Generic;
+using System.Net.Sockets;
+using Cysharp.Threading.Tasks;
 using TEngine;
 using UnityEngine;
 using UnityEngine.UI;
-using Cysharp.Threading.Tasks;
 
 namespace GameLogic
 {
     /// <summary>
-    /// 登录窗口 - 账号输入与登录
+    /// 登录窗口 - 匿名会话入场
     /// </summary>
     [Window(UILayer.UI, "LoginWindow")]
     public class LoginWindow : UIWindow
     {
         #region UI 组件
 
-        // 标题文本
         private Text m_text_Title;
-
-        // 账号输入框
         private InputField m_input_Account;
-
-        // 密码输入框（预留）
         private InputField m_input_Password;
-
-        // 随机名字按钮
         private Button m_btn_RandomName;
-
-        // 登录按钮
         private Button m_btn_Login;
 
         #endregion
@@ -33,8 +26,9 @@ namespace GameLogic
         #region 状态
 
         private string _playerName;
+        private bool _isEntering;
+        private bool _loginRequestSent;
 
-        // 随机名字库
         private static readonly string[] s_firstNames = { "勇敢的", "聪明的", "快速的", "强大的", "神秘的", "传说中的", "无敌的", "闪耀的" };
         private static readonly string[] s_lastNames = { "战士", "法师", "弓箭手", "骑士", "刺客", "牧师", "术士", "武僧" };
 
@@ -44,7 +38,6 @@ namespace GameLogic
 
         protected override void ScriptGenerator()
         {
-            // 绑定 UI 组件
             var titleTrans = transform.Find("m_text_Title");
             if (titleTrans != null)
             {
@@ -91,24 +84,23 @@ namespace GameLogic
 
         protected override void OnCreate()
         {
-            // 显示鼠标
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
 
-            // 生成随机名字
             GenerateRandomName();
+            SetupAnonymousLoginView();
+            SubscribeNetworkEvents();
 
-            Log.Info("[LoginWindow] 登录窗口创建完成");
+            Log.Info("[LoginWindow] 匿名登录窗口创建完成");
         }
 
         protected override void OnRefresh()
         {
-            // 刷新显示（如有需要）
         }
 
         protected override void OnDestroy()
         {
-            // 清理资源
+            UnsubscribeNetworkEvents();
         }
 
         #endregion
@@ -118,14 +110,17 @@ namespace GameLogic
         private void OnRandomNameClick()
         {
             GenerateRandomName();
-            Log.Info($"[LoginWindow] 生成随机名字: {_playerName}");
+            Log.Info($"[LoginWindow] 生成本地显示名: {_playerName}");
         }
 
         private void OnLoginClick()
         {
-            Log.Info("[LoginWindow] 点击进入游戏");
+            if (_isEntering)
+            {
+                Log.Warning("[LoginWindow] 正在进入游戏，请勿重复点击");
+                return;
+            }
 
-            // 获取玩家名称
             _playerName = m_input_Account?.text;
             if (string.IsNullOrEmpty(_playerName))
             {
@@ -136,8 +131,157 @@ namespace GameLogic
                 }
             }
 
-            // 加载游戏场景
+            BeginAnonymousLogin();
+        }
+
+        #endregion
+
+        #region 登录流程
+
+        private void BeginAnonymousLogin()
+        {
+            _isEntering = true;
+            _loginRequestSent = false;
+
+            EnsureNetworkInitialized();
+
+            Log.Info("[LoginWindow] 开始匿名会话登录");
+            Log.Info($"[LoginWindow] 本地显示名: {_playerName}");
+            Log.Info($"[LoginWindow] 服务器: {Game.GameData.ServerAddress}:{Game.GameData.ServerPort}");
+
+            if (GameModule.Network.IsConnected)
+            {
+                SendAnonymousLogin();
+                return;
+            }
+
+            GameModule.Network.Connect(Game.GameData.ServerAddress, Game.GameData.ServerPort);
+        }
+
+        private void EnsureNetworkInitialized()
+        {
+            if (!GameModule.Network.IsInitialized)
+            {
+                GameModule.Network.Init<ProtocolService>(ProtocolType.Tcp);
+            }
+        }
+
+        private void SendAnonymousLogin()
+        {
+            if (_loginRequestSent)
+            {
+                return;
+            }
+
+            _loginRequestSent = true;
+            GameModule.Network.SendMessage("playerloginmsg", new Dictionary<string, object>());
+            Log.Info("[LoginWindow] 已发送匿名登录请求");
+        }
+
+        private void SubscribeNetworkEvents()
+        {
+            GameModule.Network.StatusChanged += OnNetworkStatusChanged;
+            GameModule.Network.MessageReceived += OnNetworkMessageReceived;
+        }
+
+        private void UnsubscribeNetworkEvents()
+        {
+            GameModule.Network.StatusChanged -= OnNetworkStatusChanged;
+            GameModule.Network.MessageReceived -= OnNetworkMessageReceived;
+        }
+
+        private void OnNetworkStatusChanged(NetworkState status)
+        {
+            if (!_isEntering)
+            {
+                return;
+            }
+
+            if (status == NetworkState.Connected)
+            {
+                SendAnonymousLogin();
+                return;
+            }
+
+            if (status == NetworkState.FaildToConnect || status == NetworkState.ConnectBreak)
+            {
+                _isEntering = false;
+                _loginRequestSent = false;
+                Log.Error($"[LoginWindow] 匿名登录失败，网络状态: {status}");
+            }
+        }
+
+        private void OnNetworkMessageReceived(NetWorkMessage message)
+        {
+            if (!_isEntering || message == null || message.m_MessageType != "playerloginmsg")
+            {
+                return;
+            }
+
+            int code = message.m_data.ContainsKey("code0") ? (int)message.m_data["code0"] : -1;
+            if (code != 0)
+            {
+                _isEntering = false;
+                _loginRequestSent = false;
+                Log.Error($"[LoginWindow] 服务端拒绝登录，code={code}");
+                return;
+            }
+
+            string assignedPlayerId = message.m_data.ContainsKey("playerid")
+                ? message.m_data["playerid"].ToString()
+                : string.Empty;
+            string assignedCharacterId = message.m_data.ContainsKey("characterid")
+                ? message.m_data["characterid"].ToString()
+                : "1";
+
+            Game.GameData.PlayerId = assignedPlayerId;
+            Game.GameData.PlayerName = assignedPlayerId;
+            Game.GameData.PlayerCharacterId = assignedCharacterId;
+
+            _isEntering = false;
+            _loginRequestSent = false;
+
+            Log.Info($"[LoginWindow] 服务端分配玩家ID: {assignedPlayerId}");
             LoadGameScene().Forget();
+        }
+
+        #endregion
+
+        #region 视图
+
+        private void SetupAnonymousLoginView()
+        {
+            if (m_text_Title != null)
+            {
+                m_text_Title.text = "匿名进入游戏";
+            }
+
+            if (m_input_Password != null)
+            {
+                m_input_Password.gameObject.SetActive(false);
+            }
+
+            SetInputPlaceholder(m_input_Account, "显示名（可选）");
+        }
+
+        private void SetInputPlaceholder(InputField inputField, string text)
+        {
+            if (inputField == null)
+            {
+                return;
+            }
+
+            Transform placeholder = inputField.transform.Find("Placeholder");
+            if (placeholder == null)
+            {
+                return;
+            }
+
+            Text placeholderText = placeholder.GetComponent<Text>();
+            if (placeholderText != null)
+            {
+                placeholderText.text = text;
+            }
         }
 
         #endregion
@@ -152,7 +296,6 @@ namespace GameLogic
 
             _playerName = $"{firstName}{lastName}{number}";
 
-            // 更新输入框显示
             if (m_input_Account != null)
             {
                 m_input_Account.text = _playerName;
@@ -168,20 +311,11 @@ namespace GameLogic
         private async UniTaskVoid LoadGameScene()
         {
             Log.Info("[LoginWindow] 进入游戏...");
-
-            // 保存玩家名称
-            Game.GameData.PlayerName = _playerName;
-
-            Log.Info($"[LoginWindow] 玩家: {_playerName}");
+            Log.Info($"[LoginWindow] 玩家ID: {Game.GameData.PlayerId}");
             Log.Info($"[LoginWindow] 服务器: {Game.GameData.ServerAddress}:{Game.GameData.ServerPort}");
 
-            // 关闭登录界面
             GameModule.UI.CloseUI<LoginWindow>();
-
-            // 加载 Game 场景
             await GameModule.Scene.LoadSceneAsync("Game");
-
-            // 初始化 Game 场景（设置相机 + 加载 Player）
             await GameModule.TPBattleContext.InitializeGameScene();
 
             Log.Info("[LoginWindow] 进入游戏完成");
