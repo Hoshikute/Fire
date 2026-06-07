@@ -1,0 +1,778 @@
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Context/TPBattleContext.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Context/TPBattleContext.cs
+index 4944b39..359f9b5 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Context/TPBattleContext.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Context/TPBattleContext.cs
+@@ -72,11 +72,64 @@ namespace GameLogic
+             if (player != null)
+             {
+                 Log.Info($"[TPBattleContext] Player loaded successfully: {player.name}");
++                VerifyGroundLayer(player);
+             }
+             else
+             {
+                 Log.Error("[TPBattleContext] Failed to load Player.");
+             }
+         }
++
++        /// <summary>
++        /// 诊断：验证 Player 的 ground LayerMask 与场景地面 Layer 是否匹配。
++        /// </summary>
++        private void VerifyGroundLayer(GameObject playerGo)
++        {
++            var playerComp = playerGo.GetComponent<ThirdPersonController.Player>();
++            if (playerComp == null)
++            {
++                Log.Error("[TPC_DIAG] Player component not found on loaded prefab!");
++                return;
++            }
++
++            var groundMask = playerComp.whatIsGround;
++
++            // 将 LayerMask 值解析为 layer 名称
++            var layerNames = new System.Collections.Generic.List<string>();
++            for (int i = 0; i < 32; i++)
++            {
++                if ((groundMask.value & (1 << i)) != 0)
++                {
++                    layerNames.Add($"{i}:{LayerMask.LayerToName(i)}");
++                }
++            }
++            Log.Info($"[TPC_DIAG] Player whatIsGround Mask = {groundMask.value} → [{string.Join(", ", layerNames)}]");
++
++            // 检测场景中所有带有 "Ground" 或 "Terrain" 标记的对象
++            var allObjects = Object.FindObjectsOfType<GameObject>();
++            var groundLayerObjects = new System.Collections.Generic.List<string>();
++            foreach (var go in allObjects)
++            {
++                int layer = go.layer;
++                string layerName = LayerMask.LayerToName(layer);
++                if (layerName.Contains("Ground") || layerName.Contains("Terrain") || layerName.Contains("ground"))
++                {
++                    if (!groundLayerObjects.Contains(layerName))
++                        groundLayerObjects.Add(layerName);
++                }
++            }
++            if (groundLayerObjects.Count > 0)
++            {
++                Log.Info($"[TPC_DIAG] Scene ground/terrain layers found: [{string.Join(", ", groundLayerObjects)}]");
++            }
++            else
++            {
++                Log.Warning("[TPC_DIAG] No objects with 'Ground'/'Terrain' layer found in scene! This may cause ground detection failures.");
++            }
++
++            // 检查 Mask 是否覆盖了 Default layer (0) — 通常地面在 Default
++            bool masksDefault = (groundMask.value & 1) != 0;
++            Log.Info($"[TPC_DIAG] whatIsGround includes Default(0)? {masksDefault}");
++        }
+     }
+ }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/CharacterBase/CharacterBase.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/CharacterBase/CharacterBase.cs
+index 9b33b81..feabc20 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/CharacterBase/CharacterBase.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/CharacterBase/CharacterBase.cs
+@@ -1,4 +1,5 @@
+ using System;
++using TEngine;
+ using UnityEngine;
+ 
+ namespace ThirdPersonController
+@@ -53,7 +54,15 @@ namespace ThirdPersonController
+         {
+             detectedOrigin = transform.position - groundDetectedOffset * Vector3.up;
+             var isHit = Physics.CheckSphere(detectedOrigin, groundRadius, whatIsGround, QueryTriggerInteraction.Ignore);
++            var prevGround = IsOnGround.Value;
+             IsOnGround.Value = isHit && VerticalSpeed < 0;
++
++            // ★ 诊断日志：离地/着地变化
++            if (prevGround != IsOnGround.Value)
++            {
++                Log.Warning($"[Claude] IsOnGround changed: {prevGround} → {IsOnGround.Value} | isHit={isHit} VS={VerticalSpeed:F2} gravity={gravity} | pos=({transform.position.x:F2},{transform.position.y:F2},{transform.position.z:F2}) | groundLayer={whatIsGround.value} | detectedOrigin=({detectedOrigin.x:F2},{detectedOrigin.y:F2},{detectedOrigin.z:F2}) groundRadius={groundRadius:F2}");
++            }
++
+             return IsOnGround.Value;
+         }
+ 
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/IAnimationProvider.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/IAnimationProvider.cs
+new file mode 100644
+index 0000000..fc71668
+--- /dev/null
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/IAnimationProvider.cs
+@@ -0,0 +1,14 @@
++using Animancer;
++using System.Collections.Generic;
++
++namespace ThirdPersonController
++{
++    /// <summary>
++    /// 动画提供者接口 — 由各状态数据类实现，暴露所有持有的 ITransition
++    /// 用于 Player 初始化时统一预热动画 clip 数据。
++    /// </summary>
++    public interface IAnimationProvider
++    {
++        void CollectTransitions(List<ITransition> results);
++    }
++}
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/IAnimationProvider.cs.meta b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/IAnimationProvider.cs.meta
+new file mode 100644
+index 0000000..316bf02
+--- /dev/null
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/IAnimationProvider.cs.meta
+@@ -0,0 +1,11 @@
++fileFormatVersion: 2
++guid: 17caf1fc3a1bfb6499967872ab1f62a3
++MonoImporter:
++  externalObjects: {}
++  serializedVersion: 2
++  defaultReferences: []
++  executionOrder: 0
++  icon: {instanceID: 0}
++  userData: 
++  assetBundleName: 
++  assetBundleVariant: 
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerLockMovementData.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerLockMovementData.cs
+index 4716a8c..e22350d 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerLockMovementData.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerLockMovementData.cs
+@@ -1,12 +1,21 @@
+-﻿using UnityEngine;
++﻿using Animancer;
++using System.Collections.Generic;
++using UnityEngine;
+ 
+ namespace ThirdPersonController
+ {
+     [System.Serializable]
+-    public class PlayerLockMovementData
++    public class PlayerLockMovementData : IAnimationProvider
+     {
+         [field: SerializeField] public PlayerIdleData PlayerIdleData { get; private set; }
+         [field: SerializeField] public PlayerMoveLoopData PlayerMoveLoopData { get; private set; }
+         [field: SerializeField] public PlayerMoveEndData PlayerMoveEndData { get; private set; }
++
++        public void CollectTransitions(List<ITransition> results)
++        {
++            PlayerIdleData?.CollectTransitions(results);
++            PlayerMoveLoopData?.CollectTransitions(results);
++            PlayerMoveEndData?.CollectTransitions(results);
++        }
+     }
+ }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData.cs
+index 100e4c8..5c8eb11 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData.cs
+@@ -1,9 +1,11 @@
+-﻿using UnityEngine;
++﻿using Animancer;
++using System.Collections.Generic;
++using UnityEngine;
+ 
+ namespace ThirdPersonController
+ {
+     [System.Serializable]
+-    public class PlayerMovementData
++    public class PlayerMovementData : IAnimationProvider
+     {
+         [field: SerializeField] public PlayerIdleData PlayerIdleData { get;private set; }
+         [field: SerializeField] public PlayerMoveStartData PlayerMoveStartData { get; private set; }
+@@ -12,6 +14,16 @@ namespace ThirdPersonController
+         [field :SerializeField] public PlayerClimbData  PlayerClimbData { get; private set; }
+         [field:SerializeField] public PlayerHangWallData PlayerHangWallData { get; set; }
+         [field: SerializeField] public PlayerJumpFallAndLandData PlayerJumpFallAndLandData { get;private set; }
+-    
++
++        public void CollectTransitions(List<ITransition> results)
++        {
++            PlayerIdleData?.CollectTransitions(results);
++            PlayerMoveStartData?.CollectTransitions(results);
++            PlayerMoveLoopData?.CollectTransitions(results);
++            PlayerMoveEndData?.CollectTransitions(results);
++            PlayerClimbData?.CollectTransitions(results);
++            PlayerHangWallData?.CollectTransitions(results);
++            PlayerJumpFallAndLandData?.CollectTransitions(results);
++        }
+     }
+ }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerClimbData.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerClimbData.cs
+index 7b2eae4..fd5a7ff 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerClimbData.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerClimbData.cs
+@@ -1,14 +1,15 @@
+ ﻿using Animancer;
+ using System;
++using System.Collections.Generic;
+ using UnityEngine;
+ 
+ namespace ThirdPersonController
+ {
+     [Serializable]
+-    public class PlayerClimbData
+-    {    
++    public class PlayerClimbData : IAnimationProvider
++    {
+         //根据高度的不同填入合适的动画
+-    
++
+         //翻越动画
+         [field: SerializeField] public ClipTransition[] vaults;
+         //攀爬动画
+@@ -21,5 +22,22 @@ namespace ThirdPersonController
+         public ClipTransition outwardCorner_Right;
+         public ClipTransition inwardCorner_Left;
+         public ClipTransition inwardCorner_right;
++
++        public void CollectTransitions(List<ITransition> results)
++        {
++            AddArray(vaults, results);
++            AddArray(climbs, results);
++            if (outwardCorner_Left != null) results.Add(outwardCorner_Left);
++            if (outwardCorner_Right != null) results.Add(outwardCorner_Right);
++            if (inwardCorner_Left != null) results.Add(inwardCorner_Left);
++            if (inwardCorner_right != null) results.Add(inwardCorner_right);
++        }
++
++        private static void AddArray(ClipTransition[] array, List<ITransition> results)
++        {
++            if (array == null) return;
++            foreach (var t in array)
++                if (t != null) results.Add(t);
++        }
+     }
+ }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerHangWallData.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerHangWallData.cs
+index 2357dc4..541dc66 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerHangWallData.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerHangWallData.cs
+@@ -1,13 +1,14 @@
+ ﻿using Animancer;
++using System.Collections.Generic;
+ using UnityEngine;
+ 
+ namespace ThirdPersonController
+ {
+     [System.Serializable]
+-    public class PlayerHangWallData
++    public class PlayerHangWallData : IAnimationProvider
+     {
+         public Vector2 hightAndForwardOffSet;
+-        
++
+         //扒住
+         public ClipTransition hang_wall_idle_down;
+         public ClipTransition hang_wall_idle_up;
+@@ -24,17 +25,33 @@ namespace ThirdPersonController
+         //爬上去
+         public ClipTransition hang_wall_climb_up;
+         //尝试爬，不能爬上去
+-    
++
+         //爬上去取消的后摇
+         public ClipTransition hang_wall_idle_inertia_01;
+         //看后面
+-    
++
+         //向左跳
+         public ClipTransition hang_wall_idle_jump_out_left;
+         //向右跳
+         public ClipTransition hang_wall_idle_jump_out_right;
+         //向上跳
+         public ClipTransition hang_wall_idle_jump_out_up;
+-    
++
++        public void CollectTransitions(List<ITransition> results)
++        {
++            if (hang_wall_idle_down != null) results.Add(hang_wall_idle_down);
++            if (hang_wall_idle_up != null) results.Add(hang_wall_idle_up);
++            if (hang_wall_idle_frond != null) results.Add(hang_wall_idle_frond);
++            if (hang_wall_climb != null) results.Add(hang_wall_climb);
++            if (hang_wall_idle != null) results.Add(hang_wall_idle);
++            if (hang_wall_idle_right_inertia != null) results.Add(hang_wall_idle_right_inertia);
++            if (hang_wall_idle_left_inertia != null) results.Add(hang_wall_idle_left_inertia);
++            if (hand_wallMove_Mixer != null) results.Add(hand_wallMove_Mixer);
++            if (hang_wall_climb_up != null) results.Add(hang_wall_climb_up);
++            if (hang_wall_idle_inertia_01 != null) results.Add(hang_wall_idle_inertia_01);
++            if (hang_wall_idle_jump_out_left != null) results.Add(hang_wall_idle_jump_out_left);
++            if (hang_wall_idle_jump_out_right != null) results.Add(hang_wall_idle_jump_out_right);
++            if (hang_wall_idle_jump_out_up != null) results.Add(hang_wall_idle_jump_out_up);
++        }
+     }
+ }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerIdleData.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerIdleData.cs
+index 1c854c6..5817ca4 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerIdleData.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerIdleData.cs
+@@ -1,17 +1,37 @@
+ ﻿using Animancer;
+ using System;
++using System.Collections.Generic;
+ using UnityEngine;
+ 
+ namespace ThirdPersonController
+ {
+     [Serializable]
+-    public class PlayerIdleData
++    public class PlayerIdleData : IAnimationProvider
+     {
+         [field: SerializeField] public TransitionAsset idle { get; private set; }
+-    
++
+         [field:SerializeField] public AnimationClip[] strandIdle_Lock { get; private set; }
+         [field: SerializeField] public AnimationClip[] crouchIdle_Lock { get; private set; }
+         [field: SerializeField] public AnimationClip[] strandIdle { get; private set; }
+         [field: SerializeField] public AnimationClip[] crouchIdle { get; private set; }
++
++        public void CollectTransitions(List<ITransition> results)
++        {
++            if (idle != null) results.Add(idle);
++            CollectClips(strandIdle_Lock, results);
++            CollectClips(crouchIdle_Lock, results);
++            CollectClips(strandIdle, results);
++            CollectClips(crouchIdle, results);
++        }
++
++        private static void CollectClips(AnimationClip[] clips, List<ITransition> results)
++        {
++            if (clips == null) return;
++            foreach (var clip in clips)
++            {
++                if (clip != null)
++                    results.Add(new ClipTransition { Clip = clip });
++            }
++        }
+     }
+ }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerJumpData.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerJumpData.cs
+index a325606..b1cf6a0 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerJumpData.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerJumpData.cs
+@@ -1,25 +1,46 @@
+ ﻿using Animancer;
+ using System;
++using System.Collections.Generic;
+ using UnityEngine;
+ 
+ namespace ThirdPersonController
+ {
+     [Serializable]
+-    public class PlayerJumpFallAndLandData
++    public class PlayerJumpFallAndLandData : IAnimationProvider
+     {
+         [field: SerializeField] public ClipTransition placeJumpStart { get; private set; }
+         [field: SerializeField] public ClipTransition forwardJumpStart { get; private set; }
+-        //下落    
++        //下落
+         [field: SerializeField] public ClipTransition fallStart { get; private set; }
+         [field: SerializeField] public ClipTransition fall{ get; private set; }
+-    
++
+         [field: SerializeField] public ClipTransition[] placeJumpLand { get; private set; }//按照下落高度分为不同的着陆动画
+         [field: SerializeField] public ClipTransition[] forwardJumpLand { get; private set; }//按照下落高度分为不同的着陆动画
+-    
++
+         [field: SerializeField] public ClipTransition platformerUpStart;
+-    
++
+         [field: SerializeField] public ClipTransition platformerUpLoop;
+-    
++
+         [field: SerializeField] public ClipTransition platFormerDownLoop;
++
++        public void CollectTransitions(List<ITransition> results)
++        {
++            if (placeJumpStart != null) results.Add(placeJumpStart);
++            if (forwardJumpStart != null) results.Add(forwardJumpStart);
++            if (fallStart != null) results.Add(fallStart);
++            if (fall != null) results.Add(fall);
++            if (platformerUpStart != null) results.Add(platformerUpStart);
++            if (platformerUpLoop != null) results.Add(platformerUpLoop);
++            if (platFormerDownLoop != null) results.Add(platFormerDownLoop);
++            AddArray(placeJumpLand, results);
++            AddArray(forwardJumpLand, results);
++        }
++
++        private static void AddArray(ClipTransition[] array, List<ITransition> results)
++        {
++            if (array == null) return;
++            foreach (var t in array)
++                if (t != null) results.Add(t);
++        }
+     }
+ }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveEndData.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveEndData.cs
+index 2df5146..b2eae65 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveEndData.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveEndData.cs
+@@ -1,17 +1,21 @@
+ ﻿using Animancer;
+-using System;
+ using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+ using UnityEngine;
+ 
+ namespace ThirdPersonController
+ {
+     [System.Serializable]
+-    public class PlayerMoveEndData
++    public class PlayerMoveEndData : IAnimationProvider
+     {
+         [field: SerializeField] public TransitionAsset moveEnd_L { get; private set; }
+         [field: SerializeField] public TransitionAsset moveEnd_R { get; private set; }
+         [field: SerializeField] public ClipTransition moveToWall { get; private set; }
++
++        public void CollectTransitions(List<ITransition> results)
++        {
++            if (moveEnd_L != null) results.Add(moveEnd_L);
++            if (moveEnd_R != null) results.Add(moveEnd_R);
++            if (moveToWall != null) results.Add(moveToWall);
++        }
+     }
+ }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveLoopData.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveLoopData.cs
+index f17adf3..fa624eb 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveLoopData.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveLoopData.cs
+@@ -1,11 +1,17 @@
+ ﻿using Animancer;
++using System.Collections.Generic;
+ using UnityEngine;
+ 
+ namespace ThirdPersonController
+ {
+     [System.Serializable]
+-    public class PlayerMoveLoopData
++    public class PlayerMoveLoopData : IAnimationProvider
+     {
+         [field: SerializeField] public TransitionAsset moveLoop { get; private set; }
++
++        public void CollectTransitions(List<ITransition> results)
++        {
++            if (moveLoop != null) results.Add(moveLoop);
++        }
+     }
+ }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveStartData.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveStartData.cs
+index 30f0afb..bbd424a 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveStartData.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerMovementData/PlayerMoveStartData.cs
+@@ -1,10 +1,11 @@
+ ﻿using Animancer;
++using System.Collections.Generic;
+ using UnityEngine;
+ 
+ namespace ThirdPersonController
+ {
+     [System.Serializable]
+-    public class PlayerMoveStartData
++    public class PlayerMoveStartData : IAnimationProvider
+     {
+         [field: SerializeField] public TransitionAsset moveStart { get; private set; }
+         [field: SerializeField] public TransitionAsset moveStart_F { get; private set; }
+@@ -16,6 +17,19 @@ namespace ThirdPersonController
+         [field: SerializeField] public TransitionAsset moveStart_R90 { get; private set; }
+         [field: SerializeField] public TransitionAsset moveStart_R135 { get; private set; }
+         [field: SerializeField] public TransitionAsset moveStart_R180 { get; private set; }
+-    
++
++        public void CollectTransitions(List<ITransition> results)
++        {
++            if (moveStart != null) results.Add(moveStart);
++            if (moveStart_F != null) results.Add(moveStart_F);
++            if (moveStart_L45 != null) results.Add(moveStart_L45);
++            if (moveStart_L90 != null) results.Add(moveStart_L90);
++            if (moveStart_L135 != null) results.Add(moveStart_L135);
++            if (moveStart_L180 != null) results.Add(moveStart_L180);
++            if (moveStart_R45 != null) results.Add(moveStart_R45);
++            if (moveStart_R90 != null) results.Add(moveStart_R90);
++            if (moveStart_R135 != null) results.Add(moveStart_R135);
++            if (moveStart_R180 != null) results.Add(moveStart_R180);
++        }
+     }
+ }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Player.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Player.cs
+index d74f65e..9fed743 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Player.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/Player.cs
+@@ -77,9 +77,50 @@ namespace ThirdPersonController
+                 new PlayerLockIdleState()
+             );
+ 
++            // 统一预热所有动画 clip，避免首次 Play 时主线程同步加载卡顿
++            PreloadAllAnimations();
++
+             StateMachine.Start<PlayerIdleState>();
+         }
+ 
++        private const string DIAG_HEADER = "[Claude]";
++        private int _frameHeartbeatCounter;
++
++        /// <summary>
++        /// 遍历 PlayerSO 下所有移动状态数据，收集全部 ITransition（TransitionAsset/ClipTransition），
++        /// 通过 animancer.States.GetOrCreate 统一预热。利用 ClipState 构造中 clip.length/isLooping
++        /// 访问触发 Unity 加载 AnimationClip 数据，避免后续首次 Play 时的主线程阻塞。
++        /// </summary>
++        private void PreloadAllAnimations()
++        {
++            var t0 = Time.realtimeSinceStartup;
++            Log.Info($"{DIAG_HEADER}[Preload] enter | t={t0:F3}s | playerSO={playerSO != null} movementData={playerSO?.playerMovementData != null}");
++
++            if (playerSO == null || playerSO.playerMovementData == null)
++            {
++                Log.Warning($"{DIAG_HEADER}[Preload] SKIPPED — null check failed");
++                return;
++            }
++
++            var transitions = new System.Collections.Generic.List<ITransition>();
++            playerSO.playerMovementData.CollectTransitions(transitions);
++            Log.Info($"{DIAG_HEADER}[Preload] collected {transitions.Count} transitions | dt={Time.realtimeSinceStartup - t0:F3}s");
++
++            foreach (var t in transitions)
++            {
++                if (t != null && t.IsValid())
++                {
++                    var t1 = Time.realtimeSinceStartup;
++                    Animancer.States.GetOrCreate(t);
++                    var dt = Time.realtimeSinceStartup - t1;
++                    if (dt > 0.01f)
++                        Log.Warning($"{DIAG_HEADER}[Preload] slow transition: Key={t.Key} dt={dt:F3}s");
++                }
++            }
++
++            Log.Info($"{DIAG_HEADER}[Preload] done. {transitions.Count} total | totalDt={Time.realtimeSinceStartup - t0:F3}s");
++        }
++
+         private bool _pendingCameraBind;
+ 
+         protected virtual void Start()
+@@ -105,6 +146,17 @@ namespace ThirdPersonController
+ 
+         protected override void Update()
+         {
++            var dt = Time.deltaTime;
++            var rt = Time.realtimeSinceStartup;
++
++            // 每 30 帧输出一次心跳，观察帧间隔
++            if (++_frameHeartbeatCounter % 30 == 0)
++                Log.Info($"{DIAG_HEADER}[Heartbeat] frame={Time.frameCount} dt={dt:F3}s rt={rt:F3}s");
++
++            // dt 飙升 > 0.05s 时输出 Warning
++            if (dt > 0.05f)
++                Log.Warning($"{DIAG_HEADER}[Player][Update] dt spike | frame={Time.frameCount} dt={dt:F3}s rt={rt:F3}s");
++
+             base.Update();
+             // FsmModule 会自动调用 OnUpdate，但动画更新需要手动处理
+             UpdateAnimationState();
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerLandState.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerLandState.cs
+index 662475e..16d62fd 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerLandState.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerLandState.cs
+@@ -40,12 +40,18 @@ namespace ThirdPersonController
+                 }
+ 
+                 state.Events(player).SetCallback(playerSO.playerParameterData.moveInterruptEvent, () => OnInputInterruption(currentFsm));
+-                state.Events(player).OnEnd = () => SwitchState<PlayerIdleState>();
++                state.Events(player).OnEnd = () => DeferredSwitch<PlayerIdleState>();
+             }
+             else
+             {
+                 SwitchState<PlayerIdleState>();
+             }
+         }
++
++        protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
++        {
++            if (TryExecuteDeferredSwitch()) return;
++            base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
++        }
+     }
+ }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveEndState.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveEndState.cs
+index 5c0b196..3471a15 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveEndState.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveEndState.cs
+@@ -39,7 +39,7 @@ namespace ThirdPersonController
+                 float distance = Vector3.Distance(player.transform.position + Vector3.up, hitInfo.point);
+                 if (distance > 0.45f && distance < reusableData.checkWallDistance)
+                 {
+-                    animancer.Play(moveEndData.moveToWall).Events(player).OnEnd = () => SwitchState<PlayerIdleState>();
++                    animancer.Play(moveEndData.moveToWall).Events(player).OnEnd = () => DeferredSwitch<PlayerIdleState>();
+                     return true;
+                 }
+             }
+@@ -57,12 +57,12 @@ namespace ThirdPersonController
+             if (leftFootLocalPos.z > rightFootLocalPos.z)
+             {
+                 Debug.Log("左腿在前");
+-                animancer.Play(moveEndData.moveEnd_L).Events(player).OnEnd = () => SwitchState<PlayerIdleState>();
++                animancer.Play(moveEndData.moveEnd_L).Events(player).OnEnd = () => DeferredSwitch<PlayerIdleState>();
+             }
+             else
+             {
+                 Debug.Log("右腿在前");
+-                animancer.Play(moveEndData.moveEnd_R).Events(player).OnEnd = () => SwitchState<PlayerIdleState>();
++                animancer.Play(moveEndData.moveEnd_R).Events(player).OnEnd = () => DeferredSwitch<PlayerIdleState>();
+             }
+         }
+ 
+@@ -87,6 +87,8 @@ namespace ThirdPersonController
+         {
+             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+ 
++            if (TryExecuteDeferredSwitch()) return;
++
+             if (GameModule.Input.GetButtonDown(InputButtonType.Jump))
+             {
+                 OnJumpStart();
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveLoopState.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveLoopState.cs
+index 83f1a1b..30be71a 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveLoopState.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveLoopState.cs
+@@ -20,7 +20,9 @@ namespace ThirdPersonController
+         protected internal override void OnEnter(IFsm<Player> fsm)
+         {
+             base.OnEnter(fsm);
++
+             animancer.Play(moveLoopData.moveLoop);
++
+             OnCheckInput();
+             reusableData.rotationValueParameter.CurrentValue = 0;
+         }
+@@ -65,8 +67,10 @@ namespace ThirdPersonController
+             Debug.DrawLine(player.transform.position + Vector3.up, player.transform.position + Vector3.up + player.transform.forward * reusableData.checkWallDistance, Color.yellow, 0.05f);
+             if (Physics.Raycast(player.transform.position + Vector3.up, player.transform.forward, out var hitInfo, reusableData.checkWallDistance, player.whatIsGround))
+             {
+-                if (Mathf.Abs(ToolFunction.GetDeltaAngle(player.transform.forward, -hitInfo.normal)) < 40)
++                var wallAngle = Mathf.Abs(ToolFunction.GetDeltaAngle(player.transform.forward, -hitInfo.normal));
++                if (wallAngle < 40)
+                 {
++                    Log.Warning($"[Claude] MoveLoop wall hit! Switching to MoveEnd | hitPoint=({hitInfo.point.x:F2},{hitInfo.point.y:F2},{hitInfo.point.z:F2}) hitObj={hitInfo.collider?.name} normal=({hitInfo.normal.x:F2},{hitInfo.normal.y:F2},{hitInfo.normal.z:F2}) wallAngle={wallAngle:F2} checkDist={reusableData.checkWallDistance:F2} playerPos=({player.transform.position.x:F2},{player.transform.position.y:F2},{player.transform.position.z:F2})");
+                     SwitchState<PlayerMoveEndState>();
+                 }
+             }
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveStartState.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveStartState.cs
+index 2a829ee..060c35c 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveStartState.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/PlayerMovemenState/PlayerMoveStartState.cs
+@@ -101,13 +101,16 @@ namespace ThirdPersonController
+ 
+         private void OnMoveStartEnd()
+         {
+-            SwitchState<PlayerMoveLoopState>();
++            // 在 Animancer OnEnd 回调中使用延迟切换，避免在 PlayableGraph 评估期间修改拓扑导致卡顿
++            DeferredSwitch<PlayerMoveLoopState>();
+         }
+ 
+         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
+         {
+             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+ 
++            if (TryExecuteDeferredSwitch()) return;
++
+             if (GameModule.Input.GetButtonDown(InputButtonType.Jump))
+             {
+                 OnJumpStart();
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/StateMachine/State/PlayerFsmState.cs b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/StateMachine/State/PlayerFsmState.cs
+index a5914b2..386d418 100644
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/StateMachine/State/PlayerFsmState.cs
++++ b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/StateMachine/State/PlayerFsmState.cs
+@@ -1,3 +1,4 @@
++using System;
+ using Animancer;
+ using TEngine;
+ using UnityEngine;
+@@ -21,6 +22,36 @@ namespace ThirdPersonController
+         /// </summary>
+         protected IFsm<Player> currentFsm;
+ 
++        /// <summary>
++        /// 延迟切换目标状态类型。
++        /// </summary>
++        private Type _deferredTargetState;
++        private bool _pendingDeferredSwitch;
++
++        /// <summary>
++        /// 延迟状态切换 — 用于 Animancer OnEnd 等不可直接修改 PlayableGraph 的回调中。
++        /// 仅设置标志位，实际切换在下一帧 OnUpdate 中通过 TryExecuteDeferredSwitch 执行。
++        /// </summary>
++        protected void DeferredSwitch<TState>() where TState : PlayerFsmState
++        {
++            _deferredTargetState = typeof(TState);
++            _pendingDeferredSwitch = true;
++        }
++
++        /// <summary>
++        /// 尝试执行延迟状态切换。应在 OnUpdate 开头调用。
++        /// 返回 true 表示已执行状态切换，调用方应立即 return 以避免在新状态上下文中执行业务逻辑。
++        /// </summary>
++        protected bool TryExecuteDeferredSwitch()
++        {
++            if (!_pendingDeferredSwitch) return false;
++            _pendingDeferredSwitch = false;
++            var rt = Time.realtimeSinceStartup;
++            Log.Warning($"[Claude][DeferredSwitch] {GetType().Name} → {_deferredTargetState.Name} | frame={Time.frameCount} rt={rt:F3}s");
++            ChangeState(currentFsm, _deferredTargetState);
++            return true;
++        }
++
+         public PlayerReusableLogic reusableLogic
+         {
+             get
+@@ -57,6 +88,7 @@ namespace ThirdPersonController
+         protected internal override void OnEnter(IFsm<Player> fsm)
+         {
+             currentFsm = fsm;
++            Log.Info($"[Claude] OnEnter: {GetType().Name} | frame={Time.frameCount} | rt={Time.realtimeSinceStartup:F3}s | pos=({player.transform.position.x:F2},{player.transform.position.y:F2},{player.transform.position.z:F2}) | isGround={player.IsOnGround.Value} | VS={player.VerticalSpeed:F2}");
+             AddEventListening();
+         }
+ 
+@@ -65,6 +97,7 @@ namespace ThirdPersonController
+         /// </summary>
+         protected internal override void OnLeave(IFsm<Player> fsm, bool isShutdown)
+         {
++            Log.Info($"[Claude] OnLeave: {GetType().Name} | frame={Time.frameCount} | rt={Time.realtimeSinceStartup:F3}s | isGround={player.IsOnGround.Value} | VS={player.VerticalSpeed:F2}");
+             RemoveEventListening();
+         }
+ 
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Service/GameService.meta b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Service/GameService.meta
+deleted file mode 100644
+index 71ae7a4..0000000
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Service/GameService.meta
++++ /dev/null
+@@ -1,8 +0,0 @@
+-fileFormatVersion: 2
+-guid: 29f743056065a92429c56ffab8a336fd
+-folderAsset: yes
+-DefaultImporter:
+-  externalObjects: {}
+-  userData: 
+-  assetBundleName: 
+-  assetBundleVariant: 
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Service/GameService/InputService.meta b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Service/GameService/InputService.meta
+deleted file mode 100644
+index 633aca7..0000000
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Service/GameService/InputService.meta
++++ /dev/null
+@@ -1,8 +0,0 @@
+-fileFormatVersion: 2
+-guid: bf8010914e5b19e489f1e1a3d085b03b
+-folderAsset: yes
+-DefaultImporter:
+-  externalObjects: {}
+-  userData: 
+-  assetBundleName: 
+-  assetBundleVariant: 
+diff --git a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Service/GameService/TimerService.meta b/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Service/GameService/TimerService.meta
+deleted file mode 100644
+index 5ecf1a0..0000000
+--- a/UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Service/GameService/TimerService.meta
++++ /dev/null
+@@ -1,8 +0,0 @@
+-fileFormatVersion: 2
+-guid: 5101ce127dd64db44b006a0589ed7236
+-folderAsset: yes
+-DefaultImporter:
+-  externalObjects: {}
+-  userData: 
+-  assetBundleName: 
+-  assetBundleVariant: 
