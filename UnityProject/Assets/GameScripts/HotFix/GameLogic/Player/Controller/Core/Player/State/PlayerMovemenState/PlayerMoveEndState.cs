@@ -11,7 +11,6 @@ namespace ThirdPersonController
         private PlayerMoveEndData moveEndData;
         private float angle;
         private float speed;
-        private int _fallCheckTid;
 
         protected internal override void OnInit(IFsm<Player> fsm)
         {
@@ -24,6 +23,7 @@ namespace ThirdPersonController
             base.OnEnter(fsm);
             angle = reusableData.rotationValueParameter.CurrentValue;
             speed = reusableData.speedValueParameter.CurrentValue;
+            CheckCurrentFall();
 
             if (CheckWall())
             {
@@ -39,7 +39,7 @@ namespace ThirdPersonController
                 float distance = Vector3.Distance(player.transform.position + Vector3.up, hitInfo.point);
                 if (distance > 0.45f && distance < reusableData.checkWallDistance)
                 {
-                    animancer.Play(moveEndData.moveToWall).Events(player).OnEnd = () => SwitchState<PlayerIdleState>();
+                    animancer.Play(moveEndData.moveToWall).Events(player).OnEnd = () => DeferredSwitch<PlayerIdleState>();
                     return true;
                 }
             }
@@ -57,12 +57,12 @@ namespace ThirdPersonController
             if (leftFootLocalPos.z > rightFootLocalPos.z)
             {
                 Debug.Log("左腿在前");
-                animancer.Play(moveEndData.moveEnd_L).Events(player).OnEnd = () => SwitchState<PlayerIdleState>();
+                animancer.Play(moveEndData.moveEnd_L).Events(player).OnEnd = () => DeferredSwitch<PlayerIdleState>();
             }
             else
             {
                 Debug.Log("右腿在前");
-                animancer.Play(moveEndData.moveEnd_R).Events(player).OnEnd = () => SwitchState<PlayerIdleState>();
+                animancer.Play(moveEndData.moveEnd_R).Events(player).OnEnd = () => DeferredSwitch<PlayerIdleState>();
             }
         }
 
@@ -76,16 +76,13 @@ namespace ThirdPersonController
         {
             base.RemoveEventListening();
             player.IsOnGround.ValueChanged -= OnCheckFall;
-            if (_fallCheckTid != 0)
-            {
-                GameModule.Timer.RemoveTimer(_fallCheckTid);
-                _fallCheckTid = 0;
-            }
         }
 
         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+
+            if (TryExecuteDeferredSwitch()) return;
 
             if (GameModule.Input.GetButtonDown(InputButtonType.Jump))
             {
@@ -106,20 +103,6 @@ namespace ThirdPersonController
 
             reusableData.rotationValueParameter.TargetValue = angle;
             reusableData.speedValueParameter.TargetValue = speed;
-        }
-
-        private void OnCheckFall(bool isGround)
-        {
-            if (!isGround)
-            {
-                _fallCheckTid = GameModule.Timer.AddTimer((timer) =>
-                {
-                    if (!player.IsOnGround.Value)
-                    {
-                        SwitchState<PlayerFallLoopState>();
-                    }
-                }, time: 0.05f);
-            }
         }
     }
 }

@@ -72,11 +72,64 @@ namespace GameLogic
             if (player != null)
             {
                 Log.Info($"[TPBattleContext] Player loaded successfully: {player.name}");
+                VerifyGroundLayer(player);
             }
             else
             {
                 Log.Error("[TPBattleContext] Failed to load Player.");
             }
+        }
+
+        /// <summary>
+        /// 诊断：验证 Player 的 ground LayerMask 与场景地面 Layer 是否匹配。
+        /// </summary>
+        private void VerifyGroundLayer(GameObject playerGo)
+        {
+            var playerComp = playerGo.GetComponent<ThirdPersonController.Player>();
+            if (playerComp == null)
+            {
+                Log.Error("[TPC_DIAG] Player component not found on loaded prefab!");
+                return;
+            }
+
+            var groundMask = playerComp.whatIsGround;
+
+            // 将 LayerMask 值解析为 layer 名称
+            var layerNames = new System.Collections.Generic.List<string>();
+            for (int i = 0; i < 32; i++)
+            {
+                if ((groundMask.value & (1 << i)) != 0)
+                {
+                    layerNames.Add($"{i}:{LayerMask.LayerToName(i)}");
+                }
+            }
+            Log.Info($"[TPC_DIAG] Player whatIsGround Mask = {groundMask.value} → [{string.Join(", ", layerNames)}]");
+
+            // 检测场景中所有带有 "Ground" 或 "Terrain" 标记的对象
+            var allObjects = Object.FindObjectsOfType<GameObject>();
+            var groundLayerObjects = new System.Collections.Generic.List<string>();
+            foreach (var go in allObjects)
+            {
+                int layer = go.layer;
+                string layerName = LayerMask.LayerToName(layer);
+                if (layerName.Contains("Ground") || layerName.Contains("Terrain") || layerName.Contains("ground"))
+                {
+                    if (!groundLayerObjects.Contains(layerName))
+                        groundLayerObjects.Add(layerName);
+                }
+            }
+            if (groundLayerObjects.Count > 0)
+            {
+                Log.Info($"[TPC_DIAG] Scene ground/terrain layers found: [{string.Join(", ", groundLayerObjects)}]");
+            }
+            else
+            {
+                Log.Warning("[TPC_DIAG] No objects with 'Ground'/'Terrain' layer found in scene! This may cause ground detection failures.");
+            }
+
+            // 检查 Mask 是否覆盖了 Default layer (0) — 通常地面在 Default
+            bool masksDefault = (groundMask.value & 1) != 0;
+            Log.Info($"[TPC_DIAG] whatIsGround includes Default(0)? {masksDefault}");
         }
     }
 }

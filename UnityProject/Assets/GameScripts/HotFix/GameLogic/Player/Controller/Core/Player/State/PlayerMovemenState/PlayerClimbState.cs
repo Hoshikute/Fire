@@ -65,6 +65,12 @@ namespace ThirdPersonController
         protected internal override void OnLeave(IFsm<Player> fsm, bool isShutdown)
         {
             base.OnLeave(fsm, isShutdown);
+            // 安全恢复 CC：确保即使攀爬被中断也能正确恢复物理状态
+            if (player.DisEnableGravity || !player.Controller.enabled || player.ApplyFullRootMotion)
+            {
+                Debug.Log("攀爬退出时安全恢复CC");
+                ResetCC();
+            }
             animancerState = null;
         }
 

@@ -10,6 +10,9 @@ GenerateDatas/
 #FileServer
 Tools/FileServer/AssetRoot
 
+#Build
+/Build/
+
 UnityProject/ProjectSettings/CommonBurstAotSettings.json
 UnityProject/ProjectSettings/BurstAotSettings_StandaloneWindows.json
 

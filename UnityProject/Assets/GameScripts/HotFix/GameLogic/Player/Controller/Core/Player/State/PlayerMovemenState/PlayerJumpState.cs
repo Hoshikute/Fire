@@ -20,7 +20,7 @@ namespace ThirdPersonController
         {
             base.OnEnter(fsm);
             reusableData.currentInertialVelocity = GetInertialVelocity();
-            Debug.Log("惯性速度：" + reusableData.currentInertialVelocity / Time.deltaTime);
+            Debug.Log($"[JumpDebug] EXEC: JumpState entered | inertialSpeed={reusableData.currentInertialVelocity.magnitude / Time.deltaTime:F2} isPlaceJump={GameModule.Input.Move == Vector2.zero}");
             reusableData.currentInertialVelocity.y = 0;
 
             player.ChangeVerticalSpeed(ToolFunction.GetJumpInitVelocity(0.8f, player.gravity));

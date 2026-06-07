@@ -9,7 +9,6 @@ namespace ThirdPersonController
     public class PlayerMoveLoopState : PlayerMovementFsmState
     {
         private PlayerMoveLoopData moveLoopData;
-        private int tid;
 
         protected internal override void OnInit(IFsm<Player> fsm)
         {
@@ -20,9 +19,13 @@ namespace ThirdPersonController
         protected internal override void OnEnter(IFsm<Player> fsm)
         {
             base.OnEnter(fsm);
+
             animancer.Play(moveLoopData.moveLoop);
+
             OnCheckInput();
+            if (currentFsm.CurrentState != this) return;
             reusableData.rotationValueParameter.CurrentValue = 0;
+            CheckCurrentFall();
         }
 
         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
@@ -65,7 +68,8 @@ namespace ThirdPersonController
             Debug.DrawLine(player.transform.position + Vector3.up, player.transform.position + Vector3.up + player.transform.forward * reusableData.checkWallDistance, Color.yellow, 0.05f);
             if (Physics.Raycast(player.transform.position + Vector3.up, player.transform.forward, out var hitInfo, reusableData.checkWallDistance, player.whatIsGround))
             {
-                if (Mathf.Abs(ToolFunction.GetDeltaAngle(player.transform.forward, -hitInfo.normal)) < 40)
+                var wallAngle = Mathf.Abs(ToolFunction.GetDeltaAngle(player.transform.forward, -hitInfo.normal));
+                if (wallAngle < 40)
                 {
                     SwitchState<PlayerMoveEndState>();
                 }
@@ -87,11 +91,6 @@ namespace ThirdPersonController
         protected internal override void OnLeave(IFsm<Player> fsm, bool isShutdown)
         {
             base.OnLeave(fsm, isShutdown);
-            if (tid != 0)
-            {
-                GameModule.Timer.RemoveTimer(tid);
-                tid = 0;
-            }
         }
 
         private void OnCheckInput()
@@ -101,20 +100,6 @@ namespace ThirdPersonController
                 return;
             }
             SwitchState<PlayerMoveEndState>();
-        }
-
-        private void OnCheckFall(bool isGround)
-        {
-            if (!isGround)
-            {
-                tid = GameModule.Timer.AddTimer((timer) =>
-                {
-                    if (!player.IsOnGround.Value)
-                    {
-                        SwitchState<PlayerFallLoopState>();
-                    }
-                }, time: 0.05f);
-            }
         }
     }
 }

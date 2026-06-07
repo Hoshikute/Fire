@@ -99,7 +99,6 @@ namespace ThirdPersonController
         {
             if (lockTarget == null)
             {
-                // 添加空检查
                 if (cam == null) return;
                 player.transform.rotation = Quaternion.Slerp(player.transform.rotation, Quaternion.LookRotation(Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up)), Time.deltaTime * rotationSize);
             }
@@ -114,7 +113,6 @@ namespace ThirdPersonController
         {
             if (normal == default)
             {
-                // 添加空检查
                 if (cam == null) return;
                 player.transform.rotation = Quaternion.Slerp(player.transform.rotation, Quaternion.LookRotation(Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up)), Time.deltaTime * rotationSize);
             }
@@ -161,10 +159,8 @@ namespace ThirdPersonController
 
         protected Vector3 GetTargetDir()
         {
-            // 添加空检查，避免 NullReferenceException
             if (cam == null)
             {
-                // 回退：使用世界坐标系方向
                 return new Vector3(GameModule.Input.Move.x, 0, GameModule.Input.Move.y);
             }
             return Quaternion.Euler(0, cam.eulerAngles.y, 0) * new Vector3(GameModule.Input.Move.x, 0, GameModule.Input.Move.y);
@@ -176,6 +172,7 @@ namespace ThirdPersonController
 
         protected void OnJumpStart()
         {
+            Debug.Log($"[JumpDebug] INPUT: OnJumpStart from {GetType().Name} | isGround={player.IsOnGround.Value}");
             reusableLogic.OnJump();
         }
 
@@ -202,6 +199,38 @@ namespace ThirdPersonController
             {
                 OnStateDefaultEnd(fsm);
             }
+        }
+
+        protected void CheckCurrentFall()
+        {
+            if (!player.IsOnGround.Value)
+            {
+                StartFallCheckTimer();
+            }
+        }
+
+        protected void OnCheckFall(bool isGround)
+        {
+            if (!isGround)
+            {
+                StartFallCheckTimer();
+            }
+        }
+
+        private void StartFallCheckTimer()
+        {
+            if (_fallCheckTimerId != 0)
+            {
+                return;
+            }
+            _fallCheckTimerId = GameModule.Timer.AddTimer((timer) =>
+            {
+                _fallCheckTimerId = 0;
+                if (currentFsm.CurrentState == this && !player.IsOnGround.Value)
+                {
+                    SwitchState<PlayerFallLoopState>();
+                }
+            }, time: 0.05f);
         }
 
         protected void InAirMove()

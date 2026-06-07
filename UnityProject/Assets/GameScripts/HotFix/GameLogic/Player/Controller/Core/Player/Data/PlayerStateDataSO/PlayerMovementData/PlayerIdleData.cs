@@ -8,7 +8,7 @@ namespace ThirdPersonController
     public class PlayerIdleData
     {
         [field: SerializeField] public TransitionAsset idle { get; private set; }
-    
+
         [field:SerializeField] public AnimationClip[] strandIdle_Lock { get; private set; }
         [field: SerializeField] public AnimationClip[] crouchIdle_Lock { get; private set; }
         [field: SerializeField] public AnimationClip[] strandIdle { get; private set; }

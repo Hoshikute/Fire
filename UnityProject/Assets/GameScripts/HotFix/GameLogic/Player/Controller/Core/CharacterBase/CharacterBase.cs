@@ -1,4 +1,5 @@
 using System;
+using TEngine;
 using UnityEngine;
 
 namespace ThirdPersonController
@@ -53,7 +54,15 @@ namespace ThirdPersonController
         {
             detectedOrigin = transform.position - groundDetectedOffset * Vector3.up;
             var isHit = Physics.CheckSphere(detectedOrigin, groundRadius, whatIsGround, QueryTriggerInteraction.Ignore);
+            var prevGround = IsOnGround.Value;
             IsOnGround.Value = isHit && VerticalSpeed < 0;
+
+            // ★ 诊断日志：离地/着地变化
+            if (prevGround != IsOnGround.Value)
+            {
+                Log.Warning($"[Claude] IsOnGround changed: {prevGround} → {IsOnGround.Value} | isHit={isHit} VS={VerticalSpeed:F2} gravity={gravity} | pos=({transform.position.x:F2},{transform.position.y:F2},{transform.position.z:F2}) | groundLayer={whatIsGround.value} | detectedOrigin=({detectedOrigin.x:F2},{detectedOrigin.y:F2},{detectedOrigin.z:F2}) groundRadius={groundRadius:F2}");
+            }
+
             return IsOnGround.Value;
         }
 

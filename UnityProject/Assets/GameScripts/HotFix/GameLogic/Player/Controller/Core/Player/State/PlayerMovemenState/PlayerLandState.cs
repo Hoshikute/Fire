@@ -40,11 +40,33 @@ namespace ThirdPersonController
                 }
 
                 state.Events(player).SetCallback(playerSO.playerParameterData.moveInterruptEvent, () => OnInputInterruption(currentFsm));
-                state.Events(player).OnEnd = () => SwitchState<PlayerIdleState>();
+                state.Events(player).OnEnd = () => DeferredSwitch<PlayerIdleState>();
             }
             else
             {
                 SwitchState<PlayerIdleState>();
+            }
+        }
+
+        protected override void AddEventListening()
+        {
+            base.AddEventListening();
+        }
+
+        protected override void RemoveEventListening()
+        {
+            base.RemoveEventListening();
+        }
+
+        protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
+        {
+            if (TryExecuteDeferredSwitch()) return;
+            base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+
+            // 落地缓冲跳跃：着地期间可按空格立即起跳
+            if (GameModule.Input.GetButtonDown(InputButtonType.Jump))
+            {
+                OnJumpStart();
             }
         }
     }

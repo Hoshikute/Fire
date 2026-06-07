@@ -90,8 +90,7 @@ namespace ThirdPersonController
             if (reusableData.standValueParameter.TargetValue == 1)
             {
                 if (reusableData.standIdleList.Count == 0) return;
-                // 计算下一个动画的索引
-               reusableData.currentStandIdleIndex = (reusableData.currentStandIdleIndex + 1) % reusableData.standIdleList.Count;
+                reusableData.currentStandIdleIndex = (reusableData.currentStandIdleIndex + 1) % reusableData.standIdleList.Count;
     
                 for (int i = 0; i < reusableData.standIdleList.Count; i++)
                 {
@@ -110,7 +109,6 @@ namespace ThirdPersonController
             else if (reusableData.standValueParameter.TargetValue == 0)
             {
                 if (reusableData.crouchIdleList.Count == 0) return;
-                // 计算下一个动画的索引
                 reusableData.currentCrouchIdleIndex = (reusableData.currentCrouchIdleIndex + 1) % reusableData.crouchIdleList.Count;
     
                 for (int i = 0; i < reusableData.crouchIdleList.Count; i++)
@@ -146,58 +144,56 @@ namespace ThirdPersonController
             float obstructHeight = 0;
             RaycastHit hit = GetWallHight(player.transform.forward, canClimbMinHeight, canClimbMaxHight,detectionDistance, ref vaultHeight,ref obstructHeight,detectionSamplingCount);
             float angle = Vector3.Angle(-player.transform.forward, hit.normal);
-            Debug.Log("angle:" + angle);
-            Debug.Log("hit:" + hit.point);
-            Debug.Log("vaultHeight:" + vaultHeight);
-            Debug.Log("障碍物相对高度" + obstructHeight);
+            Debug.Log($"[JumpDebug] DECIDE: OnJump triggered | obstructHeight={obstructHeight:F2} angle={angle:F1} hitPoint=({hit.point.x:F2},{hit.point.y:F2},{hit.point.z:F2})");
             if (hit.point.y ==0 || angle > detectionAngle)//判断这个墙如果太高也不做攀爬//判断人物与墙面角度是否符合要求：TODO玩家的输入是否影响
             {
+                Debug.Log($"[JumpDebug] EXEC: → JumpState (no wall or angle too big, angle={angle:F1})");
                 player.SwitchState<PlayerJumpState>();
-                //不做攀爬,做跳跃逻辑
                 return;
             }
             Vector3 vaultStartPos = new Vector3(hit.point.x, vaultHeight, hit.point.z);
             reusableData.vaultPos = vaultStartPos;
             reusableData.hit = hit;
-            if (obstructHeight < 2.5f && obstructHeight >= 2f)//中高攀
+            // 按障碍高度分类决策：攀爬 / 翻越 / 普通跳跃
+            // 注意 VaultOrClimb 内部会通过 player.SwitchState<PlayerClimbState> 切换状态，此处不要重复调用
+            if (obstructHeight >= 2f)//中高及以上：不做攀爬，普通跳跃
             {
+                Debug.Log($"[JumpDebug] EXEC: → JumpState (too high, obstructHeight={obstructHeight:F2})");
                 player.SwitchState<PlayerJumpState>();
                 return;
             }
-            else if (obstructHeight < 1.7f && obstructHeight >= 1f)//中攀
+            else if (obstructHeight >= 1f && obstructHeight < 1.7f)//中攀
             {
                 reusableData.ObstructHeight = ObstructHeight.medium;
                 VaultOrClimb(vaultStartPos, hit);
+                return;
             }
-            else if (obstructHeight < 1 && obstructHeight >= 0.35f)//低中攀
+            else if (obstructHeight >= 0.35f && obstructHeight < 1f)//低中攀
             {
                 reusableData.ObstructHeight = ObstructHeight.lowMedium;
                 VaultOrClimb(vaultStartPos, hit);
+                return;
             }
-            else if (obstructHeight < 0.35f)//低攀:只能爬不能翻越
+            else if (obstructHeight > 0)//低攀:只能爬不能翻越
             {
                 reusableData.ObstructHeight = ObstructHeight.low;
                 reusableData.ClimbType = ClimbType.Climb;
-                //TODO爬
-                Debug.Log("爬：" + reusableData.ObstructHeight.ToString());
+                Debug.Log($"[JumpDebug] EXEC: → ClimbState (low, obstructHeight={obstructHeight:F2})");
                 player.SwitchState<PlayerClimbState>();
+                return;
             }
             else
             {
+                // 无有效障碍物，普通跳跃
+                Debug.Log($"[JumpDebug] EXEC: → JumpState (no valid obstacle)");
                 player.SwitchState<PlayerJumpState>();
                 return;
             }
-            //一般攀爬
-            player.SwitchState<PlayerClimbState>();
         }
     
         /// <summary>
         /// 检测障碍物的最大高度
         /// </summary>
-        /// <param name="startPos"></param>
-        /// <param name="vaultHight"></param>
-        /// <param name="wallNormal"></param>
-        /// <returns></returns>
         private RaycastHit GetWallHight(Vector3 targetDir,float startDetectionHight,float maxDetectionHight, float detectionLength,ref float vaultHight,ref float obstructHeight,int detectionSamplingCount)
         {
             RaycastHit currentHit = new RaycastHit() ;
@@ -219,12 +215,10 @@ namespace ThirdPersonController
             obstructHeight = currentHit.point.y - player.transform.position.y;
             if (obstructHeight >= canClimbMaxHight)//认为检测点高于最高爬的高度
             {
-               // this.Log("障碍物太高");
                 return default;
             }
             else if (obstructHeight<=0)//认为没有检测到任何障碍物
             {
-              //  this.Log("障碍物太低或者没有");
                 return default;
             }
             else
@@ -245,29 +239,27 @@ namespace ThirdPersonController
             //根据这个高度再次检测判断是否能翻越还是攀爬
             if (Physics.Raycast(VaultStart, -wallHit.normal, vaultMaxDistance, player.whatIsGround))//先判断翻越空间有没有其他物体遮挡
             {
-                //切换爬状态
-                Debug.Log("爬：" + reusableData.ObstructHeight.ToString());
                 reusableData.ClimbType = ClimbType.Climb;
+                Debug.Log($"[JumpDebug] DECIDE: Climb (space blocked) ObstructHeight={reusableData.ObstructHeight}");
             }
             else
             {
                 Vector3 vaultDetectionPos = VaultStart  +(- wallHit.normal * vaultMaxDistance);
                 Debug.DrawLine(vaultDetectionPos, vaultDetectionPos+Vector3.down*0.25f,Color.cyan,2);
-                //再判断这个障碍物的厚度，是否可以翻越
                 if (Physics.Raycast(vaultDetectionPos, Vector3.down, 0.25f))
                 {
-                    //切换爬状态
-                    Debug.Log("爬：" + reusableData.ObstructHeight.ToString());
                     reusableData.ClimbType = ClimbType.Climb;
+                    Debug.Log($"[JumpDebug] DECIDE: Climb (wall too thick) ObstructHeight={reusableData.ObstructHeight}");
                 }
                 else
                 {
-                    //切换翻越
-                    Debug.Log("翻越：" + reusableData.ObstructHeight.ToString());
                     reusableData.ClimbType = ClimbType.Vault;
+                    Debug.Log($"[JumpDebug] DECIDE: Vault (can vault over) ObstructHeight={reusableData.ObstructHeight}");
                 }
             }
-          
+            // 统一使用 PlayerClimbState，ClimbType 决定播放攀爬还是翻越动画
+            Debug.Log($"[JumpDebug] EXEC: → ClimbState (ClimbType={reusableData.ClimbType})");
+            player.SwitchState<PlayerClimbState>();
         }
         #endregion
     
@@ -278,15 +270,13 @@ namespace ThirdPersonController
             float obstructHeight = 0;
             RaycastHit hit = GetWallHight(targetDir,1.6f,1.9f,1.5f, ref vaultHeight, ref obstructHeight, 8);
             float angle = Vector3.Angle(-player.transform.forward, hit.normal);
-            if (hit.point.y == 0 || angle > detectionAngle)//判断这个墙如果太高也不做攀爬//判断人物与墙面角度是否符合要求：TODO玩家的输入是否影响
+            if (hit.point.y == 0 || angle > detectionAngle)
             {
                 return;
             }
             reusableData.hit = hit;
-            //判断是否在合适的距离以及相对人物的高度、
             if (obstructHeight > 1.6f && obstructHeight < 1.9f)
             {
-                //抓住墙面
                 player.SwitchState<PlayerLedgeClimbState>();
                 animator.Play(playerSO.playerMovementData.PlayerHangWallData.hang_wall_idle_frond);
             }
@@ -323,23 +313,19 @@ namespace ThirdPersonController
             if (currentTime > startNormalizedTime && currentTime < endNormalizedTime)
             {
                 float t = (currentTime - startNormalizedTime) / (endNormalizedTime - startNormalizedTime);
-    
                 Vector3 targetPos = new Vector3(player.transform.position.x, Mathf.Lerp(climbTargetMatchInfo.InitPos.y, climbTargetMatchInfo.TargetPos.y, t), player.transform.position.z);
                 player.transform.position = targetPos;
             }
         }
         public void SetClimbTarget_Y_Task(AnimancerState animancerState, ref ClimbTargetMatchInfo climbTargetMatchInfo, float startNormalizedTime, float endNormalizedTime)
         {
-            // 在方法开始处复制 ref 参数到一个局部变量
             var localClimbTargetMatchInfo = climbTargetMatchInfo;
     
             animationTask = () =>
             {
-                // 使用局部变量替代 ref 参数
                 ClimbTargetMatch_Y(animancerState, ref localClimbTargetMatchInfo, startNormalizedTime, endNormalizedTime);
             };
     
-            // 在方法结束时返回修改后的值给原始 ref 参数
             climbTargetMatchInfo = localClimbTargetMatchInfo;
     
         }
@@ -368,10 +354,8 @@ namespace ThirdPersonController
                 float endSeconds = time * endNormalizedTime;
                 if (targetAnimation.NormalizedTime >= startNormalTime && targetAnimation.NormalizedTime <= endNormalizedTime)
                 {
-                    //计算目标时间内每帧的补偿量
                     Vector3 frameCompensation = compensationMovement * (Time.deltaTime / (endSeconds - startSeconds));
                     player.AnimatorDeltaPositionOffset = frameCompensation;
-                    Debug.Log("正在补偿位移：" + player.AnimatorDeltaPositionOffset);
                 }
                 else
                 {

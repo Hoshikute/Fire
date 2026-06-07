@@ -8,10 +8,10 @@ namespace ThirdPersonController
     /// </summary>
     public class PlayerMoveStartState : PlayerMovementFsmState
     {
+        private const float MoveLoopTransitionNormalizedTime = 0.85f;
         private PlayerMoveStartData moveStartData;
         private float targetAngle;
         private bool isForwardMove;
-        private int tid;
         private AnimancerState state;
 
         protected internal override void OnInit(IFsm<Player> fsm)
@@ -30,6 +30,7 @@ namespace ThirdPersonController
                 return;
             }
 
+            CheckCurrentFall();
             targetAngle = UpdateRotation();
             if (targetAngle < 22.5 && targetAngle >= 0 || targetAngle >= -22.5 && targetAngle <= 0)
             {
@@ -79,34 +80,41 @@ namespace ThirdPersonController
             player.IsOnGround.ValueChanged -= OnCheckFall;
         }
 
-        private void OnCheckInput()
+        private bool OnCheckInput()
         {
             if (GameModule.Input.Move != UnityEngine.Vector2.zero)
             {
-                return;
+                return true;
             }
             SwitchState<PlayerMoveEndState>();
+            return false;
         }
 
         protected internal override void OnLeave(IFsm<Player> fsm, bool isShutdown)
         {
             base.OnLeave(fsm, isShutdown);
-            if (tid != 0)
+            if (state != null)
             {
-                GameModule.Timer.RemoveTimer(tid);
-                tid = 0;
+                state.Events(player).OnEnd = null;
             }
             isForwardMove = false;
         }
 
         private void OnMoveStartEnd()
         {
-            SwitchState<PlayerMoveLoopState>();
+            if (currentFsm.CurrentState != this)
+            {
+                return;
+            }
+            // 在 Animancer OnEnd 回调中使用延迟切换，避免在 PlayableGraph 评估期间修改拓扑导致卡顿
+            DeferredSwitch<PlayerMoveLoopState>();
         }
 
         protected internal override void OnUpdate(IFsm<Player> fsm, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
+
+            if (TryExecuteDeferredSwitch()) return;
 
             if (GameModule.Input.GetButtonDown(InputButtonType.Jump))
             {
@@ -119,26 +127,17 @@ namespace ThirdPersonController
                 OnCrouch();
             }
 
-            OnCheckInput();
+            if (!OnCheckInput()) return;
             UpdateCashVelocity(player.AnimationVelocity);
             if (state.NormalizedTime > 0.4f || isForwardMove)
             {
                 UpdateRotation(false, 0.7f, true, 1.8f);
             }
             UpdateSpeed();
-        }
 
-        private void OnCheckFall(bool isGround)
-        {
-            if (!isGround)
+            if (state.NormalizedTime >= MoveLoopTransitionNormalizedTime)
             {
-                tid = GameModule.Timer.AddTimer((timer) =>
-                {
-                    if (!player.IsOnGround.Value)
-                    {
-                        SwitchState<PlayerFallLoopState>();
-                    }
-                }, time: 0.05f);
+                SwitchState<PlayerMoveLoopState>();
             }
         }
     }

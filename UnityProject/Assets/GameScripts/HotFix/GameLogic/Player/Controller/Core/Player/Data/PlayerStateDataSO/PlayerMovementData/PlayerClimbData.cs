@@ -6,9 +6,9 @@ namespace ThirdPersonController
 {
     [Serializable]
     public class PlayerClimbData
-    {    
+    {
         //根据高度的不同填入合适的动画
-    
+
         //翻越动画
         [field: SerializeField] public ClipTransition[] vaults;
         //攀爬动画

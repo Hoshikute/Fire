@@ -16,6 +16,5 @@ namespace ThirdPersonController
         [field: SerializeField] public TransitionAsset moveStart_R90 { get; private set; }
         [field: SerializeField] public TransitionAsset moveStart_R135 { get; private set; }
         [field: SerializeField] public TransitionAsset moveStart_R180 { get; private set; }
-    
     }
 }

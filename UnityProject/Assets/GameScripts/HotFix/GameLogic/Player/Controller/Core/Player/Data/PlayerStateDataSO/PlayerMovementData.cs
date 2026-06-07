@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace ThirdPersonController
 {
@@ -12,6 +12,6 @@ namespace ThirdPersonController
         [field :SerializeField] public PlayerClimbData  PlayerClimbData { get; private set; }
         [field:SerializeField] public PlayerHangWallData PlayerHangWallData { get; set; }
         [field: SerializeField] public PlayerJumpFallAndLandData PlayerJumpFallAndLandData { get;private set; }
-    
+
     }
 }

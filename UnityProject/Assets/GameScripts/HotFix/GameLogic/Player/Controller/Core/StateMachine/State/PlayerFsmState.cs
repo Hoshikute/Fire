@@ -1,3 +1,4 @@
+using System;
 using Animancer;
 using TEngine;
 using UnityEngine;
@@ -20,6 +21,34 @@ namespace ThirdPersonController
         /// 当前 FSM 引用 - 用于在事件回调中切换状态。
         /// </summary>
         protected IFsm<Player> currentFsm;
+
+        /// <summary>
+        /// 延迟切换目标状态类型。
+        /// </summary>
+        private Type _deferredTargetState;
+        private bool _pendingDeferredSwitch;
+
+        /// <summary>
+        /// 延迟状态切换 — 用于 Animancer OnEnd 等不可直接修改 PlayableGraph 的回调中。
+        /// 仅设置标志位，实际切换在下一帧 OnUpdate 中通过 TryExecuteDeferredSwitch 执行。
+        /// </summary>
+        protected void DeferredSwitch<TState>() where TState : PlayerFsmState
+        {
+            _deferredTargetState = typeof(TState);
+            _pendingDeferredSwitch = true;
+        }
+
+        /// <summary>
+        /// 尝试执行延迟状态切换。应在 OnUpdate 开头调用。
+        /// 返回 true 表示已执行状态切换，调用方应立即 return 以避免在新状态上下文中执行业务逻辑。
+        /// </summary>
+        protected bool TryExecuteDeferredSwitch()
+        {
+            if (!_pendingDeferredSwitch) return false;
+            _pendingDeferredSwitch = false;
+            ChangeState(currentFsm, _deferredTargetState);
+            return true;
+        }
 
         public PlayerReusableLogic reusableLogic
         {
@@ -44,7 +73,6 @@ namespace ThirdPersonController
             animancer = player.Animancer;
             currentFsm = fsm;
 
-            // 添加空检查警告
             if (cam == null)
             {
                 Debug.LogWarning($"[PlayerFsmState] cam 为 null，玩家旋转功能可能异常");

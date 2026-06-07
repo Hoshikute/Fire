@@ -656,9 +656,9 @@ MonoBehaviour:
   velocityLimit: {x: -20, y: 60}
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   groundDetectedOffset: -0.06
-  groundRadius: 0.12
+  groundRadius: 1.2
   moveSpeedMult: 2
   playerSO: {fileID: 11400000, guid: 99e2ea24fd0ddcb46a2bf3f325a404fc, type: 2}
   _cameraTransform: {fileID: 0}
