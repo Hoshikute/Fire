@@ -28,6 +28,12 @@ namespace GameLogic
         /// <summary>是否接地。</summary>
         public bool isOnGround = true;
 
+        /// <summary>
+        /// 速度档位（1 = 走，2 = 跑）。
+        /// 由输入采集系统根据 Shift 键写入，PlayerMoveSystem 读取选择对应速度常量。
+        /// </summary>
+        public int speedGear = 1;
+
         public override MomentComponentBase DeepCopy()
         {
             PlayerMoveComponent c = new PlayerMoveComponent();
@@ -38,6 +44,7 @@ namespace GameLogic
             c.moveSpeed = moveSpeed;
             c.verticalSpeed = verticalSpeed;
             c.isOnGround = isOnGround;
+            c.speedGear = speedGear;
             return c;
         }
     }

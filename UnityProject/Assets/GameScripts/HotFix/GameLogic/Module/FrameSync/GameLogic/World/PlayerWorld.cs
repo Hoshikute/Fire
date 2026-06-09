@@ -29,18 +29,21 @@ namespace GameLogic
         {
             return new Type[]
             {
-                typeof(PlayerInputCollectSystem), // 表现层：渲染帧采集 Unity 输入 → 单例
-                typeof(PlayerMoveSystem),         // 逻辑层：逻辑帧确定性移动
-                typeof(PlayerViewSystem),         // 表现层：渲染帧读逻辑状态驱动 Transform
+                typeof(PlayerInputCollectSystem), // 表现层：渲染帧采集 Unity 输入（含相机修正）→ 单例
+                typeof(PlayerMoveSystem),         // 逻辑层：逻辑帧确定性移动（走/跑/跳/重力/空中惯性）
+                typeof(PlayerStateSystem),        // 逻辑层：逻辑帧确定性状态推导（排在 Move 之后）
+                typeof(PlayerViewSystem),         // 表现层：渲染帧读 pos/faceDir 驱动 Transform 插值
+                typeof(PlayerAnimViewSystem),     // 表现层：渲染帧读 PlayerStateComponent 驱动 Animancer
             };
         }
 
         public override Type[] GetRecordTypes()
         {
-            // 声明可回滚组件：World 会用 RecordSystem<PlayerMoveComponent> 自动每帧快照。
+            // 声明可回滚组件：World 会用 RecordSystem<T> 自动每帧快照。
             return new Type[]
             {
                 typeof(PlayerMoveComponent),
+                typeof(PlayerStateComponent),
             };
         }
     }

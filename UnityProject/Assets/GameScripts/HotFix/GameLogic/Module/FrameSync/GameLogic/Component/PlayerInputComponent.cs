@@ -16,20 +16,29 @@ namespace GameLogic
         /// <summary>
         /// 移动方向（定点单位向量，长度≈SyncVector3.ONE）。
         /// 由表现层把 Unity 的 Vector2 输入转成定点并归一化后写入。
+        /// 已包含相机朝向修正（在 PlayerInputCollectSystem 中完成）。
         /// </summary>
         public SyncVector3 moveDir = SyncVector3.Zero;
 
-        /// <summary>本帧是否按下跳跃。</summary>
+        /// <summary>本帧是否按下跳跃（边沿触发，消费后清空）。</summary>
         public bool jump;
 
+        /// <summary>本帧是否切换锁定模式（边沿触发，消费后清空）。</summary>
+        public bool toggleLock;
+
+        /// <summary>本帧是否触发平台跳请求（边沿触发，消费后清空）。</summary>
+        public bool platformJump;
+
         /// <summary>
-        /// 把输入清空（逻辑帧消费后调用，避免一次输入被多帧重复执行）。
-        /// 注意：moveDir 不清空——移动是持续性输入，松开手柄时表现层会写回 Zero。
-        /// jump 是边沿触发，消费后必须清掉。
+        /// 把所有边沿触发型输入清空。
+        /// 逻辑帧消费完后调用，避免一次按键在多帧重复触发。
+        /// 注意：moveDir 不清空——移动是持续性输入，松开摇杆时表现层会写回 Zero。
         /// </summary>
         public void ConsumeOneShot()
         {
             jump = false;
+            toggleLock = false;
+            platformJump = false;
         }
     }
 }

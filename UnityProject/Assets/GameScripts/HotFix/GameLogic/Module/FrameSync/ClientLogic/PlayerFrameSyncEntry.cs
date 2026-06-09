@@ -2,6 +2,7 @@
 // 作者：HuHu <3112891874@qq.com>
 // ----------------------------------------------------------------
 
+using Animancer;
 using TEngine;
 using UnityEngine;
 
@@ -9,68 +10,76 @@ namespace GameLogic
 {
     /// <summary>
     /// 帧同步角色控制入口（表现层 MonoBehaviour）。
-    /// 挂在场景里，负责：
-    ///   1. 通过 GameModule.FrameSync 创建 PlayerWorld；
-    ///   2. 生成一个玩家逻辑实体（PlayerMoveComponent 逻辑 + PlayerViewComponent 绑定表现 Transform）；
-    ///   3. 启动世界（IsStart=true），之后由 FrameSyncModule 主循环驱动逻辑帧 / 渲染帧。
+    /// 完整替代原 ThirdPersonController.Player：
+    ///   - 不再依赖 ThirdPersonController 命名空间的任何类型。
+    ///   - 负责创建 PlayerWorld、生成玩家逻辑实体、绑定 Animancer / 相机。
+    ///   - 摄像机绑定逻辑从 Player.cs 迁移到此处（Start 延迟绑定，保证 CameraModule 已初始化）。
     ///
-    /// 这是「传统单机控制器」与「FrameSync ECS」的桥：
-    /// 老的 ThirdPersonController 仍可独立存在；本入口提供一条用帧同步 ECS 跑角色移动的最小路径。
-    /// 把本组件挂到一个空 GameObject，并把要被驱动的角色 Transform 拖到 viewRoot 即可运行。
+    /// 使用方式：
+    ///   1. 把本组件挂到场景里的角色根 GameObject（需挂有 AnimancerComponent）。
+    ///   2. 把动画配置 SO（PlayerAnimConfig）拖入 animConfig 字段。
+    ///   3. 如需手动指定相机锚点，把子物体 LookAt Transform 拖入 lookAtTarget；
+    ///      否则自动查找名为 "LookAt" 的子节点，再回退到根节点。
+    ///   4. 启动后由 FrameSyncModule 主循环驱动逻辑帧 / 渲染帧。
     /// </summary>
     public class PlayerFrameSyncEntry : MonoBehaviour
     {
-        [Header("被帧同步逻辑驱动的角色表现根（Transform）")]
-        [SerializeField] private Transform _viewRoot;
+        private const string TraceHeader = "[PlayerFrameSyncEntry]";
 
-        [Header("初始逻辑位置（米，会转成定点数）")]
+        [Header("动画")]
+        [Tooltip("动画剪辑配置 ScriptableObject（PlayerAnimConfig）")]
+        [SerializeField] private PlayerAnimConfig _animConfig;
+
+        [Header("相机")]
+        [Tooltip("相机 LookAt 锚点（留空时自动查找子节点 LookAt，再回退到根节点）")]
+        [SerializeField] private Transform _lookAtTarget;
+
+        [Header("初始逻辑位置（米，转为定点数）")]
         [SerializeField] private Vector3 _spawnPos = Vector3.zero;
 
-        private WorldBase m_world;
-        private int m_playerEntityId;
+        // ── 运行时 ──────────────────────────────────────────────────────
+        private WorldBase          m_world;
+        private int                m_playerEntityId;
+        private AnimancerComponent m_animancer;
+        private bool               m_pendingCameraBind;
+
+        // ── Unity 生命周期 ───────────────────────────────────────────────
+
+        private void Awake()
+        {
+            m_animancer = GetComponent<AnimancerComponent>();
+            if (m_animancer == null)
+            {
+                Log.Error($"{TraceHeader} 未找到 AnimancerComponent，请检查挂载对象。");
+            }
+
+            if (_animConfig == null)
+            {
+                Log.Warning($"{TraceHeader} animConfig 未赋值，动画将无法播放。");
+            }
+
+            m_pendingCameraBind = true;
+        }
 
         private void Start()
         {
-            if (_viewRoot == null)
-            {
-                _viewRoot = transform;
-                Log.Warning("[PlayerFrameSyncEntry] 未指定 viewRoot，默认用自身 Transform。");
-            }
-
-            // 1) 创建世界（CreateWorld 内部会 Init 并加入 FrameSyncModule 的世界列表）。
+            // 1) 创建世界
             m_world = GameModule.FrameSync.CreateWorld<PlayerWorld>();
-            m_world.SyncRule = SyncRule.Frame; // 帧同步规则：本地算结果，只同步输入
+            m_world.SyncRule = SyncRule.Frame;
 
-            // 2) 生成玩家实体。逻辑组件 + 表现组件一并挂上。
+            // 2) 生成玩家实体
             SpawnPlayer();
 
-            // 3) 启动世界：之后 FrameSyncModule.Update 会驱动 Loop/FixedLoop。
+            // 3) 启动世界
             m_world.IsStart = true;
 
-            Log.Info($"[PlayerFrameSyncEntry] PlayerWorld 已启动，逻辑帧步长 {GameModule.FrameSync.IntervalTime}ms。");
-        }
+            Log.Info($"{TraceHeader} PlayerWorld 已启动，逻辑帧步长 {GameModule.FrameSync.IntervalTime}ms。");
 
-        private void SpawnPlayer()
-        {
-            // 逻辑组件（确定性，可回滚）
-            PlayerMoveComponent move = new PlayerMoveComponent
+            // 4) 延迟绑定相机（CameraModule 在 Start 阶段才保证初始化完成）
+            if (m_pendingCameraBind)
             {
-                pos = SyncVector3.FromVector3(_spawnPos),
-                faceDir = SyncVector3.FromRaw(0, 0, SyncVector3.ONE),
-                isOnGround = true,
-            };
-
-            // 表现组件（绑定 Unity Transform，仅表现层用）
-            PlayerViewComponent view = new PlayerViewComponent
-            {
-                viewRoot = _viewRoot,
-            };
-
-            // 稳定实体 ID：用固定标识，保证跨端 / 回滚一致。
-            m_playerEntityId = "LocalPlayer".ToHash();
-            m_world.CreateEntity(m_playerEntityId, move, view);
-
-            // CreateEntity 进的是 createCache，会在下一个 FixedLoop 的 LazyExecuteEntityOperation 真正加入世界。
+                TryBindCamera();
+            }
         }
 
         private void OnDestroy()
@@ -80,6 +89,79 @@ namespace GameLogic
                 GameModule.FrameSync.DestroyWorld(m_world);
                 m_world = null;
             }
+        }
+
+        // ── 实体生成 ─────────────────────────────────────────────────────
+
+        private void SpawnPlayer()
+        {
+            // 逻辑组件（确定性，可回滚）
+            PlayerMoveComponent move = new PlayerMoveComponent
+            {
+                pos        = SyncVector3.FromVector3(_spawnPos),
+                faceDir    = SyncVector3.FromRaw(0, 0, SyncVector3.ONE),
+                isOnGround = true,
+                speedGear  = 1,
+            };
+
+            // 逻辑状态组件（确定性，可回滚）
+            PlayerStateComponent state = new PlayerStateComponent
+            {
+                state         = PlayerLogicState.Idle,
+                framesInState = 0,
+            };
+
+            // 表现组件（绑定 Unity 对象，不进快照）
+            PlayerViewComponent view = new PlayerViewComponent
+            {
+                viewRoot   = transform,
+                animancer  = m_animancer,
+                animConfig = _animConfig,
+            };
+
+            // 稳定实体 ID（跨端 / 回滚一致）
+            m_playerEntityId = "LocalPlayer".ToHash();
+            m_world.CreateEntity(m_playerEntityId, move, state, view);
+        }
+
+        // ── 相机绑定（从原 Player.cs 迁移）──────────────────────────────
+
+        private void TryBindCamera()
+        {
+            Transform anchor = ResolveFollowAnchor();
+            if (anchor == null)
+            {
+                Log.Error($"{TraceHeader} 无法确定相机锚点，相机绑定跳过。");
+                return;
+            }
+
+            Log.Info($"{TraceHeader} 绑定相机：follow/lookAt = {anchor.name}");
+            GameModule.Camera.BindCinemachineToPlayer(anchor, anchor);
+            m_pendingCameraBind = false;
+        }
+
+        /// <summary>
+        /// 解析相机 Follow / LookAt 锚点。
+        /// 优先级：序列化字段 _lookAtTarget → 子节点 "LookAt" → 自身根节点。
+        /// </summary>
+        private Transform ResolveFollowAnchor()
+        {
+            if (_lookAtTarget != null)
+            {
+                Log.Info($"{TraceHeader}[ResolveFollowAnchor] 使用序列化 LookAt 目标：{_lookAtTarget.name}");
+                return _lookAtTarget;
+            }
+
+            Transform child = transform.Find("LookAt");
+            if (child != null)
+            {
+                _lookAtTarget = child;
+                Log.Info($"{TraceHeader}[ResolveFollowAnchor] 自动找到子节点 LookAt：{child.name}");
+                return child;
+            }
+
+            Log.Warning($"{TraceHeader}[ResolveFollowAnchor] 未找到 LookAt 锚点，回退到角色根节点。");
+            return transform;
         }
     }
 }
