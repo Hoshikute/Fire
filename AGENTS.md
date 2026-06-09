@@ -35,6 +35,8 @@ Unity 第三人称角色控制器 + 帧同步（lockstep）网游，含预测回
 
 详细架构、模块、踩坑记录都在 `.knowledge/`。**先读 `.knowledge/INDEX.md`** 按任务类型定位到具体文档，再读对应文件。
 
+> TEngine 框架机制（Module/FSM/资源/UI/事件/热更新/配置等通用框架问题）查 `.knowledge/framework/tengine-repowiki.md`，它会路由到完整框架文档 `UnityProject/repowiki/`。
+
 ## 维护约定
 
 修改了架构、新增了模块、踩了新坑后，**同步更新对应的 `.knowledge/` 文档**，保持知识库与代码一致。

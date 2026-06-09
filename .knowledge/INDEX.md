@@ -17,6 +17,7 @@
 | 调一个诡异的 Bug | 先扫 `pitfalls/` 下所有文件 |
 | 想知道某个设计为什么这么做 | `decisions/` 下的 ADR |
 | 命名 / 署名 / 代码风格 | `conventions/coding-style.md` |
+| **TEngine 框架机制**（Module/FSM/资源/UI/事件/热更新/配置/音频等）| `framework/tengine-repowiki.md`（再路由到 repowiki）|
 
 ## 文档清单
 
@@ -33,6 +34,9 @@
 
 ### conventions/ — 规范
 - `coding-style.md` — 命名、署名、注释、逻辑/表现分离
+
+### framework/ — TEngine 框架文档收录
+- `tengine-repowiki.md` — TEngine 框架百科（repowiki，137 篇）的导航页：按主题路由到 `UnityProject/repowiki/zh/content/` 下的具体文档。框架机制（模块/FSM/资源/UI/事件/热更新/配置/音频/性能/编辑器工具/API）都在这查。
 
 ### pitfalls/ — 踩坑记录（最值钱，调 Bug 前必看）
 - `rollback-bugs.md` — 回滚相关的坑
