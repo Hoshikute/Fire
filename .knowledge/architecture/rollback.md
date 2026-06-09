@@ -1,0 +1,42 @@
+# 预测回滚 (Rollback Prediction)
+
+## 一句话
+客户端先用预测输入跑在前面，收到权威输入后若发现不一致，就**回滚到历史帧的快照、用正确输入重放**到当前帧。
+
+## 关键文件
+- `Module/FrameSync/ECS/Record/RecordSystem.cs` — 记录系统泛型实现（快照保存/回滚/重放）
+- `Module/FrameSync/ECS/Record/RecordSystemBase.cs` — 记录系统基类
+- `Module/FrameSync/ECS/Record/RecordComponent.cs` — 按帧存储快照的容器
+- `Module/FrameSync/ECS/MomentComponentBase.cs` — 可被记录的"时刻组件"基类（带 Frame/ID/DeepCopy）
+- `Module/FrameSync/Core/WorldBase.cs` — 持有 `m_recordList`/`m_recordDict`，以及回滚缓存（create/destroy rollback cache）
+
+## 核心机制
+回滚围绕 `RecordSystem<T>`（T 是 `MomentComponentBase`）展开：
+
+- **Record(frame)** — 每逻辑帧把符合过滤条件的实体的组件 `DeepCopy()` 一份，打上 `Frame`/`ID`，存进 `RecordComponent<T>`。
+- **RevertToFrame(frame)** — 回滚：取出该帧的快照列表，对每个实体调用 `ChangeComp(深拷贝)` 恢复状态。处理三种实体情况：
+  1. 当前存在的实体 → 直接恢复
+  2. 在"创建回滚缓存"中的实体（该帧之后才被创建）
+  3. 在"销毁回滚缓存"中的实体（该帧之后被销毁，需复活）
+- **ClearAfter(frame) / ClearBefore(frame)** — 重放后清理废弃快照、滑动窗口清理过旧快照。
+
+## 回滚-重放完整流程（概念）
+1. 每逻辑帧执行后 Record 当前状态（快照入环形/列表缓冲）。
+2. 收到服务器权威输入，发现某历史帧 F 的预测输入与权威不符。
+3. 对所有记录系统 `RevertToFrame(F)` —— 世界回到第 F 帧状态。
+4. 用正确输入从 F 重新 FixedLoop 推进到当前帧（重算，`m_isRecalc = true`）。
+5. `ClearAfter` 清理被重算覆盖的旧快照。
+
+## 注意事项 / 坑（重点，见 pitfalls/rollback-bugs.md）
+- **DeepCopy 必须是真深拷贝**：`RecordSystem.Record` 和 `RevertToFrame` 都靠 `DeepCopy()`。若组件里有引用类型字段而 DeepCopy 只拷了引用（浅拷贝），回滚后新旧状态会共享同一对象，导致状态污染、表现诡异、跨端不一致。
+- **创建/销毁也要可回滚**：实体的"创建"和"销毁"在回滚时需要撤销/重做，靠 WorldBase 的 create/destroy rollback cache。新增实体生命周期逻辑时别忘了维护这两个缓存。
+- **快照内存与清理**：不及时 `ClearBefore` 会让快照无限增长。确认回滚窗口大小并定期清理。
+- **重算期间禁止副作用**：`m_isRecalc` 为 true 时不应触发表现层特效、音效、网络发送等不可回退的副作用。
+
+## 相关代码位置
+`UnityProject/Assets/GameScripts/HotFix/GameLogic/Module/FrameSync/ECS/Record/`
+
+## 关联文档
+- 帧同步循环：`architecture/lockstep.md`
+- ECS：`architecture/ecs.md`
+- 踩坑：`pitfalls/rollback-bugs.md`

@@ -1,0 +1,40 @@
+# 帧同步 (Lockstep)
+
+## 一句话
+所有客户端按固定逻辑帧（200ms）执行**完全相同的确定性逻辑**，只同步输入指令，各端独立算出一致结果。
+
+## 关键文件
+- `Module/FrameSync/FrameSyncModule.cs` — 模块入口与主循环，驱动逻辑帧推进
+- `Module/FrameSync/Core/WorldBase.cs` — 同步世界基类，承载 ECS（实体、系统、记录）
+- `Module/FrameSync/Core/SyncRule.cs` — 同步规则枚举（Status / Frame）
+- `Module/FrameSync/Core/ClientTime.cs` — 客户端时间工具（毫秒）
+- `Module/FrameSync/Calc/SyncVector3.cs` — 确定性向量（定点数）
+
+## 核心流程（逻辑帧循环）
+`FrameSyncModule.Update` 每个渲染帧被调用：
+1. `m_updateTimer += elapseSeconds * 1000`（累积真实时间，毫秒）
+2. `UpdateWorlds(deltaTime)` — **渲染帧**更新（表现层，可变步长）
+3. `while (m_updateTimer > m_intervalTime)` — 当累积时间超过一个逻辑帧步长：
+   - `FixedUpdateWorlds(m_intervalTime)` — **固定逻辑帧**更新（帧同步核心，定长 200ms）
+   - `m_updateTimer -= m_intervalTime`
+
+> 渲染帧（Loop）做插值/表现，逻辑帧（FixedLoop）做确定性计算 —— 这是"逻辑与表现分离"的物理体现。
+
+## 确定性保证（同步的命根子）
+- **定点数**：`SyncVector3` 用 `int x/y/z` + `SCALE=1000f`，避免浮点误差跨端不一致。逻辑里的坐标/向量都该用它，不要直接用 `Vector3` 参与逻辑运算。
+- **固定步长**：逻辑帧恒为 `m_intervalTime = 200ms`（5 帧/秒逻辑帧），绝不依赖真实帧率或 `Time.deltaTime`。
+- **指令带帧号**：`PlayerCommandBase` 含 `frame` / `time` / `id`，保证输入在确定帧上执行。
+
+## 注意事项 / 坑
+- 逻辑层（`GameLogic`）严禁引入不确定性：`float` 直接运算、`UnityEngine.Random`、`DateTime.Now`（除 ClientTime 受控使用外）、`Time.deltaTime`。
+- World 的 `m_isCertainty` / `m_isRecalc` / `m_isLocal` 标记区分"是否确定性世界 / 是否重算中 / 是否本地世界"，回滚重算时会用到，改逻辑要注意当前处于哪种状态。
+- 异常会被 `FrameSyncModule` 的 try/catch 吞掉并 `Log.Error`，调试时关注 "UpdateWorld Exception" / "FixedUpdateWorld Exception" 日志。
+
+## 相关代码位置
+`UnityProject/Assets/GameScripts/HotFix/GameLogic/Module/FrameSync/`
+
+## 关联文档
+- 回滚：`architecture/rollback.md`
+- ECS：`architecture/ecs.md`
+- 网络/指令：`architecture/network-sync.md`
+- 为什么选帧同步：`decisions/0001-why-lockstep.md`
