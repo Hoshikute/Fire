@@ -1,0 +1,51 @@
+# P2 方案③：FrameSync 角色移动「全量复刻」设计
+
+状态：进行中（决策已定：方案③全量复刻，多轮迭代）
+作者：HuHu
+日期：2026-06
+关联：0002-tpc-to-framesync-migration.md
+
+## 目标
+用确定性帧同步规范，完整复刻老 TPC 的角色手感：行走/奔跑、跳跃/下落、斜坡、攀爬、翻越（Vault）、落地，复刻后老 TPC 整模块删除。
+
+## 老 TPC 必须丢弃的非确定性元素（核查所得）
+逐文件确认，老 TPC 移动层里以下全部**不能进帧同步逻辑层**，要么丢弃要么改写：
+
+| 非确定性来源 | 老 TPC 位置 | 帧同步替代 |
+|------------|-----------|-----------|
+| `Animator.deltaPosition`（Root Motion 驱动位移） | PlayerReusableLogic / 各 State | 逻辑层程序化定点位移；动画只读状态播放 |
+| `Time.deltaTime` | PlayerMovementFsmState 大量（UpdateRotation/InAirMove…） | 逻辑帧固定步长 deltaTime（200ms 定点） |
+| `Quaternion.Slerp` 旋转插值 | UpdateLockRotation / UpdateRotation | 逻辑层存定点 faceDir；表现层做插值（纯表现可用 Slerp） |
+| `Physics.CheckSphere` / `Physics.Raycast` | 接地/斜坡/贴墙检测 | 确定性地面/碰撞查询（见下 IDeterministicGround / 碰撞体系） |
+| `GameModule.Timer` 回调（如 0.05s fallcheck） | StartFallCheckTimer 等 | 逻辑帧计数器（int 帧数），不用真实时间 |
+| `Mathf.Lerp` / `Mathf.Exp` 平滑 | InAirMove 惯性 | 定点线性近似或查表 |
+| Animancer `ManualMixerState` 多层权重混合 | PlayerReusableLogic 371 行 | 表现层 PlayerViewSystem 读逻辑状态枚举驱动动画，不参与逻辑 |
+| 惯性速度缓存 `cashVelocity[]` + 浮点平均 | GetInertialVelocity | 定点惯性（可选，后期手感打磨轮） |
+
+## 分层架构（铁律：逻辑确定可回滚 / 表现可非确定）
+```
+表现层(渲染帧, 非确定OK)              逻辑层(逻辑帧200ms, 确定性可回滚)
+─────────────────────              ──────────────────────────────
+PlayerInputCollectSystem ─指令─▶ PlayerInputComponent(单例)
+                                       │
+                                       ▼
+                                 PlayerMoveSystem ──▶ PlayerMoveComponent(可回滚)
+                                 PlayerStateSystem ─▶ PlayerStateComponent(可回滚, 状态枚举)
+                                 [接地/斜坡/碰撞/攀爬 = 确定性服务]
+                                       │
+PlayerViewSystem ◀────────────────────┘ (只读逻辑状态→驱动 Transform + Animancer)
+```
+
+## 分轮计划（每轮独立可 dotnet build 验证，0 错误才进下一轮）
+
+- **第1轮 接地抽象**：`IDeterministicGround` 接口 + `FlatGround` 默认实现（等价当前 y<=0，可扩展）。`PlayerMoveSystem` 通过接口查地面高度，去掉硬编码。【基础，无行为变化】✅ 已完成（dotnet build 0 错误）
+- **第2轮 角色状态机**：`PlayerStateComponent`（可回滚, 状态枚举 Idle/Move/Jump/Fall/Land）+ `PlayerStateSystem`（确定性状态转移，逻辑帧计数 framesInState 代替 Timer）。状态是物理状态的投影，不反向驱动位移，天然可回滚。已注册进 PlayerWorld（Move 之后）+ 加入 GetRecordTypes + Entry 创建实体带上 StateComponent。✅ 已完成（dotnet build 0 错误）
+- **第3轮 斜坡**：确定性地面法线查询；坡度限制；沿斜面投影位移。
+- **第4轮 碰撞阻挡**：确定性碰撞体系（AABB/胶囊 vs 定点静态几何），角色不穿墙。【依赖：确定性场景几何数据来源——待确认】
+- **第5轮 攀爬/翻越**：把动画曲线位移改成确定性程序化位移（按逻辑帧推进的固定轨迹）；攀爬/Vault 状态。
+- **第6轮 表现层动画**：`PlayerViewSystem` 读 `PlayerStateComponent` 枚举驱动 Animancer 播放（纯表现，不回写逻辑）。
+- **第7轮 手感打磨**：惯性、转向插值、加减速曲线（定点近似）。
+
+## 待确认风险点
+- **第4轮碰撞几何数据来源未定**：确定性碰撞不能用 Unity Collider。需要确认项目是否有导出的确定性几何（格子/碰撞网格/导航网格）；若无，碰撞轮需先做几何数据方案，或暂以 AABB 包围盒近似。
+- 攀爬/翻越的"动画曲线位移"如何在逻辑层复刻：需提取老动画曲线的关键位移量，转成定点轨迹表。

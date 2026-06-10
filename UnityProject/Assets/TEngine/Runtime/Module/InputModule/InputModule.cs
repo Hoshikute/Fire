@@ -45,7 +45,7 @@ namespace TEngine
 
         #region Module 生命周期
 
-        public override int Priority => 5;
+        public override int Priority => 0;
 
         public override void OnInit()
         {
@@ -308,6 +308,7 @@ namespace TEngine
         {
             if (_inputLocked) return;
 
+            Log.Info($"[CODEX_LOG] Input Jump callback. phase={context.phase}, pressed={context.action.IsPressed()}, control={context.control?.path}, playerEnabled={_actions?.Player.enabled}");
             HandleButtonState(InputButtonType.Jump, context);
             DispatchToListeners(listener => listener.OnJump(context));
         }
@@ -393,19 +394,26 @@ namespace TEngine
             bool isPressed = context.action.IsPressed();
             bool wasPressed = _buttonStates[buttonType];
 
-            _buttonStates[buttonType] = isPressed;
-
-            if (context.phase == UnityEngine.InputSystem.InputActionPhase.Performed && !wasPressed)
+            if (isPressed && !wasPressed)
             {
                 _buttonDownThisFrame[buttonType] = true;
                 _buttonsToClearDown.Add(buttonType);
+                if (buttonType == InputButtonType.Jump)
+                {
+                    Log.Info($"[CODEX_LOG] Input button down recorded. button={buttonType}, phase={context.phase}");
+                }
             }
-            else if (context.phase == UnityEngine.InputSystem.InputActionPhase.Canceled && wasPressed)
+            else if (!isPressed && wasPressed)
             {
                 _buttonUpThisFrame[buttonType] = true;
                 _buttonsToClearUp.Add(buttonType);
+                if (buttonType == InputButtonType.Jump)
+                {
+                    Log.Info($"[CODEX_LOG] Input button up recorded. button={buttonType}, phase={context.phase}");
+                }
             }
 
+            _buttonStates[buttonType] = isPressed;
             DispatchButtonCallbacks(buttonType, context.phase);
         }
 
