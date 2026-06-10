@@ -1,40 +1,37 @@
-# 玩家控制器 (Player Controller)
+# 玩家控制器 — 已删除（Player Controller — Deleted）
 
 ## 一句话
-第三人称角色控制器，命名空间 `ThirdPersonController`，以 `Player`（继承 `CharacterBase`）为核心，用 TEngine FSM 管理移动/跳跃/攀爬等状态，用 Animancer 播放动画。
+**已删除。** 原 `ThirdPersonController` → `PlayerFrameSyncEntry` + FrameSync ECS。所有功能已迁移至 `player-framesync-ecs.md`。
 
-## 关键文件
-- `Player/Controller/Core/Player/Player.cs` — 控制器入口（Awake 建状态机、绑相机、持有 Animancer/ReusableData/ReusableLogic）
-- `Player/Controller/Core/CharacterBase/CharacterBase.cs` — 角色基类
-- `Player/Controller/Core/Player/Data/PlayerReusableData/PlayerReusableData.cs` — 跨状态共享的运行时数据
-- `Player/Controller/Core/Player/State/PlayerReusableLogic.cs` — 跨状态复用的逻辑
-- `Player/Controller/Core/Player/Data/PlayerStateDataSO/PlayerSO.cs` — 配置数据（ScriptableObject）
-- `Player/Controller/Camera/CameraController.cs` — 相机控制（配合 Cinemachine）
+## 迁移映射（旧 → 新）
 
-## 入口与生命周期（Player.cs）
-- `[RequireComponent(typeof(AnimancerComponent))]`，Awake 中：
-  1. **相机引用三层回退**：序列化字段 `_cameraTransform` → `GameModule.Camera.MainCamera` → `Camera.main`，确保 `CamTransform` 不为 null。
-  2. 实际相机绑定延迟到 `Start`（`_pendingCameraBind`），等 CameraModule 初始化完成。
-  3. 取 `AnimancerComponent`，构造 `ReusableData` / `ReusableLogic`。
-  4. **用 `GameModule.Fsm.CreateFsm("PlayerFSM", this, ...)` 注册全部状态**，`StateMachine.Start<PlayerIdleState>()` 进入默认空闲态。
+| 旧 TPC（ThirdPersonController） | 新 FrameSync ECS（GameLogic） | 状态 |
+|------|------|------|
+| `Player.cs` + FSM 状态机 | `PlayerFrameSyncEntry` + `PlayerStateSystem`（确定性状态推导） | ✅ 完成 |
+| `PlayerReusableData` / `BindableProperty` | `PlayerStateComponent`（可回滚值类型枚举）+ `PlayerViewComponent`（表现数据） | ✅ 完成 |
+| `PlayerReusableLogic`（Animancer 驱动位移） | `PlayerMoveSystem`（定点积分位移）+ `PlayerAnimViewSystem`（只读枚举播动画） | ✅ 完成 |
+| `MonoSingleton` / `NoMonoSingleton` | 迁移至 `TEngine` 命名空间（`Runtime/Utility/`） | ✅ 完成 |
+| `BindableProperty` | 迁移至 `TEngine` 命名空间（仅表现层可用，逻辑层禁止） | ✅ 完成 |
+| `ToolFunction`（角度/跳跃速度） | 迁移至 `TEngine` 命名空间 | ✅ 完成 |
+| 44 个 .cs 文件 | 全部删除 | ✅ 完成 |
+| `Player.prefab` 挂 `ThirdPersonController.Player` | 挂 `GameLogic.PlayerFrameSyncEntry` | ✅ 完成 |
+| `CharacterModule` API：`SetThirdPersonPlayerPrefab` | `SetCharacterPrefab` / `LoadCharacterAsync` | ✅ 完成 |
+| 相机：`Player.cs` 内 Awake 绑定 | `PlayerFrameSyncEntry.TryBindCamera`（Start 延迟绑定） | ✅ 完成 |
 
-## 状态清单（注册在 Player.Awake）
-Idle / MoveStart / MoveLoop / MoveEnd / Jump / Climb / LedgeClimb / MoveToWall / FallLoop / PlatformerUp / Land / OutPlaceJump / LockIdle。
-> 状态文件在 `Player/Controller/Core/Player/State/PlayerMovemenState/`（注意目录名拼写为 `Movemen`）。
-
-## 数据组织
-- **PlayerSO**（ScriptableObject）：各状态的可配置参数（如 `PlayerIdleData`、`PlayerJumpData`、`PlayerClimbData`…），状态在 `OnInit` 里从 `playerSO.playerMovementData.XxxData` 取。
-- **PlayerReusableData**：运行时跨状态共享的可变数据（如当前 idle 索引、是否锁定、IsOnGround 等 BindableProperty）。
-- **BindableProperty**：可绑定属性（`Player/Controller/Tool/BindableProperty/`），状态通过 `ValueChanged += xxx` 订阅变化驱动状态切换。
-
-## 注意事项 / 坑
-- 相机为 null 风险高，已用三层回退 + 延迟绑定缓解，改动相机初始化时注意时序。
-- 状态切换不要在 Animancer 回调里直接做（见 animancer-fsm.md 的延迟切换）。
-- 这是**表现层**（ThirdPersonController），与帧同步逻辑层（GameLogic）分离；不要在这里塞确定性逻辑。
-
-## 相关代码位置
-`UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/`
+## 历史文件（已删除，仅供考古）
+```
+Player/Controller/
+├── Core/Player/Player.cs                 ← PlayerFrameSyncEntry
+├── Core/CharacterBase/CharacterBase.cs   ← PlayerStateComponent + PlayerViewComponent
+├── Core/StateMachine/State/*             ← PlayerStateSystem
+├── Core/Player/State/PlayerMovemenState/* ← PlayerMoveSystem + PlayerAnimViewSystem
+├── Tool/Singleton/MonoSingleton.cs       → Runtime/Utility/MonoSingleton.cs (TEngine)
+├── Tool/Singleton/NoMonoSingleton.cs     → Runtime/Utility/NoMonoSingleton.cs (TEngine)
+├── Tool/BindableProperty/*.cs            → Runtime/Utility/BindableProperty.cs (TEngine)
+└── Tool/ToolFunction/*.cs               → Runtime/Utility/ToolFunction.cs (TEngine)
+```
 
 ## 关联文档
-- 动画状态机：`modules/animancer-fsm.md`
-- 规范：`conventions/coding-style.md`
+- 迁移决策：`decisions/0002-tpc-to-framesync-migration.md`
+- 迁移踩坑：`decisions/0004-tpc-migration-lessons.md`
+- 当前架构：`modules/player-framesync-ecs.md`

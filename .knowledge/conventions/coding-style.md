@@ -4,8 +4,9 @@
 新增文件作者署名：HuHu <3112891874@qq.com>。
 
 ## 命名空间
-- 帧同步 / 确定性逻辑层：`GameLogic`
-- 第三人称角色控制器 / 表现层：`ThirdPersonController`
+- 帧同步 / 确定性逻辑层：`GameLogic`（含 `Module/FrameSync/GameLogic/` + `Module/FrameSync/ClientLogic/`）
+- 工具类 / 通用基础设施：`TEngine`（非 `TEngine.Utility`——与已有 `static partial class Utility` 冲突）
+- 旧 `ThirdPersonController` 命名空间已**完全删除**，不要新增文件到该 namespace
 
 ## 命名约定（沿用现有代码）
 - 私有字段：`m_xxx`（如 `m_world`、`m_entityDict`）或 `_xxx`（控制器层较多用，如 `_currentState`、`_pendingCameraBind`）。同一文件内保持与周边一致。

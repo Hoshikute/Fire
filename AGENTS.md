@@ -40,3 +40,8 @@ Unity 第三人称角色控制器 + 帧同步（lockstep）网游，含预测回
 ## 维护约定
 
 修改了架构、新增了模块、踩了新坑后，**同步更新对应的 `.knowledge/` 文档**，保持知识库与代码一致。
+- 新增或删除模块时，**同步更新 `.knowledge/INDEX.md`**（文档清单 + 查找表）以及 `.knowledge/modules/` 下对应的模块文档，保持知识图谱与代码模块一致。
+
+## Notes
+
+- SQLite is binary — don't attempt textual diff *.sqlite binary 这个文件内容是否会导致二进制文件变更被忽略？如果被忽略了我怎么提交做同步？

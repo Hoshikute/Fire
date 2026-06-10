@@ -11,8 +11,8 @@
 | 涉及状态保存、回滚、重放、快照 | `architecture/rollback.md` |
 | 处理网络消息、指令下发、追帧 | `architecture/network-sync.md` |
 | 理解 ECS（World/Entity/Component/System） | `architecture/ecs.md` |
-| 改 Player 控制器代码 | `modules/player-controller.md` |
-| 改帧同步版角色控制 / 角色 ECS / 定点移动 | `modules/player-framesync-ecs.md` |
+| 改 Player 控制器代码 | `modules/player-controller.md`（已删除，迁移至 `player-framesync-ecs.md`） |
+| 改帧同步版角色控制 / 角色 ECS / 定点移动 / 斜坡 / 碰撞 / 动画配置 / 渲染插值 | `modules/player-framesync-ecs.md` |
 | 改动画切换 / FSM 状态 | `modules/animancer-fsm.md` |
 | 调一个诡异的 Bug | 先扫 `pitfalls/` 下所有文件 |
 | 想知道某个设计为什么这么做 | `decisions/` 下的 ADR |
@@ -28,8 +28,8 @@
 - `ecs.md` — ECS 框架（World/Entity/Component/System/Record）
 
 ### modules/ — 模块说明
-- `player-controller.md` — 第三人称角色控制器、入口与生命周期
-- `player-framesync-ecs.md` — 帧同步版角色控制（确定性逻辑层 ECS + 表现层 + PlayerWorld，定点移动/可回滚）
+- `player-controller.md` — 已删除的旧 TPC 文档（迁移映射）
+- `player-framesync-ecs.md` — 帧同步版角色控制（确定性逻辑层 ECS + 表现层 + PlayerWorld + 碰撞/斜坡/攀爬/动画配置 + 渲染插值）
 - `animancer-fsm.md` — Animancer 动画 + TEngine FSM 状态机
 
 ### conventions/ — 规范
@@ -43,6 +43,7 @@
 
 ### decisions/ — 架构决策记录（ADR）
 - `0001-why-lockstep.md` — 为什么选帧同步而非状态同步
+- `0004-tpc-migration-lessons.md` — TPC→FrameSync ECS 迁移踩坑与关键修复记录
 
 ## 阅读约定
 
