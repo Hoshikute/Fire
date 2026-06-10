@@ -14,9 +14,9 @@ namespace GameLogic.Character
         private bool _isShutdown;
         private UniTask<GameObject> _loadingTask;
 
-        public string ThirdPersonPlayerLocation { get; private set; }
-        public string ThirdPersonPlayerPackageName { get; private set; }
-        public GameObject ThirdPersonPlayerInstance { get; private set; }
+        public string CharacterLocation { get; private set; }
+        public string CharacterPackageName { get; private set; }
+        public GameObject CharacterInstance { get; private set; }
 
         public override void OnInit()
         {
@@ -36,10 +36,10 @@ namespace GameLogic.Character
             _moduleCts?.Dispose();
             _moduleCts = null;
 
-            DestroyThirdPersonPlayer();
+            DestroyCharacter();
 
-            ThirdPersonPlayerLocation = null;
-            ThirdPersonPlayerPackageName = null;
+            CharacterLocation = null;
+            CharacterPackageName = null;
             _isLoading = false;
         }
 
@@ -47,20 +47,20 @@ namespace GameLogic.Character
         {
         }
 
-        public void SetThirdPersonPlayerPrefab(string location, string packageName = "")
+        public void SetCharacterPrefab(string location, string packageName = "")
         {
             Log.Assert(!string.IsNullOrEmpty(location), "[CharacterModule] location is null or empty.");
-            ThirdPersonPlayerLocation = location;
-            ThirdPersonPlayerPackageName = packageName ?? string.Empty;
+            CharacterLocation = location;
+            CharacterPackageName = packageName ?? string.Empty;
         }
 
-        public UniTask<GameObject> LoadThirdPersonPlayerAsync(Transform parent = null, CancellationToken cancellationToken = default)
+        public UniTask<GameObject> LoadCharacterAsync(Transform parent = null, CancellationToken cancellationToken = default)
         {
             Log.Assert(!_isShutdown, "[CharacterModule] Module has been shutdown.");
 
-            if (ThirdPersonPlayerInstance != null)
+            if (CharacterInstance != null)
             {
-                return UniTask.FromResult(ThirdPersonPlayerInstance);
+                return UniTask.FromResult(CharacterInstance);
             }
 
             if (_isLoading)
@@ -68,7 +68,7 @@ namespace GameLogic.Character
                 return _loadingTask;
             }
 
-            Log.Assert(!string.IsNullOrEmpty(ThirdPersonPlayerLocation), "[CharacterModule] ThirdPersonPlayerLocation is null or empty.");
+            Log.Assert(!string.IsNullOrEmpty(CharacterLocation), "[CharacterModule] CharacterLocation is null or empty.");
 
             _isLoading = true;
 
@@ -76,19 +76,19 @@ namespace GameLogic.Character
             _loadCts?.Dispose();
             _loadCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _moduleCts.Token);
 
-            _loadingTask = DoLoadThirdPersonPlayerAsync(parent, _loadCts.Token);
+            _loadingTask = DoLoadCharacterAsync(parent, _loadCts.Token);
             return _loadingTask;
         }
 
-        private async UniTask<GameObject> DoLoadThirdPersonPlayerAsync(Transform parent, CancellationToken cancellationToken)
+        private async UniTask<GameObject> DoLoadCharacterAsync(Transform parent, CancellationToken cancellationToken)
         {
             try
             {
                 GameObject instance = await GameModule.Resource.LoadGameObjectAsync(
-                    ThirdPersonPlayerLocation,
+                    CharacterLocation,
                     parent,
                     cancellationToken,
-                    ThirdPersonPlayerPackageName
+                    CharacterPackageName
                 );
 
                 if (_isShutdown || cancellationToken.IsCancellationRequested)
@@ -101,7 +101,7 @@ namespace GameLogic.Character
                     return null;
                 }
 
-                ThirdPersonPlayerInstance = instance;
+                CharacterInstance = instance;
                 return instance;
             }
             finally
@@ -110,15 +110,15 @@ namespace GameLogic.Character
             }
         }
 
-        public void DestroyThirdPersonPlayer()
+        public void DestroyCharacter()
         {
-            if (ThirdPersonPlayerInstance == null)
+            if (CharacterInstance == null)
             {
                 return;
             }
 
-            Object.Destroy(ThirdPersonPlayerInstance);
-            ThirdPersonPlayerInstance = null;
+            Object.Destroy(CharacterInstance);
+            CharacterInstance = null;
         }
     }
 }

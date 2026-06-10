@@ -64,14 +64,22 @@ namespace GameLogic
         private async UniTask LoadPlayerAsync()
         {
             // 配置 Player prefab 路径
-            GameModule.Character.SetThirdPersonPlayerPrefab(PLAYER_PREFAB_PATH);
+            GameModule.Character.SetCharacterPrefab(PLAYER_PREFAB_PATH);
 
             // 动态加载 Player
-            var player = await GameModule.Character.LoadThirdPersonPlayerAsync();
+            var player = await GameModule.Character.LoadCharacterAsync();
 
             if (player != null)
             {
                 Log.Info($"[TPBattleContext] Player loaded successfully: {player.name}");
+
+                // 注入配置到 PlayerFrameSyncEntry
+                var entry = player.GetComponent<PlayerFrameSyncEntry>();
+                if (entry == null)
+                {
+                    entry = player.AddComponent<PlayerFrameSyncEntry>();
+                }
+
                 VerifyGroundLayer(player);
             }
             else
@@ -85,51 +93,15 @@ namespace GameLogic
         /// </summary>
         private void VerifyGroundLayer(GameObject playerGo)
         {
-            var playerComp = playerGo.GetComponent<ThirdPersonController.Player>();
-            if (playerComp == null)
+            var entry = playerGo.GetComponent<PlayerFrameSyncEntry>();
+            if (entry == null)
             {
-                Log.Error("[TPC_DIAG] Player component not found on loaded prefab!");
+                Log.Warning("[TPC_DIAG] PlayerFrameSyncEntry not found on loaded prefab - ground layer check skipped.");
                 return;
             }
 
-            var groundMask = playerComp.whatIsGround;
-
-            // 将 LayerMask 值解析为 layer 名称
-            var layerNames = new System.Collections.Generic.List<string>();
-            for (int i = 0; i < 32; i++)
-            {
-                if ((groundMask.value & (1 << i)) != 0)
-                {
-                    layerNames.Add($"{i}:{LayerMask.LayerToName(i)}");
-                }
-            }
-            Log.Info($"[TPC_DIAG] Player whatIsGround Mask = {groundMask.value} → [{string.Join(", ", layerNames)}]");
-
-            // 检测场景中所有带有 "Ground" 或 "Terrain" 标记的对象
-            var allObjects = Object.FindObjectsOfType<GameObject>();
-            var groundLayerObjects = new System.Collections.Generic.List<string>();
-            foreach (var go in allObjects)
-            {
-                int layer = go.layer;
-                string layerName = LayerMask.LayerToName(layer);
-                if (layerName.Contains("Ground") || layerName.Contains("Terrain") || layerName.Contains("ground"))
-                {
-                    if (!groundLayerObjects.Contains(layerName))
-                        groundLayerObjects.Add(layerName);
-                }
-            }
-            if (groundLayerObjects.Count > 0)
-            {
-                Log.Info($"[TPC_DIAG] Scene ground/terrain layers found: [{string.Join(", ", groundLayerObjects)}]");
-            }
-            else
-            {
-                Log.Warning("[TPC_DIAG] No objects with 'Ground'/'Terrain' layer found in scene! This may cause ground detection failures.");
-            }
-
-            // 检查 Mask 是否覆盖了 Default layer (0) — 通常地面在 Default
-            bool masksDefault = (groundMask.value & 1) != 0;
-            Log.Info($"[TPC_DIAG] whatIsGround includes Default(0)? {masksDefault}");
+            // FrameSync 架构下地面逻辑由 IDeterministicGround 管理，不再依赖 whatIsGround LayerMask
+            Log.Info("[TPC_DIAG] FrameSync player loaded — ground handling via IDeterministicGround.");
         }
     }
 }

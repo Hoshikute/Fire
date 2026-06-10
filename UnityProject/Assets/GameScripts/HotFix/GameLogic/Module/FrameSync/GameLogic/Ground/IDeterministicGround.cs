@@ -25,6 +25,12 @@ namespace GameLogic
         int SampleHeight(int x, int z);
 
         /// <summary>
+        /// 查询给定水平位置处的地面法线（定点单位向量，|normal| = SyncVector3.ONE = 1000）。
+        /// 平地返回 (0, ONE, 0)，斜坡返回斜面法线。
+        /// </summary>
+        SyncVector3 GetNormal(int x, int z);
+
+        /// <summary>
         /// 判断给定位置是否接地：实体当前 y 是否已落到该列地面高度或以下（带一个微小容差）。
         /// </summary>
         bool IsGrounded(SyncVector3 pos, int toleranceFixed = 0);

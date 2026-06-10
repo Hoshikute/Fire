@@ -103,6 +103,12 @@ namespace GameLogic
         /// </summary>
         public int wallObstructType = 0;
 
+        /// <summary>
+        /// 是否为原地跳跃（起跳时无移动输入）。
+        /// 由 PlayerMoveSystem 在触发跳跃时写入，PlayerStateSystem 据此选择 Jump vs JumpInPlace。
+        /// </summary>
+        public bool isInPlaceJump = false;
+
         public override MomentComponentBase DeepCopy()
         {
             PlayerStateComponent c = new PlayerStateComponent();
@@ -114,6 +120,7 @@ namespace GameLogic
             c.isLocked = isLocked;
             c.platformJumpRequested = platformJumpRequested;
             c.wallObstructType = wallObstructType;
+            c.isInPlaceJump = isInPlaceJump;
             return c;
         }
     }

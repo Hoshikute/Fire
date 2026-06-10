@@ -25,8 +25,28 @@ namespace GameLogic
         /// <summary>上一次渲染所用的逻辑位置（用于插值起点），定点。</summary>
         public SyncVector3 lastLogicPos = SyncVector3.Zero;
 
+        /// <summary>
+        /// 插值起点：上一逻辑帧的位置（定点）。
+        /// PlayerViewSystem 检测到 pos 变化时，把旧值存入此字段，
+        /// 然后用 Lerp(prevLogicPos → lastLogicPos, interpT) 在两个逻辑快照间线性过渡。
+        /// </summary>
+        public SyncVector3 prevLogicPos = SyncVector3.Zero;
+
+        /// <summary>
+        /// 插值进度（0→1），每个渲染帧 += dt / logicFrameDuration。
+        /// ≥1 表示已追上最新逻辑位置。
+        /// </summary>
+        public float interpT = 1.1f;
+
         /// <summary>是否已完成首帧对齐（避免第一帧从原点飞过来）。</summary>
         public bool initialized;
+
+        /// <summary>
+        /// 动画是否已首次播放。
+        /// PlayerAnimViewSystem 在首次执行时无条件播放当前状态动画，
+        /// 之后仅在状态切换时触发播放。
+        /// </summary>
+        public bool animInitialized;
 
         /// <summary>
         /// Animancer 动画播放组件引用。
@@ -39,5 +59,11 @@ namespace GameLogic
         /// 由 PlayerFrameSyncEntry 序列化字段注入，解耦动画资源路径。
         /// </summary>
         public PlayerAnimConfig animConfig;
+
+        /// <summary>
+        /// PlatformerUp 当前阶段：0=start, 1=loop, 2=downLoop。
+        /// 仅 PlayerAnimViewSystem 使用，不参与逻辑层。
+        /// </summary>
+        public int platformerUpPhase;
     }
 }

@@ -6,12 +6,12 @@ namespace GameLogic.Character
 {
     public interface ICharacterModule
     {
-        string ThirdPersonPlayerLocation { get; }
-        string ThirdPersonPlayerPackageName { get; }
-        GameObject ThirdPersonPlayerInstance { get; }
+        string CharacterLocation { get; }
+        string CharacterPackageName { get; }
+        GameObject CharacterInstance { get; }
 
-        void SetThirdPersonPlayerPrefab(string location, string packageName = "");
-        UniTask<GameObject> LoadThirdPersonPlayerAsync(Transform parent = null, CancellationToken cancellationToken = default);
-        void DestroyThirdPersonPlayer();
+        void SetCharacterPrefab(string location, string packageName = "");
+        UniTask<GameObject> LoadCharacterAsync(Transform parent = null, CancellationToken cancellationToken = default);
+        void DestroyCharacter();
     }
 }

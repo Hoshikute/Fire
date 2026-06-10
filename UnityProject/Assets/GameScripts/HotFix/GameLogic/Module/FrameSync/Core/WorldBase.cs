@@ -299,6 +299,16 @@ namespace GameLogic
             m_destroyCache.Clear();
         }
 
+        /// <summary>
+        /// 立即执行待处理的实体创建/销毁操作。
+        /// 用于在 Start() 阶段创建实体后、启动世界前，
+        /// 确保实体已在 m_entityList 中，避免首帧丢失。
+        /// </summary>
+        public void FlushEntityOperations()
+        {
+            LazyExecuteEntityOperation();
+        }
+
         public void CreateEntity(string identifier, params ComponentBase[] comps)
         {
             identifier = FrameCount + identifier;

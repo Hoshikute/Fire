@@ -12,6 +12,11 @@ namespace GameLogic
     /// 集中管理所有逻辑状态对应的 Animancer ClipTransition，
     /// 替代原 ThirdPersonController 里散落在各 PlayerStateDataSO 中的动画字段。
     ///
+    /// 对齐参考项目 A:\animator-third-person-controller 的动画映射：
+    ///   - MoveStart 按 8 方向选 clip（F/R45/R90/R135/R180/L135/L90/L45）
+    ///   - MoveEnd 按左右脚选 clip（moveEnd_L / moveEnd_R）
+    ///   - PlatformerUp 三阶段（start → loop → downLoop）
+    ///
     /// 使用方式：
     ///   1. 在 Project 里 Create → GameLogic → PlayerAnimConfig 创建 SO 资产。
     ///   2. 在 Inspector 里把各状态的动画剪辑拖入对应字段。
@@ -25,51 +30,78 @@ namespace GameLogic
     {
         [Header("地面常态")]
         [Tooltip("待机（Idle）")]
-        public ClipTransition idle;
+        public TransitionAsset idle;
 
-        [Tooltip("移动启步（MoveStart）")]
-        public ClipTransition moveStart;
+        [Header("移动启步（MoveStart）— 按 8 方向选择")]
+        [Tooltip("起步-正前（夹角 <22.5°）")]
+        public TransitionAsset moveStart_F;
+        [Tooltip("起步-右前 45°（22.5°~67.5°）")]
+        public TransitionAsset moveStart_R45;
+        [Tooltip("起步-右 90°（67.5°~112.5°）")]
+        public TransitionAsset moveStart_R90;
+        [Tooltip("起步-右后 135°（112.5°~157.5°）")]
+        public TransitionAsset moveStart_R135;
+        [Tooltip("起步-正后 180°（>157.5° 或 <-157.5°）")]
+        public TransitionAsset moveStart_R180;
+        [Tooltip("起步-左后 135°（-157.5°~-112.5°）")]
+        public TransitionAsset moveStart_L135;
+        [Tooltip("起步-左 90°（-112.5°~-67.5°）")]
+        public TransitionAsset moveStart_L90;
+        [Tooltip("起步-左前 45°（-67.5°~-22.5°）")]
+        public TransitionAsset moveStart_L45;
 
+        [Header("移动循环 / 结束")]
         [Tooltip("移动循环（MoveLoop）")]
-        public ClipTransition moveLoop;
+        public TransitionAsset moveLoop;
 
-        [Tooltip("移动结束（MoveEnd）")]
-        public ClipTransition moveEnd;
+        [Tooltip("移动结束—左脚在前（MoveEnd_L）")]
+        public TransitionAsset moveEnd_L;
+
+        [Tooltip("移动结束—右脚在前（MoveEnd_R）")]
+        public TransitionAsset moveEnd_R;
+
+        [Header("靠墙")]
+        [Tooltip("靠墙过渡（MoveToWall）；为空时复用 moveEnd_L")]
+        public TransitionAsset moveToWall;
 
         [Header("锁定模式")]
         [Tooltip("锁定待机（LockIdle）；为空时回退使用 idle")]
-        public ClipTransition lockIdle;
+        public TransitionAsset lockIdle;
 
         [Header("空中")]
         [Tooltip("前跳起跳（Jump）")]
-        public ClipTransition jumpForward;
+        public TransitionAsset jumpForward;
 
         [Tooltip("就地跳起跳（JumpInPlace）")]
-        public ClipTransition jumpInPlace;
+        public TransitionAsset jumpInPlace;
 
         [Tooltip("下落开始（Fall 入场）")]
-        public ClipTransition fallStart;
+        public TransitionAsset fallStart;
 
         [Tooltip("下落循环（Fall 持续）")]
-        public ClipTransition fallLoop;
+        public TransitionAsset fallLoop;
 
         [Tooltip("落地（Land）")]
-        public ClipTransition land;
+        public TransitionAsset land;
+
+        [Header("平台跳（PlatformerUp）— 三阶段")]
+        [Tooltip("平台跳起跳（start）")]
+        public TransitionAsset platformerUpStart;
+
+        [Tooltip("平台跳上升循环（loop）")]
+        public TransitionAsset platformerUpLoop;
+
+        [Tooltip("平台跳下落（downLoop）")]
+        public TransitionAsset platformerDownLoop;
 
         [Header("交互 / 攀爬")]
-        [Tooltip("靠墙过渡（MoveToWall）；为空时回退使用 idle")]
-        public ClipTransition moveToWall;
-
         [Tooltip("翻越矮障碍物（Vault）")]
-        public ClipTransition vault;
+        public TransitionAsset vault;
 
         [Tooltip("攀爬高障碍物（Climb）")]
-        public ClipTransition climb;
+        public TransitionAsset climb;
 
         [Tooltip("边缘攀上（LedgeClimb）")]
-        public ClipTransition ledgeClimb;
-
-        [Tooltip("平台跳（PlatformerUp）")]
-        public ClipTransition platformerUp;
+        public TransitionAsset ledgeClimb;
     }
 }

@@ -28,11 +28,17 @@ namespace GameLogic
         /// <summary>是否接地。</summary>
         public bool isOnGround = true;
 
+        /// <summary>胶囊碰撞体半径（定点，毫单位）。默认 300（0.3m）。</summary>
+        public int capsuleRadius = 300;
+
+        /// <summary>胶囊碰撞体高度（定点，毫单位，不含两端半球）。默认 1200（1.2m）。</summary>
+        public int capsuleHeight = 1200;
+
         /// <summary>
-        /// 速度档位（1 = 走，2 = 跑）。
-        /// 由输入采集系统根据 Shift 键写入，PlayerMoveSystem 读取选择对应速度常量。
+        /// 当前实际移动速度（定点，毫单位/秒）。
+        /// 受加减速曲线影响，不同于标称 WalkSpeed/RunSpeed。
         /// </summary>
-        public int speedGear = 1;
+        public int currentSpeed = 0;
 
         public override MomentComponentBase DeepCopy()
         {
@@ -44,7 +50,9 @@ namespace GameLogic
             c.moveSpeed = moveSpeed;
             c.verticalSpeed = verticalSpeed;
             c.isOnGround = isOnGround;
-            c.speedGear = speedGear;
+            c.capsuleRadius = capsuleRadius;
+            c.capsuleHeight = capsuleHeight;
+            c.currentSpeed = currentSpeed;
             return c;
         }
     }

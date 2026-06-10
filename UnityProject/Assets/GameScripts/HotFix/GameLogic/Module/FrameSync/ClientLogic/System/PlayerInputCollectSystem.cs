@@ -17,7 +17,7 @@ namespace GameLogic
     ///   - jump：跳跃边沿触发
     ///   - toggleLock：锁定模式切换边沿触发
     ///   - platformJump：平台跳边沿触发（由交互逻辑写入）
-    ///   - speedGear：Shift 键写入 PlayerMoveComponent.speedGear（1 走 / 2 跑）
+    ///   - speedGear：Shift 键写入 PlayerInputComponent.speedGear（1 走 / 2 跑）
     ///
     /// 为什么放表现层：采集 Unity 输入本身依赖真实帧率和 UnityEngine.Input（非确定性来源），
     /// 必须隔离在表现层。逻辑层只读取「已定点化的输入意图」，保持确定性。
@@ -58,19 +58,10 @@ namespace GameLogic
                 input.toggleLock = true;
             }
 
-            // ── 4. 速度档位（Shift = 跑，持续性输入直接写 PlayerMoveComponent）
-            // 注：speedGear 写进 PlayerMoveComponent 而非 PlayerInputComponent，
-            // 因为它影响逻辑层的确定性速度选择，需要参与回滚快照。
-            PlayerMoveComponent move3d = null;
-            var entities = GetEntityList();
-            for (int i = 0; i < entities.Count; i++)
-            {
-                move3d = entities[i].GetComp<PlayerMoveComponent>();
-                if (move3d != null)
-                {
-                    move3d.speedGear = GameModule.Input.GetButton(InputButtonType.Shift) ? 2 : 1;
-                }
-            }
+            // ── 4. 速度档位（Shift = 跑，持续性输入）
+            // speedGear 写在 PlayerInputComponent（SingletonComponent，不参与回滚快照），
+            // 避免渲染帧直写 MomentComponentBase 污染回滚数据。
+            input.speedGear = GameModule.Input.GetButton(InputButtonType.Shift) ? 2 : 1;
         }
     }
 }

@@ -68,7 +68,11 @@ namespace GameLogic
             m_world.SyncRule = SyncRule.Frame;
 
             // 2) 生成玩家实体
+            Log.Info($"{TraceHeader} _spawnPos = {_spawnPos}, 转定点: {SyncVector3.FromVector3(_spawnPos)}");
             SpawnPlayer();
+
+            // 2.5) 立即提交实体（避免首帧丢失：LazyExecuteEntityOperation 在 FixedLoop 末尾才执行）
+            m_world.FlushEntityOperations();
 
             // 3) 启动世界
             m_world.IsStart = true;
@@ -95,13 +99,35 @@ namespace GameLogic
 
         private void SpawnPlayer()
         {
+            // 用地面查询修正 spawn y 并确定初始接地状态
+            SyncVector3 rawPos = SyncVector3.FromVector3(_spawnPos);
+            IDeterministicGround ground = new FlatGround(0);
+            int groundY = ground.SampleHeight(rawPos.x, rawPos.z);
+            int tolerance = 100; // 微小容差（≈0.1m）
+
+            bool isOnGround;
+            SyncVector3 pos;
+            if (rawPos.y <= groundY + tolerance)
+            {
+                // 位置在地面或以下：吸附到地面
+                pos = SyncVector3.FromRaw(rawPos.x, groundY, rawPos.z);
+                isOnGround = true;
+            }
+            else
+            {
+                // 位置在空中：保留原始 y，标记不接地
+                pos = rawPos;
+                isOnGround = false;
+                Log.Warning($"{TraceHeader} _spawnPos.y={_spawnPos.y} 在地面以上 {_spawnPos.y - groundY / 1000f:F2}m，" +
+                            "将以非接地状态生成（会触发自由落体）。");
+            }
+
             // 逻辑组件（确定性，可回滚）
             PlayerMoveComponent move = new PlayerMoveComponent
             {
-                pos        = SyncVector3.FromVector3(_spawnPos),
+                pos        = pos,
                 faceDir    = SyncVector3.FromRaw(0, 0, SyncVector3.ONE),
-                isOnGround = true,
-                speedGear  = 1,
+                isOnGround = isOnGround,
             };
 
             // 逻辑状态组件（确定性，可回滚）
@@ -162,6 +188,26 @@ namespace GameLogic
 
             Log.Warning($"{TraceHeader}[ResolveFollowAnchor] 未找到 LookAt 锚点，回退到角色根节点。");
             return transform;
+        }
+
+        // ── 运行时注入（供 TPBattleContext 等业务入口调用）──────────
+
+        /// <summary>
+        /// 运行时注入动画配置（替代 Inspector 序列化赋值）。
+        /// 必须在 Start() 之前调用，否则已启动的 World 不会感知新的配置。
+        /// </summary>
+        public void SetAnimConfig(PlayerAnimConfig config)
+        {
+            _animConfig = config;
+        }
+
+        /// <summary>
+        /// 运行时注入相机 LookAt 锚点（替代 Inspector 序列化赋值）。
+        /// 如果在 Start() 之后调用，需要手动重新绑定相机。
+        /// </summary>
+        public void SetLookAtTarget(Transform target)
+        {
+            _lookAtTarget = target;
         }
     }
 }

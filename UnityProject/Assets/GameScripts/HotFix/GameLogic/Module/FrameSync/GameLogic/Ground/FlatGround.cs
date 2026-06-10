@@ -27,6 +27,12 @@ namespace GameLogic
             return m_groundHeight;
         }
 
+        public SyncVector3 GetNormal(int x, int z)
+        {
+            // 平地法线始终垂直向上
+            return SyncVector3.FromRaw(0, SyncVector3.ONE, 0);
+        }
+
         public bool IsGrounded(SyncVector3 pos, int toleranceFixed = 0)
         {
             // pos.y 落到地面高度（含容差）或以下即接地。

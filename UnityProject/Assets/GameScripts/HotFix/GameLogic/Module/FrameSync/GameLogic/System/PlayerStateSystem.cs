@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------
 
 using System;
+using TEngine;
 
 namespace GameLogic
 {
@@ -27,6 +28,10 @@ namespace GameLogic
     /// </summary>
     public class PlayerStateSystem : SystemBase
     {
+        // ── 诊断：前 N 帧输出状态 ────────────────────────────────────────
+        private int m_diagFrameCount = 0;
+        private const int DiagMaxFrames = 10;
+
         // ── 帧计数阈值（200ms / 帧）────────────────────────────────────
         /// <summary>落地缓冲帧数（≈200ms）。</summary>
         private const int LandBufferFrames = 1;
@@ -79,6 +84,15 @@ namespace GameLogic
 
             PlayerLogicState next = Decide(move, st, input);
 
+            // 诊断：前 N 帧无条件输出当前状态（首帧 + 后续切换）
+            if (m_diagFrameCount < DiagMaxFrames || next != st.state)
+            {
+                Log.Info($"[PlayerStateSystem] F#{m_world.FrameCount} st={st.state}→{next} " +
+                         $"isOnGround={move.isOnGround} vSpeed={move.verticalSpeed} " +
+                         $"moveDirMag={input.moveDir.SqrMagnitude()} isLocked={st.isLocked}");
+                if (next == st.state) m_diagFrameCount++;
+            }
+
             st.prevState = st.state;
             if (next != st.state)
             {
@@ -126,8 +140,8 @@ namespace GameLogic
             {
                 if (move.verticalSpeed > 0)
                 {
-                    // 区分就地跳和前跳（由上一帧起跳时的输入决定，状态已记录）
-                    if (st.state == PlayerLogicState.JumpInPlace)
+                    // 区分就地跳和前跳：由 PlayerMoveSystem 在起跳时写入 st.isInPlaceJump
+                    if (st.isInPlaceJump)
                         return PlayerLogicState.JumpInPlace;
                     return PlayerLogicState.Jump;
                 }

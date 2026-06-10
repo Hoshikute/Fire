@@ -30,6 +30,13 @@ namespace GameLogic
         public bool platformJump;
 
         /// <summary>
+        /// 速度档位（1 = 走，2 = 跑）。
+        /// 由输入采集系统根据 Shift 键写入，PlayerMoveSystem 读取选择对应速度常量。
+        /// 放在单例组件（不参与回滚），避免渲染帧直写回滚组件污染快照。
+        /// </summary>
+        public int speedGear = 1;
+
+        /// <summary>
         /// 把所有边沿触发型输入清空。
         /// 逻辑帧消费完后调用，避免一次按键在多帧重复触发。
         /// 注意：moveDir 不清空——移动是持续性输入，松开摇杆时表现层会写回 Zero。
