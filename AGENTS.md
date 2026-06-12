@@ -11,7 +11,6 @@ Unity 第三人称角色控制器 + 帧同步（lockstep）网游，含预测回
 - 动画系统：Animancer（`com.kybernetik.animancer`）
 - 架构：ECS（World / Entity / Component / System）驱动的帧同步
 - 主命名空间：逻辑层 `GameLogic`，角色控制器 `ThirdPersonController`
-- 作者署名：HuHu <3112891874@qq.com>
 
 ## 关键代码位置
 
@@ -29,7 +28,6 @@ Unity 第三人称角色控制器 + 帧同步（lockstep）网游，含预测回
 2. **快照必须深拷贝**：所有参与回滚记录的 Component 实现 `DeepCopy()` 必须是真正的深拷贝，浅拷贝会导致回滚后状态污染。参考 `RecordSystem<T>.Record/RevertToFrame`。
 3. **逻辑与表现分离**：`GameLogic`（确定性逻辑）与 `ThirdPersonController`（Unity 表现/动画/相机）不要互相污染。表现层读逻辑层状态，不要反向写。
 4. **改 FrameSync 或 Player 模块前**：先读对应的 `.knowledge/` 文档（见下方导航），理解约束再动手。
-5. **新增文件署名**：作者 HuHu <3112891874@qq.com>。
 
 ## 知识库导航
 
