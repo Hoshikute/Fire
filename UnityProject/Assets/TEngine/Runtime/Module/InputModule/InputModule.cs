@@ -308,7 +308,6 @@ namespace TEngine
         {
             if (_inputLocked) return;
 
-            Log.Info($"[CODEX_LOG] Input Jump callback. phase={context.phase}, pressed={context.action.IsPressed()}, control={context.control?.path}, playerEnabled={_actions?.Player.enabled}");
             HandleButtonState(InputButtonType.Jump, context);
             DispatchToListeners(listener => listener.OnJump(context));
         }
@@ -398,19 +397,11 @@ namespace TEngine
             {
                 _buttonDownThisFrame[buttonType] = true;
                 _buttonsToClearDown.Add(buttonType);
-                if (buttonType == InputButtonType.Jump)
-                {
-                    Log.Info($"[CODEX_LOG] Input button down recorded. button={buttonType}, phase={context.phase}");
-                }
             }
             else if (!isPressed && wasPressed)
             {
                 _buttonUpThisFrame[buttonType] = true;
                 _buttonsToClearUp.Add(buttonType);
-                if (buttonType == InputButtonType.Jump)
-                {
-                    Log.Info($"[CODEX_LOG] Input button up recorded. button={buttonType}, phase={context.phase}");
-                }
             }
 
             _buttonStates[buttonType] = isPressed;

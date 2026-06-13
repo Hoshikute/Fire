@@ -58,17 +58,13 @@ namespace GameLogic
         /// <summary>每逻辑帧最大转向角（定点，毫弧度 ≈ cos/sin 直接用向量）。</summary>
         private const int MaxTurnRate = 400; // 约 0.4 弧度/帧（~23°/帧，200ms 帧对应 ~115°/秒）
 
-        // ── 诊断：前 N 帧输出状态 ────────────────────────────────────────
-        private int m_diagFrameCount = 0;
-        private const int DiagMaxFrames = 10;
-
         // ── 确定性地面服务 ──────────────────────────────────────────────
         private IDeterministicGround m_ground;
 
         /// <summary>确定性碰撞世界（逻辑层服务）。</summary>
         private ICollisionWorld m_collision;
 
-        /// <summary>攀爬/翻越轨迹配置（由 PlayerWorld/Entry 注入）。</summary>
+        /// <summary>攀爬/翻越轨迹配置（由启动流程注入）。</summary>
         public ClimbConfig ClimbConfig { get; set; }
 
         public override void Init()
@@ -92,17 +88,6 @@ namespace GameLogic
             {
                 PlayerMoveComponent  move  = entities[i].GetComp<PlayerMoveComponent>();
                 PlayerStateComponent st    = entities[i].GetComp<PlayerStateComponent>();
-
-                // 诊断：前 N 帧输出关键状态
-                if (m_diagFrameCount < DiagMaxFrames)
-                {
-                    Log.Info($"[PlayerMoveSystem] F#{m_world.FrameCount} entity#{entities[i].ID} " +
-                             $"pos=({move.pos.x},{move.pos.y},{move.pos.z}) " +
-                             $"isOnGround={move.isOnGround} vSpeed={move.verticalSpeed} " +
-                             $"curSpeed={move.currentSpeed} speedGear={input.speedGear} " +
-                             $"state={st.state} framesInState={st.framesInState}");
-                    m_diagFrameCount++;
-                }
 
                 Step(move, st, input, deltaTime);
             }

@@ -15,6 +15,7 @@ namespace GameLogic
     ///   - toggleLock：锁定模式切换边沿触发
     ///   - platformJump：平台跳边沿触发（由交互逻辑写入）
     ///   - speedGear：Shift 键写入 PlayerInputComponent.speedGear（1 走 / 2 跑）
+    ///   - isCrouching：Crouch 边沿触发切换 StandValue（只影响表现层 mixer）
     ///
     /// 为什么放表现层：采集 Unity 输入本身依赖真实帧率和 UnityEngine.Input（非确定性来源），
     /// 必须隔离在表现层。逻辑层只读取「已定点化的输入意图」，保持确定性。
@@ -59,6 +60,12 @@ namespace GameLogic
             // speedGear 写在 PlayerInputComponent（SingletonComponent，不参与回滚快照），
             // 避免渲染帧直写 MomentComponentBase 污染回滚数据。
             input.speedGear = GameModule.Input.GetButton(InputButtonType.Shift) ? 2 : 1;
+
+            // ── 5. 下蹲姿态（边沿触发切换，表现层 StandValue 使用）
+            if (GameModule.Input.GetButtonDown(InputButtonType.Crouch))
+            {
+                input.isCrouching = !input.isCrouching;
+            }
         }
     }
 }

@@ -34,6 +34,13 @@ namespace GameLogic
         public int speedGear = 1;
 
         /// <summary>
+        /// 下蹲姿态开关（true = 蹲伏，false = 站立）。
+        /// 旧 TPC 的 Crouch 是边沿触发切换 StandValue；当前只用于表现层 Animancer mixer，
+        /// 不写入回滚组件，也不改变碰撞或确定性移动。
+        /// </summary>
+        public bool isCrouching;
+
+        /// <summary>
         /// 把所有边沿触发型输入清空。
         /// 逻辑帧消费完后调用，避免一次按键在多帧重复触发。
         /// 注意：moveDir 不清空——移动是持续性输入，松开摇杆时表现层会写回 Zero。

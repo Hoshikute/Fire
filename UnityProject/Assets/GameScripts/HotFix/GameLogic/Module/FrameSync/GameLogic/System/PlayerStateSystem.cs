@@ -25,10 +25,6 @@ namespace GameLogic
     /// </summary>
     public class PlayerStateSystem : SystemBase
     {
-        // ── 诊断：前 N 帧输出状态 ────────────────────────────────────────
-        private int m_diagFrameCount = 0;
-        private const int DiagMaxFrames = 10;
-
         // ── 帧计数阈值（200ms / 帧）────────────────────────────────────
         /// <summary>落地缓冲帧数（≈200ms）。</summary>
         private const int LandBufferFrames = 1;
@@ -81,13 +77,11 @@ namespace GameLogic
 
             PlayerLogicState next = Decide(move, st, input);
 
-            // 诊断：前 N 帧无条件输出当前状态（首帧 + 后续切换）
-            if (m_diagFrameCount < DiagMaxFrames || next != st.state)
+            if (next != st.state)
             {
                 Log.Info($"[PlayerStateSystem] F#{m_world.FrameCount} st={st.state}→{next} " +
                          $"isOnGround={move.isOnGround} vSpeed={move.verticalSpeed} " +
                          $"moveDirMag={input.moveDir.SqrMagnitude()} isLocked={st.isLocked}");
-                if (next == st.state) m_diagFrameCount++;
             }
 
             st.prevState = st.state;

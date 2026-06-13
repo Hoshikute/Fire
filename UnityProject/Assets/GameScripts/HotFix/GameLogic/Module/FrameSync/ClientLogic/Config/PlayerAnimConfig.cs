@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using Animancer;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace GameLogic
     /// 使用方式：
     ///   1. 在 Project 里 Create → GameLogic → PlayerAnimConfig 创建 SO 资产。
     ///   2. 在 Inspector 里把各状态的动画剪辑拖入对应字段。
-    ///   3. 把 SO 资产拖入 PlayerFrameSyncEntry.animConfig 字段。
+    ///   3. 资源地址约定为 "PlayerAnimConfig"，由 TPBattleContext 加载后注入 PlayerViewComponent。
     ///
     /// 命名规范：字段名与 PlayerLogicState 枚举值一一对应，方便检索。
     /// 可选字段（nullable）不赋值时表现系统会跳过播放并打 Log.Warning 提示。
@@ -100,5 +101,50 @@ namespace GameLogic
 
         [Tooltip("边缘攀上（LedgeClimb）")]
         public TransitionAsset ledgeClimb;
+
+        public bool HasRequiredBaseTransitions(out string missingFields)
+        {
+            List<string> missing = new List<string>();
+
+            AddIfNull(missing, idle, nameof(idle));
+            AddIfNull(missing, moveStart_F, nameof(moveStart_F));
+            AddIfNull(missing, moveStart_R45, nameof(moveStart_R45));
+            AddIfNull(missing, moveStart_R90, nameof(moveStart_R90));
+            AddIfNull(missing, moveStart_R135, nameof(moveStart_R135));
+            AddIfNull(missing, moveStart_R180, nameof(moveStart_R180));
+            AddIfNull(missing, moveStart_L135, nameof(moveStart_L135));
+            AddIfNull(missing, moveStart_L90, nameof(moveStart_L90));
+            AddIfNull(missing, moveStart_L45, nameof(moveStart_L45));
+            AddIfNull(missing, moveLoop, nameof(moveLoop));
+            AddIfNull(missing, moveEnd_L, nameof(moveEnd_L));
+            AddIfNull(missing, moveEnd_R, nameof(moveEnd_R));
+            AddIfNull(missing, GetMoveToWallTransition(), $"{nameof(moveToWall)} or {nameof(moveEnd_L)} fallback");
+            AddIfNull(missing, GetLockIdleTransition(), $"{nameof(lockIdle)} or {nameof(idle)} fallback");
+            AddIfNull(missing, jumpForward, nameof(jumpForward));
+            AddIfNull(missing, jumpInPlace, nameof(jumpInPlace));
+            AddIfNull(missing, fallLoop, nameof(fallLoop));
+            AddIfNull(missing, land, nameof(land));
+
+            missingFields = string.Join(", ", missing);
+            return missing.Count == 0;
+        }
+
+        public TransitionAsset GetMoveToWallTransition()
+        {
+            return moveToWall != null ? moveToWall : moveEnd_L;
+        }
+
+        public TransitionAsset GetLockIdleTransition()
+        {
+            return lockIdle != null ? lockIdle : idle;
+        }
+
+        private static void AddIfNull(List<string> missing, TransitionAsset asset, string fieldName)
+        {
+            if (asset == null)
+            {
+                missing.Add(fieldName);
+            }
+        }
     }
 }
