@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenSpec 变更 fix-player-tpose-missing-anim-config</title>
+  <style>
+:root {
+  color-scheme: light;
+  --page: #e6f4f4;
+  --paper: #f5fafa;
+  --paper-soft: #d5eded;
+  --paper-mute: #c2e5e5;
+  --ink: #2a4b4c;
+  --muted: #526f70;
+  --line: rgba(42, 75, 76, .12);
+  --line-soft: rgba(42, 75, 76, .06);
+  --nav: rgba(157, 200, 200, .94);
+  --teal: #519D9E;
+  --teal-bright: #58C9B9;
+  --mint: #9DC8C8;
+  --primary: #D1B6E1;
+  --primary-soft: rgba(209, 182, 225, .6);
+  --primary-mute: rgba(209, 182, 225, .2);
+  --accent: #519D9E;
+  --accent-soft: rgba(88, 201, 185, .18);
+  --accent-text: #214d4e;
+  --missing: #8f3a1a;
+  --missing-soft: rgba(209, 182, 225, .24);
+  --code-bg: #263238;
+  --code-text: #F8F8F8;
+  --inline-code-bg: #d5eded;
+  --shadow: 0 18px 46px rgba(42, 75, 76, .10);
+  --radius: 7px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #263238;
+    --paper: #304a4b;
+    --paper-soft: #37474F;
+    --paper-mute: #2D3B41;
+    --ink: #F8F8F8;
+    --muted: #c2d6d6;
+    --line: rgba(248, 248, 248, .12);
+    --line-soft: rgba(248, 248, 248, .06);
+    --nav: rgba(38, 50, 56, .92);
+    --teal: #58C9B9;
+    --teal-bright: #58C9B9;
+    --mint: #519D9E;
+    --primary: #D1B6E1;
+    --primary-soft: rgba(209, 182, 225, .6);
+    --primary-mute: rgba(209, 182, 225, .2);
+    --accent: #519D9E;
+    --accent-soft: rgba(209, 182, 225, .2);
+    --accent-text: #F8F8F8;
+    --missing: #f0b79b;
+    --missing-soft: rgba(163, 59, 22, .16);
+    --code-bg: #172126;
+    --code-text: #F8F8F8;
+    --inline-code-bg: #37474F;
+    --shadow: 0 18px 46px rgba(0, 0, 0, .24);
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Microsoft YaHei UI", "Segoe UI Variable", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    linear-gradient(135deg, var(--primary-mute), rgba(88, 201, 185, .13) 42%, rgba(157, 200, 200, .28)),
+    var(--page);
+  text-rendering: optimizeLegibility;
+}
+a { color: inherit; }
+.page { min-height: 100vh; }
+.topbar {
+  position: relative;
+  background: var(--nav);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(42, 75, 76, .08);
+}
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, var(--teal), var(--teal-bright), var(--primary));
+}
+.topbar-inner {
+  width: min(1680px, 100%);
+  margin: 0 auto;
+  padding: 22px clamp(14px, 2.4vw, 34px) 0;
+}
+.title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.topbar h1 {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.15;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+.copy-command {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  min-width: 96px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-soft);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+.copy-command:hover {
+  border-color: var(--teal-bright);
+  background: var(--teal-bright);
+}
+.copy-command:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+.copy-command:active { transform: translateY(1px); }
+.copy-command.copied {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+.copy-command.failed {
+  border-color: var(--missing);
+  background: var(--missing-soft);
+  color: var(--missing);
+}
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  overflow-x: auto;
+  padding: 0;
+}
+.tab {
+  flex: 0 0 auto;
+  min-width: 92px;
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-mute);
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.3;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+.tab:hover { background: var(--teal-bright); border-color: var(--teal-bright); }
+.tab:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+.tab.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+main {
+  width: 100%;
+  margin: 0;
+  padding: 0 0 52px;
+}
+.doc {
+  margin: 0 0 20px;
+  overflow: hidden;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: none;
+}
+.doc[hidden] { display: none; }
+.content {
+  padding: 16px clamp(14px, 2vw, 26px) 24px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.content > :first-child { margin-top: 0; }
+.content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
+  margin: .85em 0 .35em;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+.content h1 {
+  font-size: 24px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 7px;
+}
+.content h2 { font-size: 21px; }
+.content h3 { font-size: 18px; }
+.content p { margin: .45em 0; }
+ul, ol { padding-left: 25px; }
+li { margin: .2em 0; }
+blockquote {
+  margin: 14px 0;
+  padding: 11px 14px;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+code {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: var(--inline-code-bg);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: .92em;
+}
+pre {
+  margin: 16px 0;
+  padding: 15px;
+  border-radius: var(--radius);
+  overflow: auto;
+  background: var(--code-bg);
+  color: var(--code-text);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+pre code { padding: 0; background: transparent; color: inherit; }
+.missing {
+  display: inline-block;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--missing-soft);
+  color: var(--missing);
+  font-weight: 700;
+}
+.taskbox {
+  display: inline-block;
+  width: 1.25em;
+  color: var(--accent);
+  font-weight: 700;
+}
+hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .doc:not([hidden]) {
+    animation: panel-in .18s ease-out;
+  }
+  @keyframes panel-in {
+    from { opacity: .82; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+@media (max-width: 820px) {
+  .topbar-inner { padding-top: 18px; }
+  .title-row { display: block; }
+  .copy-command { display: inline-block; margin-top: 10px; }
+  main { padding-top: 0; }
+}
+@media (max-width: 560px) {
+  .tabs { gap: 8px; }
+  .tab { min-width: 82px; padding: 9px 11px; }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="title-row">
+          <div>
+            <div class="eyebrow">OpenSpec Review</div>
+            <h1>fix-player-tpose-missing-anim-config</h1>
+          </div>
+          <button class="copy-command" type="button" aria-label="复制执行命令">复制命令</button>
+        </div>
+        <nav class="tabs" role="tablist" aria-label="OpenSpec 产物页签">
+          <a class="tab" id="tab-doc-1-proposal-md" role="tab" href="#doc-1-proposal-md" data-tab="doc-1-proposal-md" aria-controls="doc-1-proposal-md">提案</a><a class="tab" id="tab-doc-2-design-md" role="tab" href="#doc-2-design-md" data-tab="doc-2-design-md" aria-controls="doc-2-design-md">设计</a><a class="tab" id="tab-doc-3-tasks-md" role="tab" href="#doc-3-tasks-md" data-tab="doc-3-tasks-md" aria-controls="doc-3-tasks-md">任务</a><a class="tab" id="tab-doc-4-specs-framesync-player-animation-resources-spec-md" role="tab" href="#doc-4-specs-framesync-player-animation-resources-spec-md" data-tab="doc-4-specs-framesync-player-animation-resources-spec-md" aria-controls="doc-4-specs-framesync-player-animation-resources-spec-md">规格：framesync-player-animation-resources</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="doc" id="doc-1-proposal-md" data-panel="doc-1-proposal-md" role="tabpanel" aria-labelledby="tab-doc-1-proposal-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>为什么</h2>
+<p>当前 FrameSync 玩家可以正常进入 Game 场景，Player prefab 也已经加载成功，但动画配置没有加载到。运行日志显示 <code>TPBattleContext</code> 在检查 <code>CheckLocationValid(&quot;PlayerAnimConfig&quot;)</code> 时失败，随后 <code>PlayerAnimViewSystem</code> 因为 <code>PlayerViewComponent.animConfig == null</code> 直接跳过动画播放，导致角色虽然逻辑状态在切换，画面上仍停在默认 T-Pose。</p>
+<p>这个问题需要现在修复，因为最近的动画路径重构已经把动画配置注入方式从 <code>PlayerFrameSyncEntry</code> 的序列化字段改成了 <code>TPBattleContext</code> 通过 TEngine <code>GameModule.Resource</code> 加载 <code>PlayerAnimConfig</code>。代码契约已经切到 TEngine ResourceModule/YooAsset 资源定位链路，但对应的资源资产、DefaultPackage 收集规则验证和加载失败诊断还没有补齐。</p>
+<h2>TEngine 规范依据</h2>
+<p>已对照阅读项目知识库与 TEngine RepoWiki 中的资源规范：<code>.knowledge/framework/tengine-repowiki.md</code>、<code>资源管理/资源管理.md</code>、<code>资源管理/YooAsset集成.md</code>、<code>资源管理/资源加载机制.md</code>、<code>编辑器工具/资源收集器.md</code>、<code>开发者指南/最佳实践指南/资源管理最佳实践.md</code>。本变更按这些规范收敛到现有资源系统：</p>
+<ul>
+<li>资源必须通过 <code>ResourceModule</code>/<code>GameModule.Resource</code> 统一加载，不新增绕过 YooAsset 的 <code>Resources.Load</code>、AssetDatabase 运行时依赖或手写路径加载。</li>
+<li>运行时定位地址以 TEngine/YooAsset 的 location 为准；当前 <code>DefaultPackage</code> 下 <code>Assets/AssetRaw/Configs</code> 已由 collector 使用 <code>AddressByFileName</code>、<code>PackDirectory</code>、<code>CollectAll</code> 收集，因此 <code>PlayerAnimConfig.asset</code> 的预期地址就是 <code>PlayerAnimConfig</code>。</li>
+<li>资源可用性验证必须覆盖 <code>CheckLocationValid(&quot;PlayerAnimConfig&quot;)</code> 和 <code>LoadAssetAsync&lt;PlayerAnimConfig&gt;(&quot;PlayerAnimConfig&quot;)</code>，并在地址无效或加载返回空时给出明确日志。</li>
+<li>动画配置资源属于表现层输入，生命周期由 TEngine 资源模块和对象池/句柄机制管理，不写入 FrameSync 可回滚逻辑组件。</li>
+</ul>
+<h2>变更内容</h2>
+<ul>
+<li>新增一份资源化的 <code>PlayerAnimConfig</code> 配置契约，通过默认资源包以地址 <code>PlayerAnimConfig</code> 加载。</li>
+<li>复用现有 <code>Assets/AssetRaw/Configs</code> collector，不新增并行资源加载体系；如 collector 规则漂移，优先修复资源配置而不是改运行时代码绕过框架。</li>
+<li>确保配置至少包含进入游戏和地面移动所需的基础动画映射：Idle、MoveStart 八方向、MoveLoop、MoveEnd、MoveToWall 兜底、LockIdle 兜底。</li>
+<li>保持逻辑层和表现层分离：动画资源只驱动 Animancer 表现，不反向写入 FrameSync 逻辑组件。</li>
+<li>补充校验和诊断，让缺失或不完整的动画配置能在 TEngine 资源边界被明确发现，而不是静默表现为 T-Pose。</li>
+<li>不恢复旧 <code>ThirdPersonController</code> 运行链路，也不恢复已删除的 <code>PlayerFrameSyncEntry</code> 序列化注入链路。</li>
+</ul>
+<h2>能力</h2>
+<h3>新增能力</h3>
+<ul>
+<li><code>framesync-player-animation-resources</code>: FrameSync 玩家资源化动画配置能力，覆盖 TEngine/YooAsset 资源地址有效性、基础状态动画映射、资源加载失败诊断，以及动画资源缺失时的运行时诊断。</li>
+</ul>
+<h3>修改能力</h3>
+<ul>
+<li>无。</li>
+</ul>
+<h2>影响范围</h2>
+<ul>
+<li>运行时代码：<code>Assets/GameScripts/HotFix/GameLogic/Context/TPBattleContext.cs</code>、<code>Assets/GameScripts/HotFix/GameLogic/Module/FrameSync/ClientLogic/System/PlayerAnimViewSystem.cs</code>、<code>Assets/GameScripts/HotFix/GameLogic/Module/FrameSync/ClientLogic/Config/PlayerAnimConfig.cs</code>。</li>
+<li>资源资产：<code>Assets/AssetRaw/Configs/PlayerAnimConfig.asset</code> 及其 <code>.meta</code>，以及现有 Animancer 过渡资源 <code>Assets/AssetRaw/ThirdPersonController/AnimancerController/Resources/Config/PlayerAnimacer/</code>。</li>
+<li>资源配置：<code>DefaultPackage</code> 必须能解析地址 <code>PlayerAnimConfig</code>；当前预期链路是 <code>Assets/AssetRaw/Configs</code> + <code>AddressByFileName</code> + <code>PackDirectory</code> + <code>CollectAll</code>。</li>
+<li>验证影响：Game 场景运行验证必须确认不再出现 <code>PlayerAnimConfig missing</code> 或 <code>Could not found location [PlayerAnimConfig]</code> 错误，并且角色能播放 Idle 和移动动画、脱离 T-Pose。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-2-design-md" data-panel="doc-2-design-md" role="tabpanel" aria-labelledby="tab-doc-2-design-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>背景</h2>
+<p>当前 FrameSync 玩家启动链路由 <code>TPBattleContext</code> 加载 Player prefab，然后通过资源地址 <code>PlayerAnimConfig</code> 加载 <code>PlayerAnimConfig</code>，再注入到 <code>PlayerViewComponent.animConfig</code>。<code>PlayerAnimViewSystem</code> 依赖这个非空配置，才会播放首帧 Idle 动画和后续状态切换动画。</p>
+<p>这次运行时问题非常集中：Player prefab 已加载、PlayerWorld 已启动、<code>PlayerStateSystem</code> 也能输出状态切换日志，但 <code>TPBattleContext</code> 报出 <code>PlayerAnimConfig missing. Expected resource location: PlayerAnimConfig.</code>。因为 <code>PlayerAnimViewSystem</code> 会跳过 <code>animConfig == null</code> 的实体，Animancer 没收到任何 Play 调用，角色就停在 T-Pose。</p>
+<p>仓库中已经存在地面移动相关的 Animancer <code>TransitionAsset</code>，位置在 <code>Assets/AssetRaw/ThirdPersonController/AnimancerController/Resources/Config/PlayerAnimacer/NoneLock/</code>。缺失的是新的聚合配置资产 <code>PlayerAnimConfig.asset</code>，以及它能通过 TEngine ResourceModule/YooAsset 默认资源包被加载的验证。</p>
+<h2>TEngine 规范对齐</h2>
+<p>本设计按 TEngine RepoWiki 的资源管理规范收敛：</p>
+<ul>
+<li><code>ResourceModule</code> 是项目统一资源入口，<code>GameModule.Resource.CheckLocationValid</code> 与 <code>GameModule.Resource.LoadAssetAsync&lt;T&gt;</code> 是运行时验证和加载 <code>PlayerAnimConfig</code> 的正确边界。</li>
+<li>TEngine 的 YooAsset 集成以包名和 location 共同定位资源；本修复使用默认包，不显式传包名，避免和现有 Game 场景启动链路分叉。</li>
+<li>资源收集器使用“包-分组-收集器-规则”结构。当前 <code>DefaultPackage</code> 的 <code>Configs</code> 分组收集 <code>Assets/AssetRaw/Configs</code>，规则为 <code>AddressByFileName</code>、<code>PackDirectory</code>、<code>CollectAll</code>，所以文件名 <code>PlayerAnimConfig.asset</code> 会生成无后缀 location <code>PlayerAnimConfig</code>。</li>
+<li>TEngine 资源加载支持缓存、句柄与对象池生命周期；本变更只补资源与诊断，不在 FrameSync 逻辑组件中保存 UnityEngine 资源引用。</li>
+<li>资源故障排查应先确认定位地址、包名和 collector 规则，再看加载返回值；因此验证任务必须覆盖 collector 配置和 EditorSimulateMode 下的 <code>CheckLocationValid</code>。</li>
+</ul>
+<h2>目标 / 非目标</h2>
+<p><strong>目标：</strong></p>
+<ul>
+<li>提供真实的 <code>PlayerAnimConfig</code> 资源资产，并能通过 <code>GameModule.Resource</code> 以地址 <code>PlayerAnimConfig</code> 加载。</li>
+<li>明确该资产受 <code>DefaultPackage</code> 的 <code>Assets/AssetRaw/Configs</code> collector 管理，符合 TEngine/YooAsset 的资源定位规则。</li>
+<li>填入基础地面动画映射，让 Game 场景进入后能播放 Idle 和移动状态切换动画，而不是停在 T-Pose。</li>
+<li>保持动画为纯表现层：<code>PlayerAnimViewSystem</code> 只读逻辑状态并驱动 Animancer，不修改 FrameSync 逻辑组件。</li>
+<li>增加诊断信息，让缺失配置或缺失基础动画字段能从 Console 日志中快速定位。</li>
+<li>在 Game 场景中验证：原来的 <code>PlayerAnimConfig missing</code> 错误消失，角色可见地脱离 T-Pose。</li>
+</ul>
+<p><strong>非目标：</strong></p>
+<ul>
+<li>不绕过 TEngine <code>ResourceModule</code> 增加 <code>Resources.Load</code>、AssetDatabase 运行时依赖或硬编码绝对文件路径。</li>
+<li>不新增新的资源包或 collector 分组，除非验证发现现有 <code>Configs</code> collector 已经漂移且无法覆盖该资产。</li>
+<li>不重新引入 <code>ThirdPersonController</code> 逻辑或 Root Motion 位移。</li>
+<li>不恢复已经删除的 <code>PlayerFrameSyncEntry</code> 序列化注入路径。</li>
+<li>不重写 <code>PlayerStateSystem</code>、<code>PlayerMoveSystem</code> 或确定性移动规则。</li>
+<li>不要求在恢复基础 Game 场景动画前一次性迁移完所有跳跃、下落、翻越、攀爬、平台跳动画。</li>
+</ul>
+<h2>决策</h2>
+<h3>D1：将 <code>PlayerAnimConfig.asset</code> 放在 <code>Assets/AssetRaw/Configs</code></h3>
+<p>使用 <code>Assets/AssetRaw/Configs/PlayerAnimConfig.asset</code> 作为聚合 ScriptableObject 的位置。<code>DefaultPackage</code> 当前已经收集 <code>Assets/AssetRaw/Configs</code>，地址规则是 <code>AddressByFileName</code>，打包规则是 <code>PackDirectory</code>，过滤规则是 <code>CollectAll</code>，因此生成的 YooAsset location 正好是 <code>PlayerAnimConfig</code>，与 <code>TPBattleContext.PLAYER_ANIM_CONFIG_PATH</code> 一致。</p>
+<p>备选方案：把资产放在现有 Animancer 过渡资源旁边。这样资源组织更集中，但当前 collector 设置没有把那棵目录纳入 DefaultPackage；除非同步修改 collector，否则 <code>CheckLocationValid(&quot;PlayerAnimConfig&quot;)</code> 仍会失败。</p>
+<h3>D2：复用 TEngine ResourceModule 加载链路，不新增旁路加载</h3>
+<p><code>TPBattleContext.LoadPlayerAnimConfigAsync()</code> 继续通过 <code>GameModule.Resource.CheckLocationValid(PLAYER_ANIM_CONFIG_PATH)</code> 和 <code>GameModule.Resource.LoadAssetAsync&lt;PlayerAnimConfig&gt;(PLAYER_ANIM_CONFIG_PATH)</code> 加载。这样可复用 TEngine 的 YooAsset 包初始化、资源定位、缓存、句柄和对象池生命周期。</p>
+<p>备选方案：直接在 prefab 或场景中序列化拖拽 <code>PlayerAnimConfig</code>。这能绕过 location 失败，但会回到旧注入模式，破坏当前动态加载与资源包契约，也不能覆盖线上包清单缺资源的问题。</p>
+<h3>D3：复用现有地面移动 <code>TransitionAsset</code></h3>
+<p>基础字段按现有资源填入：</p>
+<ul>
+<li><code>idle</code>：<code>NoneLock/IdleLoop.asset</code></li>
+<li><code>moveStart_<em></code>：对应的 <code>NoneLock/MoveStart_</em>.asset</code></li>
+<li><code>moveLoop</code>：<code>NoneLock/MoveLoop.asset</code></li>
+<li><code>moveEnd_L</code> / <code>moveEnd_R</code>：对应的 <code>NoneLock/MoveEnd_*.asset</code></li>
+<li><code>moveToWall</code>：暂时兜底复用 <code>moveEnd_L</code></li>
+<li><code>lockIdle</code>：暂时兜底复用 <code>idle</code></li>
+</ul>
+<p>备选方案：先为每个 <code>PlayerLogicState</code> 都创建完整过渡资产再启用配置。这个方向更完整，但范围明显大于当前 T-Pose 修复，会拖慢基础 Game 场景动画恢复。</p>
+<h3>D4：高级动画缺口按“不完整映射”处理，不阻塞启动</h3>
+<p>Jump、Fall、Vault、Climb、LedgeClimb、PlatformerUp 等高级状态如果暂时没有合适的 <code>TransitionAsset</code>，可以作为后续迁移项单独跟踪。基础配置必须能加载，并允许 Idle/移动动画播放。高级字段缺失时，应在进入对应状态时输出明确警告，而不是让整个动画系统不可用。</p>
+<p>备选方案：只要 <code>PlayerAnimConfig</code> 任何字段为空就阻止 Game 场景启动。这样能避免隐藏资源债务，但当前代码已经把部分字段设计为可选/可兜底，而且这次用户可见故障是“整个配置为 null”，不是某个高级状态缺动画。</p>
+<h3>D5：在资源边界做配置校验</h3>
+<p>校验应靠近 <code>TPBattleContext.LoadPlayerAnimConfigAsync()</code> 或 <code>PlayerAnimConfig</code> helper，因为这里最早知道资源地址和聚合映射是否可用。校验应在 <code>PlayerAnimViewSystem</code> 静默跳过之前报告缺失地址或缺失基础字段，并保留 TEngine 自带的 <code>Could not found location [...]</code> 语义。</p>
+<p>备选方案：只在 <code>PlayerAnimViewSystem</code> 每帧发现 <code>animConfig == null</code> 时输出日志。这会很吵，而且定位太晚；资源边界能给出更清晰的一次性原因。</p>
+<h2>风险 / 权衡</h2>
+<ul>
+<li>[风险] 手写 Unity YAML 可能引用错误脚本或错误 Transition GUID -&gt; 缓解：优先通过 Unity Editor API 创建/更新 ScriptableObject，或在运行前核对 <code>.meta</code> GUID。</li>
+<li>[风险] collector 规则未来漂移导致文件存在但 location 失效 -&gt; 缓解：任务中显式验证 <code>DefaultPackage/Configs</code> 的 <code>CollectPath</code>、<code>AddressByFileName</code>、<code>PackDirectory</code>、<code>CollectAll</code>，并在 EditorSimulateMode 下验证 <code>CheckLocationValid(&quot;PlayerAnimConfig&quot;)</code>。</li>
+<li>[风险] 资源包未初始化或播放模式配置不一致会造成编辑器与运行时表现不同 -&gt; 缓解：验证时记录当前 YooAsset/TEngine 播放模式，并通过 Game 场景实际启动链路验证，而不是只看 Project 视图文件存在。</li>
+<li>[风险] <code>moveToWall</code> 和 <code>lockIdle</code> 的兜底动画只是近似表现 -&gt; 缓解：在任务中明确这些是临时兜底，后续专用动画迁移单独处理。</li>
+<li>[风险] 基础修复后，高级状态仍可能没有动画 -&gt; 缓解：警告中必须写清缺失的状态或字段，便于后续逐项补齐，不阻塞 Idle/移动恢复。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-3-tasks-md" data-panel="doc-3-tasks-md" role="tabpanel" aria-labelledby="tab-doc-3-tasks-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>1. TEngine 资源契约确认</h2>
+<ul>
+<li><span class="taskbox">✓</span>1.1 对照 TEngine 资源规范，确认本修复继续使用 <code>GameModule.Resource</code>/<code>ResourceModule</code>，不新增 <code>Resources.Load</code>、AssetDatabase 运行时依赖或硬编码文件路径旁路。</li>
+<li><span class="taskbox">✓</span>1.2 确认当前 <code>DefaultPackage</code> collector 仍然使用 <code>AddressByFileName</code> 收集 <code>Assets/AssetRaw/Configs</code>，并记录 <code>PackDirectory</code>、<code>CollectAll</code> 规则没有漂移。</li>
+<li><span class="taskbox">✓</span>1.3 确认 <code>PlayerAnimConfig.asset</code> 作为文件名生成的 YooAsset location 为无后缀 <code>PlayerAnimConfig</code>，与 <code>TPBattleContext.PLAYER_ANIM_CONFIG_PATH</code> 一致。</li>
+</ul>
+<h2>2. 资源资产契约</h2>
+<ul>
+<li><span class="taskbox">✓</span>2.1 创建 <code>Assets/AssetRaw/Configs/PlayerAnimConfig.asset</code> 和 <code>.meta</code>，类型为 <code>GameLogic.PlayerAnimConfig</code> ScriptableObject。</li>
+<li><span class="taskbox">✓</span>2.2 从现有 <code>NoneLock</code> 过渡资产填入基础地面映射：Idle、MoveStart F/R45/R90/R135/R180/L135/L90/L45、MoveLoop、MoveEnd_L、MoveEnd_R。</li>
+<li><span class="taskbox">✓</span>2.3 为 <code>moveToWall</code> 和 <code>lockIdle</code> 填入安全兜底，避免缺少专用过渡时整段动画播放被跳过。</li>
+<li><span class="taskbox">✓</span>2.4 确认被引用的 <code>TransitionAsset</code> 资源也在 TEngine/YooAsset 可收集资源范围内，避免 <code>PlayerAnimConfig</code> 可加载但内部引用丢失。</li>
+</ul>
+<h2>3. 运行时校验与诊断</h2>
+<ul>
+<li><span class="taskbox">✓</span>3.1 增加 <code>PlayerAnimConfig</code> 校验 helper 或等价运行时检查，用于检查基础必填字段。</li>
+<li><span class="taskbox">✓</span>3.2 在 <code>TPBattleContext</code> 加载 <code>PlayerAnimConfig</code> 后调用校验，并输出准确的缺失地址、加载返回空或缺失基础字段。</li>
+<li><span class="taskbox">✓</span>3.3 确认 <code>TPBattleContext</code> 在启动 PlayerWorld 前仍会把加载到的配置注入 <code>PlayerViewComponent.animConfig</code>。</li>
+<li><span class="taskbox">✓</span>3.4 保持启动逻辑确定性与表现层边界，不把动画数据写入参与回滚记录的逻辑组件。</li>
+<li><span class="taskbox">✓</span>3.5 保留 TEngine 资源模块的失败语义：地址无效时能看到 <code>PlayerAnimConfig</code> location，加载失败时能区分 location 无效与 asset 返回 null。</li>
+</ul>
+<h2>4. PlayerAnimViewSystem 行为</h2>
+<ul>
+<li><span class="taskbox">✓</span>4.1 确认 <code>animInitialized == false</code> 且配置有效时，首帧会播放 Idle。</li>
+<li><span class="taskbox">✓</span>4.2 确认移动状态切换会对配置好的基础过渡调用 <code>AnimancerComponent.Play</code>。</li>
+<li><span class="taskbox">✓</span>4.3 为缺少过渡的可选高级状态增加或优化 warning，日志需写明状态或字段，并避免每帧刷屏。</li>
+<li><span class="taskbox">✓</span>4.4 确认可选高级映射缺失不会影响 Idle 和地面移动映射继续播放。</li>
+</ul>
+<h2>5. 验证</h2>
+<ul>
+<li><span class="taskbox">✓</span>5.1 搜索 <code>PlayerAnimConfig missing</code>、<code>Could not found location [PlayerAnimConfig]</code>、<code>animConfig == null</code> 和基础配置字段引用，确认预期代码路径已覆盖。</li>
+<li><span class="taskbox">□</span>5.2 在 EditorSimulateMode 下通过 YooAsset/TEngine 资源查询验证 <code>GameModule.Resource.CheckLocationValid(&quot;PlayerAnimConfig&quot;)</code> 为 true。</li>
+<li><span class="taskbox">✓</span>5.3 运行可用的 GameLogic 编译/构建验证，或相关 Unity 生成项目验证。</li>
+<li><span class="taskbox">□</span>5.4 在 Unity Editor 中运行 Game 场景，确认不再出现 <code>PlayerAnimConfig missing</code> 或 <code>Could not found location [PlayerAnimConfig]</code> 错误。</li>
+<li><span class="taskbox">□</span>5.5 验证可见玩家进入场景后脱离 T-Pose，先播放 Idle，再在移动和停止时切过 MoveStart、MoveLoop、MoveEnd，并回到 Idle。</li>
+<li><span class="taskbox">✓</span>5.6 运行 <code>openspec validate fix-player-tpose-missing-anim-config --strict</code>，并刷新 HTML 审阅页。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-4-specs-framesync-player-animation-resources-spec-md" data-panel="doc-4-specs-framesync-player-animation-resources-spec-md" role="tabpanel" aria-labelledby="tab-doc-4-specs-framesync-player-animation-resources-spec-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>新增需求</h2>
+<h3>需求：遵循 TEngine 资源系统契约</h3>
+<p><code>PlayerAnimConfig</code> 的运行时加载 MUST 通过 TEngine <code>ResourceModule</code>/<code>GameModule.Resource</code> 完成，并 MUST 使用 YooAsset location <code>PlayerAnimConfig</code>。系统 SHALL NOT 为该配置新增绕过 TEngine 资源模块的 <code>Resources.Load</code>、AssetDatabase 运行时依赖或硬编码绝对文件路径加载。</p>
+<h4>场景：使用默认资源包定位动画配置</h4>
+<ul>
+<li><strong>当</strong> <code>TPBattleContext</code> 初始化 Game 场景并准备加载玩家动画配置</li>
+<li><strong>则</strong> 它通过 <code>GameModule.Resource.CheckLocationValid(&quot;PlayerAnimConfig&quot;)</code> 和 <code>GameModule.Resource.LoadAssetAsync&lt;PlayerAnimConfig&gt;(&quot;PlayerAnimConfig&quot;)</code> 验证并加载配置</li>
+</ul>
+<h4>场景：Collector 规则生成预期 location</h4>
+<ul>
+<li><strong>当</strong> <code>PlayerAnimConfig.asset</code> 位于 <code>Assets/AssetRaw/Configs</code></li>
+<li><strong>则</strong> <code>DefaultPackage</code> 的 <code>Configs</code> collector 使用 <code>AddressByFileName</code> 生成 location <code>PlayerAnimConfig</code>，并允许默认资源包解析该地址</li>
+</ul>
+<h3>需求：PlayerAnimConfig 资源可加载</h3>
+<p>系统 MUST 提供一个 <code>PlayerAnimConfig</code> ScriptableObject 资源，并且该资源 MUST 能通过默认资源包以地址 <code>PlayerAnimConfig</code> 解析。</p>
+<h4>场景：游戏启动时资源地址可解析</h4>
+<ul>
+<li><strong>当</strong> <code>TPBattleContext</code> 初始化 Game 场景并调用 <code>GameModule.Resource.CheckLocationValid(&quot;PlayerAnimConfig&quot;)</code></li>
+<li><strong>则</strong> 检查结果为成功，并且 <code>GameModule.Resource.LoadAssetAsync&lt;PlayerAnimConfig&gt;(&quot;PlayerAnimConfig&quot;)</code> 返回非空配置</li>
+</ul>
+<h4>场景：资源缺失时输出可定位错误</h4>
+<ul>
+<li><strong>当</strong> <code>PlayerAnimConfig</code> 资源地址无法解析</li>
+<li><strong>则</strong> 启动诊断日志包含准确地址 <code>PlayerAnimConfig</code>，并明确指出动画配置缺失是动画无法启动的原因</li>
+</ul>
+<h3>需求：基础地面动画映射存在</h3>
+<p><code>PlayerAnimConfig</code> 资源 MUST 包含 Game 场景基础动画链路所需的非空过渡映射：Idle、MoveStart 八方向、MoveLoop、MoveEnd 左/右、MoveToWall 兜底、LockIdle 兜底。</p>
+<h4>场景：玩家首个可见帧播放 Idle</h4>
+<ul>
+<li><strong>当</strong> 本地 FrameSync 玩家实体创建，且 <code>PlayerStateComponent.state == Idle</code></li>
+<li><strong>则</strong> <code>PlayerAnimViewSystem</code> 在玩家的 <code>AnimancerComponent</code> 上播放配置好的 Idle 过渡，而不是让模型保持 T-Pose</li>
+</ul>
+<h4>场景：地面移动状态切换播放配置动画</h4>
+<ul>
+<li><strong>当</strong> <code>PlayerStateComponent.state</code> 从 <code>Idle</code> 切到 <code>MoveStart</code>、<code>MoveLoop</code>、<code>MoveEnd</code>，或切回 <code>Idle</code></li>
+<li><strong>则</strong> <code>PlayerAnimViewSystem</code> 为新状态选择对应配置过渡，并调用 <code>AnimancerComponent.Play</code></li>
+</ul>
+<h4>场景：MoveToWall 和 LockIdle 使用安全兜底</h4>
+<ul>
+<li><strong>当</strong> <code>PlayerStateComponent.state</code> 进入 <code>MoveToWall</code> 或 <code>LockIdle</code>，且尚未选择专用过渡</li>
+<li><strong>则</strong> 系统使用配置好的兜底过渡，而不是跳过全部动画播放</li>
+</ul>
+<h3>需求：动画表现保持只读逻辑</h3>
+<p>动画资源加载和播放 MUST 保持纯表现层行为。它 SHALL NOT 修改 <code>PlayerMoveComponent</code>、<code>PlayerStateComponent</code>、<code>PlayerInputComponent</code> 或任何参与回滚记录的确定性逻辑组件。</p>
+<h4>场景：Animancer 播放不写逻辑状态</h4>
+<ul>
+<li><strong>当</strong> <code>PlayerAnimViewSystem</code> 播放 Idle 或移动过渡</li>
+<li><strong>则</strong> 只有 Animancer 表现状态发生变化，确定性 FrameSync 逻辑组件不会被动画系统写入</li>
+</ul>
+<h3>需求：可诊断可选映射缺失</h3>
+<p>如果 jump、fall、vault、climb、ledge climb、platformer 等高级可选动画映射缺失，系统 SHALL 在对应路径被触发时报告缺失状态或字段，但 SHALL NOT 让整个配置变成 null。</p>
+<h4>场景：可选高级状态缺少过渡</h4>
+<ul>
+<li><strong>当</strong> <code>PlayerStateComponent.state</code> 进入某个高级状态，且对应 <code>PlayerAnimConfig</code> 字段为 null</li>
+<li><strong>则</strong> Console warning 指出缺失的动画状态或字段，同时已经配置的 Idle 和地面移动映射仍可继续使用</li>
+</ul>
+  </div>
+</section>
+    </main>
+  </div>
+  <script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('[data-tab]'));
+  const panels = Array.from(document.querySelectorAll('[data-panel]'));
+  const panelIds = new Set(panels.map((panel) => panel.id));
+  const copyButton = document.querySelector('.copy-command');
+  const applyCommand = "/prompts:opsx-apply fix-player-tpose-missing-anim-config";
+
+  async function copyText(text) {
+    const errors = [];
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+    if (copyWithEvent(text)) { return; }
+    if (copyWithTextarea(text)) { return; }
+    throw errors[0] || new Error('copy command rejected');
+  }
+
+  function copyWithEvent(text) {
+    const handler = (event) => {
+      event.clipboardData.setData('text/plain', text);
+      event.preventDefault();
+    };
+    document.addEventListener('copy', handler, true);
+    try {
+      return document.execCommand('copy');
+    } catch (error) {
+      return false;
+    } finally {
+      document.removeEventListener('copy', handler, true);
+    }
+  }
+
+  function copyWithTextarea(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    try {
+      return document.execCommand('copy');
+    } catch (error) {
+      return false;
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+
+  function showCopyState(state, label) {
+    if (!copyButton) { return; }
+    copyButton.textContent = label;
+    copyButton.classList.toggle('copied', state === 'copied');
+    copyButton.classList.toggle('failed', state === 'failed');
+    window.clearTimeout(copyButton.copyTimer);
+    copyButton.copyTimer = window.setTimeout(() => {
+      copyButton.textContent = '复制命令';
+      copyButton.classList.remove('copied', 'failed');
+    }, 1600);
+  }
+
+  function activate(id, updateHash) {
+    const targetId = panelIds.has(id) ? id : (tabs[0] && tabs[0].dataset.tab);
+    if (!targetId) { return; }
+    let activeTab = null;
+    tabs.forEach((tab) => {
+      const active = tab.dataset.tab === targetId;
+      tab.classList.toggle('active', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      tab.setAttribute('tabindex', active ? '0' : '-1');
+      if (active) { activeTab = tab; }
+    });
+    panels.forEach((panel) => { panel.hidden = panel.id !== targetId; });
+    if (updateHash && window.location.hash !== '#' + targetId) {
+      history.pushState(null, '', '#' + targetId);
+    }
+    return activeTab;
+  }
+
+  if (copyButton) {
+    copyButton.addEventListener('click', async () => {
+      try {
+        await copyText(applyCommand);
+        showCopyState('copied', '已复制');
+      } catch (error) {
+        showCopyState('failed', '复制失败');
+      }
+    });
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', (event) => {
+      event.preventDefault();
+      activate(tab.dataset.tab, true);
+    });
+    tab.addEventListener('keydown', (event) => {
+      const current = tabs.indexOf(tab);
+      let next = current;
+      if (event.key === 'ArrowRight') { next = (current + 1) % tabs.length; }
+      else if (event.key === 'ArrowLeft') { next = (current - 1 + tabs.length) % tabs.length; }
+      else if (event.key === 'Home') { next = 0; }
+      else if (event.key === 'End') { next = tabs.length - 1; }
+      else { return; }
+      event.preventDefault();
+      const activeTab = activate(tabs[next].dataset.tab, true);
+      if (activeTab) { activeTab.focus(); }
+    });
+  });
+  window.addEventListener('hashchange', () => activate(window.location.hash.slice(1), false));
+  activate(window.location.hash.slice(1), false);
+})();
+  </script>
+</body>
+</html>

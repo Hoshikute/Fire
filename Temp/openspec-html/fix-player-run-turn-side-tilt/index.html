@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenSpec 变更 fix-player-run-turn-side-tilt</title>
+  <style>
+:root {
+  color-scheme: light;
+  --page: #e6f4f4;
+  --paper: #f5fafa;
+  --paper-soft: #d5eded;
+  --paper-mute: #c2e5e5;
+  --ink: #2a4b4c;
+  --muted: #526f70;
+  --line: rgba(42, 75, 76, .12);
+  --line-soft: rgba(42, 75, 76, .06);
+  --nav: rgba(157, 200, 200, .94);
+  --teal: #519D9E;
+  --teal-bright: #58C9B9;
+  --mint: #9DC8C8;
+  --primary: #D1B6E1;
+  --primary-soft: rgba(209, 182, 225, .6);
+  --primary-mute: rgba(209, 182, 225, .2);
+  --accent: #519D9E;
+  --accent-soft: rgba(88, 201, 185, .18);
+  --accent-text: #214d4e;
+  --missing: #8f3a1a;
+  --missing-soft: rgba(209, 182, 225, .24);
+  --code-bg: #263238;
+  --code-text: #F8F8F8;
+  --inline-code-bg: #d5eded;
+  --shadow: 0 18px 46px rgba(42, 75, 76, .10);
+  --radius: 7px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #263238;
+    --paper: #304a4b;
+    --paper-soft: #37474F;
+    --paper-mute: #2D3B41;
+    --ink: #F8F8F8;
+    --muted: #c2d6d6;
+    --line: rgba(248, 248, 248, .12);
+    --line-soft: rgba(248, 248, 248, .06);
+    --nav: rgba(38, 50, 56, .92);
+    --teal: #58C9B9;
+    --teal-bright: #58C9B9;
+    --mint: #519D9E;
+    --primary: #D1B6E1;
+    --primary-soft: rgba(209, 182, 225, .6);
+    --primary-mute: rgba(209, 182, 225, .2);
+    --accent: #519D9E;
+    --accent-soft: rgba(209, 182, 225, .2);
+    --accent-text: #F8F8F8;
+    --missing: #f0b79b;
+    --missing-soft: rgba(163, 59, 22, .16);
+    --code-bg: #172126;
+    --code-text: #F8F8F8;
+    --inline-code-bg: #37474F;
+    --shadow: 0 18px 46px rgba(0, 0, 0, .24);
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Microsoft YaHei UI", "Segoe UI Variable", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    linear-gradient(135deg, var(--primary-mute), rgba(88, 201, 185, .13) 42%, rgba(157, 200, 200, .28)),
+    var(--page);
+  text-rendering: optimizeLegibility;
+}
+a { color: inherit; }
+.page { min-height: 100vh; }
+.topbar {
+  position: relative;
+  background: var(--nav);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(42, 75, 76, .08);
+}
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, var(--teal), var(--teal-bright), var(--primary));
+}
+.topbar-inner {
+  width: min(1680px, 100%);
+  margin: 0 auto;
+  padding: 22px clamp(14px, 2.4vw, 34px) 0;
+}
+.title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.topbar h1 {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.15;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+.copy-command {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  min-width: 96px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-soft);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+.copy-command:hover {
+  border-color: var(--teal-bright);
+  background: var(--teal-bright);
+}
+.copy-command:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+.copy-command:active { transform: translateY(1px); }
+.copy-command.copied {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+.copy-command.failed {
+  border-color: var(--missing);
+  background: var(--missing-soft);
+  color: var(--missing);
+}
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  overflow-x: auto;
+  padding: 0;
+}
+.tab {
+  flex: 0 0 auto;
+  min-width: 92px;
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-mute);
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.3;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+.tab:hover { background: var(--teal-bright); border-color: var(--teal-bright); }
+.tab:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+.tab.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+main {
+  width: 100%;
+  margin: 0;
+  padding: 0 0 52px;
+}
+.doc {
+  margin: 0 0 20px;
+  overflow: hidden;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: none;
+}
+.doc[hidden] { display: none; }
+.content {
+  padding: 16px clamp(14px, 2vw, 26px) 24px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.content > :first-child { margin-top: 0; }
+.content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
+  margin: .85em 0 .35em;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+.content h1 {
+  font-size: 24px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 7px;
+}
+.content h2 { font-size: 21px; }
+.content h3 { font-size: 18px; }
+.content p { margin: .45em 0; }
+ul, ol { padding-left: 25px; }
+li { margin: .2em 0; }
+blockquote {
+  margin: 14px 0;
+  padding: 11px 14px;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+code {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: var(--inline-code-bg);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: .92em;
+}
+pre {
+  margin: 16px 0;
+  padding: 15px;
+  border-radius: var(--radius);
+  overflow: auto;
+  background: var(--code-bg);
+  color: var(--code-text);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+pre code { padding: 0; background: transparent; color: inherit; }
+.missing {
+  display: inline-block;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--missing-soft);
+  color: var(--missing);
+  font-weight: 700;
+}
+.taskbox {
+  display: inline-block;
+  width: 1.25em;
+  color: var(--accent);
+  font-weight: 700;
+}
+hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .doc:not([hidden]) {
+    animation: panel-in .18s ease-out;
+  }
+  @keyframes panel-in {
+    from { opacity: .82; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+@media (max-width: 820px) {
+  .topbar-inner { padding-top: 18px; }
+  .title-row { display: block; }
+  .copy-command { display: inline-block; margin-top: 10px; }
+  main { padding-top: 0; }
+}
+@media (max-width: 560px) {
+  .tabs { gap: 8px; }
+  .tab { min-width: 82px; padding: 9px 11px; }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="title-row">
+          <div>
+            <div class="eyebrow">OpenSpec Review</div>
+            <h1>fix-player-run-turn-side-tilt</h1>
+          </div>
+          <button class="copy-command" type="button" aria-label="复制执行命令">复制命令</button>
+        </div>
+        <nav class="tabs" role="tablist" aria-label="OpenSpec 产物页签">
+          <a class="tab" id="tab-doc-1-proposal-md" role="tab" href="#doc-1-proposal-md" data-tab="doc-1-proposal-md" aria-controls="doc-1-proposal-md">提案</a><a class="tab" id="tab-doc-2-design-md" role="tab" href="#doc-2-design-md" data-tab="doc-2-design-md" aria-controls="doc-2-design-md">设计</a><a class="tab" id="tab-doc-3-tasks-md" role="tab" href="#doc-3-tasks-md" data-tab="doc-3-tasks-md" aria-controls="doc-3-tasks-md">任务</a><a class="tab" id="tab-doc-4-specs-framesync-player-turn-locomotion-mixer-spec-md" role="tab" href="#doc-4-specs-framesync-player-turn-locomotion-mixer-spec-md" data-tab="doc-4-specs-framesync-player-turn-locomotion-mixer-spec-md" aria-controls="doc-4-specs-framesync-player-turn-locomotion-mixer-spec-md">规格：framesync-player-turn-locomotion-mixer</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="doc" id="doc-1-proposal-md" data-panel="doc-1-proposal-md" role="tabpanel" aria-labelledby="tab-doc-1-proposal-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>为什么</h2>
+<p>最新 Unity Console 运行日志显示，FrameSync 玩家在奔跑左右转时会出现可见侧倾；地面状态仍正常进入 <code>MoveStart</code>、<code>MoveLoop</code>、<code>MoveEnd</code>、<code>Idle</code>，且 <code>PlayerViewSystem</code> 只用 <code>Quaternion.LookRotation(face, Vector3.up)</code> 做水平朝向，因此问题更像是 Animancer locomotion mixer 的 <code>RotationValue</code> 驱动语义不匹配，而不是确定性位移或 Transform 直接产生了 roll。</p>
+<p><code>fix-player-locomotion-mixer-params</code> 已恢复地面 locomotion mixer 的基本参数和资源层级，但运行日志进一步暴露出 <code>MoveLoop</code> 中 <code>RotationValue</code> 会在 <code>-1.81</code> 到 <code>2.65</code> 间变化，足以把跑步循环推到旧资源的左右跑/斜跑分支。需要把奔跑转向时的方向参数从“直接角度差”修正为符合 FrameSync 代码驱动位移的表现层语义。</p>
+<h2>变更内容</h2>
+<ul>
+<li>调整 FrameSync 玩家 <code>MoveLoop</code>/地面 locomotion 的 <code>RotationValue</code> 来源、范围和平滑策略，避免奔跑左右转时长期选中带明显侧倾的左右跑/斜跑动画分支。</li>
+<li>保留 <code>MoveStart</code> 的起步方向选择能力，但明确 <code>MoveLoop</code> 持续移动阶段不应因为逻辑朝向滞后而被误判为横向跑。</li>
+<li>增加一次性或变更触发的诊断，能够对比“运行时 <code>RotationValue</code>”“资源阈值”“当前状态/速度档位”，避免每帧刷屏。</li>
+<li>保持 FrameSync 确定性边界：动画参数平滑、Animancer mixer 权重和视觉验证均停留在表现层，不写入 <code>PlayerMoveComponent</code>、<code>PlayerStateComponent</code> 等回滚快照。</li>
+<li>不重新启用 root motion 驱动位移，不回退到旧 <code>ThirdPersonController</code> 链路。</li>
+</ul>
+<h2>能力</h2>
+<h3>新增能力</h3>
+<ul>
+<li><code>framesync-player-turn-locomotion-mixer</code>: 定义 FrameSync 玩家奔跑转向时 locomotion mixer 的 <code>RotationValue</code> 语义、范围控制、表现层平滑和验证要求。</li>
+</ul>
+<h3>修改能力</h3>
+<h2>影响</h2>
+<ul>
+<li>表现层代码：<code>UnityProject/Assets/GameScripts/HotFix/GameLogic/Module/FrameSync/ClientLogic/System/PlayerAnimViewSystem.cs</code>。</li>
+<li>参考表现层代码：<code>UnityProject/Assets/GameScripts/HotFix/GameLogic/Module/FrameSync/ClientLogic/System/PlayerViewSystem.cs</code>。</li>
+<li>参考资源资产：<code>UnityProject/Assets/AssetRaw/ThirdPersonController/AnimancerController/Resources/Config/PlayerAnimacer/NoneLock/ChildMixer/MoveMoveLoop.asset</code>、<code>MoveRunLoop.asset</code>、<code>MoveWalkLoop.asset</code>。</li>
+<li>参考旧 TPC 代码：<code>PlayerMovementFsmState.UpdateRotation</code>、<code>PlayerReusableData.rotationValueParameter</code> 的平滑参数语义。</li>
+<li>验证路径：Unity EditorSimulateMode 的 Game 场景中验证走/跑直行、奔跑左转、奔跑右转、停止回 Idle，并确认 Console 没有 locomotion 参数或配置缺失 warning。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-2-design-md" data-panel="doc-2-design-md" role="tabpanel" aria-labelledby="tab-doc-2-design-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>背景</h2>
+<p>FrameSync 玩家当前通过 <code>TPBattleContext -&gt; PlayerAnimConfig -&gt; PlayerAnimViewSystem</code> 播放 Animancer 动画，通过 <code>PlayerMoveSystem</code> 在 200ms 逻辑帧中更新 <code>PlayerMoveComponent.faceDir</code> 和位置，再由 <code>PlayerViewSystem</code> 在渲染帧只读逻辑状态、用 <code>Quaternion.LookRotation(face, Vector3.up)</code> 平滑表现朝向。</p>
+<p>最新 Console 证据显示，奔跑左右转时角色出现可见侧倾，但地面状态仍正常切换，且 Transform 表现层只做 yaw 旋转。异常更集中在 locomotion mixer 参数：<code>PlayerAnimViewSystem.CalculateRotationValue</code> 当前把 <code>input.moveDir</code> 与 <code>move.faceDir</code> 的差角直接作为 <code>RotationValue</code> 写入 Animancer；日志中 <code>MoveLoop</code> 的 <code>RotationValue</code> 可到约 <code>2.65</code>。旧资源中 <code>MoveRunLoop.asset</code> 的 <code>RotationValue</code> 阈值是 <code>-2 / 0 / 2</code>，<code>MoveWalkLoop.asset</code> 是 <code>-2.5 / 0 / 2.5</code>，这会让持续奔跑转向进入左右跑或斜跑分支。</p>
+<p>旧 <code>ThirdPersonController</code> 路径有两个隐含前提：一是 <code>rotationValueParameter</code> 通过 <code>SmoothedFloatParameter</code> 平滑，二是 <code>player.transform</code> 会持续 Slerp 到输入方向。FrameSync 迁移后，位移改为确定性代码驱动，<code>faceDir</code> 受逻辑帧和转向速率限制；如果动画参数仍直接读“输入方向与当前逻辑朝向差”，就会把正常转向误解释成持续横移。</p>
+<h2>目标 / 非目标</h2>
+<p><strong>目标：</strong></p>
+<ul>
+<li>让奔跑左右转时的 <code>MoveLoop</code> 动画保持符合前进跑/自然转向的姿态，不因 <code>RotationValue</code> 过大而长期混入明显侧倾的左右跑/斜跑分支。</li>
+<li>明确 <code>RotationValue</code> 在 FrameSync 表现层中的来源、限幅和平滑策略，并与旧 Animancer 阈值对齐。</li>
+<li>保留 <code>MoveStart</code> 起步方向选择，不把起步瞬间的 8 向选择和持续奔跑循环混为一套逻辑。</li>
+<li>保持动画参数为表现层数据，不写入回滚组件，不改变确定性移动、碰撞、重力或逻辑帧步长。</li>
+<li>提供可重复验证方式：临时 <code>RotationValue=0</code> 对照、Console 参数范围、Unity Editor 视觉检查。</li>
+</ul>
+<p><strong>非目标：</strong></p>
+<ul>
+<li>不重新启用 root motion 驱动位移。</li>
+<li>不恢复旧 <code>ThirdPersonController</code> 作为运行时控制器。</li>
+<li>不重做地面 locomotion 资源层级、跑步/下蹲输入契约；这些属于 <code>fix-player-locomotion-mixer-params</code> 已覆盖或后续范围。</li>
+<li>不修改 <code>PlayerMoveSystem.RotateTowards</code> 的确定性算法，除非后续运行证据证明逻辑朝向本身错误。</li>
+<li>不处理锁定模式八向移动、Vault/Climb/LedgeClimb 等交互动画的完整方向混合。</li>
+</ul>
+<h2>决策</h2>
+<h3>D1：先用 <code>RotationValue=0</code> 对照验证，再做正式参数修正</h3>
+<p>实现时应先提供一个极窄的本地验证路径：在 <code>MoveLoop</code> 状态临时把 <code>RotationValue</code> 固定为 <code>0</code>，进入 Unity EditorSimulateMode 测试奔跑左右转。如果侧倾消失，说明问题是 locomotion mixer 分支选择；如果仍侧倾，再检查具体跑步 clip 或模型骨骼姿态。</p>
+<p>备选方案：直接调整动画资源或替换 clip。这个方案会把根因掩盖在资源变更里，无法区分是参数错误、阈值错误还是 clip 本身带侧倾。</p>
+<h3>D2：<code>MoveLoop</code> 的 <code>RotationValue</code> 不应直接等于输入与逻辑朝向的原始差角</h3>
+<p><code>PlayerMoveSystem</code> 的 <code>faceDir</code> 在固定逻辑帧中逐步转向，表现层每帧用原始差角计算 <code>RotationValue</code> 会在转向期间持续得到大值。正式实现应将 <code>MoveLoop</code> 的 <code>RotationValue</code> 映射到旧资源可接受的方向域，并在非锁定奔跑转向时优先表达“前进跑的自然转向”，而不是“横向跑”。</p>
+<p>可选实现路径：</p>
+<ul>
+<li>第一版保守修复：非锁定 <code>MoveLoop</code> 中当玩家有移动输入且不是显式横移/锁定移动时，将 <code>RotationValue</code> 向 <code>0</code> 平滑，避免跑步转向混入侧跑分支。</li>
+<li>进阶修复：引入表现层私有的平滑值，按旧 <code>SmoothedFloatParameter</code> 的时间常数将目标值限幅后再写入 Animancer。</li>
+</ul>
+<p>备选方案：继续使用 <code>Mathf.Atan2(cross, dot)</code> 原始弧度值。这个方案与当前日志中的侧倾现象吻合，不能作为最终行为。</p>
+<h3>D3：平滑状态必须停留在 <code>PlayerViewComponent</code> 或 <code>PlayerAnimViewSystem</code> 私有表现层状态</h3>
+<p>如果需要恢复旧 TPC 的参数平滑，平滑缓存应放在 <code>PlayerViewComponent</code> 或 <code>PlayerAnimViewSystem</code> 的私有字典中，只用于 Animancer 参数写入。不要把 <code>RotationValue</code> 写入 <code>PlayerMoveComponent</code>、<code>PlayerStateComponent</code> 或任何参与 <code>RecordSystem&lt;T&gt;</code> 快照的组件。</p>
+<p>备选方案：把平滑后的方向参数作为逻辑组件字段保存。这样会把视觉 mixer 细节变成回滚事实，破坏逻辑/表现边界。</p>
+<h3>D4：日志按参数桶变化输出，不能每帧刷屏</h3>
+<p>现有 <code>[CODEX_LOG] Player locomotion mixer params</code> 已按快照变化输出。修复后应继续保留少量诊断，至少能看出 <code>state</code>、<code>SpeedValue</code>、<code>RotationValue</code>、<code>speedGear</code>，并在 <code>MoveLoop</code> 期间确认 <code>RotationValue</code> 不再频繁越过跑步左右阈值。</p>
+<p>备选方案：删除日志会降低复测可见性；每帧打印会淹没 Console，影响用户判断。</p>
+<h2>风险 / 取舍</h2>
+<ul>
+<li>[Risk] 固定或过度压低 <code>MoveLoop.RotationValue</code> 会让真正的横移/锁定移动缺少侧向姿态。Mitigation：本变更只约束非锁定奔跑左右转；锁定模式和显式横移作为后续单独验证范围。</li>
+<li>[Risk] 如果跑步正向 clip 本身带有明显侧倾，参数修正只能减轻分支误选，不能消除资源姿态问题。Mitigation：先做 <code>RotationValue=0</code> 对照，必要时再追 clip 资源。</li>
+<li>[Risk] 平滑实现若使用 <code>Time.deltaTime</code> 写进逻辑组件会污染确定性。Mitigation：只在表现层 <code>Update</code> 使用渲染帧时间，且不回写回滚组件。</li>
+<li>[Risk] 当前 <code>MoveStart</code> 8 向 clip 和 <code>MoveLoop</code> 参数之间可能存在过渡不连续。Mitigation：保留起步方向选择，重点验证进入 <code>MoveLoop</code> 后姿态是否稳定。</li>
+</ul>
+<h2>迁移计划</h2>
+<ol>
+<li>复核 <code>MoveMoveLoop.asset</code>、<code>MoveRunLoop.asset</code>、<code>MoveWalkLoop.asset</code> 的 <code>SpeedValue</code>/<code>RotationValue</code> 参数名和阈值，确认 <code>RotationValue</code> 的左右分支边界。</li>
+<li>在本地验证或代码分支中临时强制非锁定 <code>MoveLoop</code> 的 <code>RotationValue=0</code>，用 Unity Editor 观察奔跑左右转侧倾是否消失。</li>
+<li>若验证成立，在 <code>PlayerAnimViewSystem</code> 中实现表现层 <code>RotationValue</code> 策略：非锁定 <code>MoveLoop</code> 对原始差角进行限幅、归零或平滑，保留其它状态的必要方向参数。</li>
+<li>保留参数变更日志，确认 <code>MoveLoop</code> 跑步转向期间 <code>RotationValue</code> 不再频繁越过跑步左右阈值。</li>
+<li>运行 GameLogic C# 构建检查和 <code>openspec validate fix-player-run-turn-side-tilt --strict</code>。</li>
+<li>在 Unity EditorSimulateMode 复测直行跑、左转跑、右转跑、停止回 Idle，并明确记录是否完成真实运行验证。</li>
+</ol>
+<h2>待确认问题</h2>
+<ul>
+<li>非锁定 <code>MoveLoop</code> 是否需要保留任何轻微左右摆动值，还是第一版应完全归零以稳定前进跑姿态？</li>
+<li>锁定模式下的左右移动是否也存在侧倾问题，是否应作为本变更之外的新范围处理？</li>
+<li>如果 <code>RotationValue=0</code> 后仍侧倾，是否需要进一步检查跑步正向 clip 的 root motion/骨骼姿态导入设置？</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-3-tasks-md" data-panel="doc-3-tasks-md" role="tabpanel" aria-labelledby="tab-doc-3-tasks-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>1. 证据复核与边界确认</h2>
+<ul>
+<li><span class="taskbox">□</span>1.1 复核最新 Unity Console 日志，确认侧倾发生时地面状态仍正常进入 <code>MoveStart</code>、<code>MoveLoop</code>、<code>MoveEnd</code>、<code>Idle</code>，并记录 <code>MoveLoop</code> 的 <code>RotationValue</code> 范围。</li>
+<li><span class="taskbox">□</span>1.2 复核 <code>PlayerViewSystem</code> 的 Transform 朝向逻辑，确认它只做 yaw 旋转且不会主动写入 roll。</li>
+<li><span class="taskbox">□</span>1.3 复核 <code>MoveMoveLoop.asset</code>、<code>MoveRunLoop.asset</code>、<code>MoveWalkLoop.asset</code> 的 <code>SpeedValue</code>/<code>RotationValue</code> 参数名与阈值。</li>
+<li><span class="taskbox">□</span>1.4 对照旧 <code>ThirdPersonController</code> 的 <code>PlayerMovementFsmState.UpdateRotation</code> 和 <code>PlayerReusableData.rotationValueParameter</code>，记录旧路径的平滑与转向补偿语义。</li>
+</ul>
+<h2>2. RotationValue 对照验证</h2>
+<ul>
+<li><span class="taskbox">□</span>2.1 在本地临时验证路径中将非锁定 <code>MoveLoop</code> 的 <code>RotationValue</code> 固定为 <code>0</code> 或等价归零策略。</li>
+<li><span class="taskbox">□</span>2.2 在 Unity EditorSimulateMode 中验证奔跑左转和奔跑右转，记录侧倾是否消失。</li>
+<li><span class="taskbox">□</span>2.3 若归零后侧倾仍存在，暂停正式实现并转为检查跑步正向 clip 或模型骨骼姿态，不继续扩大代码改动。</li>
+<li><span class="taskbox">□</span>2.4 若归零后侧倾消失，确认正式实现应集中在 <code>PlayerAnimViewSystem</code> 的表现层 <code>RotationValue</code> 策略。</li>
+</ul>
+<h2>3. 表现层参数修正</h2>
+<ul>
+<li><span class="taskbox">□</span>3.1 在 <code>PlayerAnimViewSystem</code> 中区分 <code>MoveStart</code> 起步方向选择和 <code>MoveLoop</code> 持续奔跑方向参数，避免二者共用不合适的原始差角语义。</li>
+<li><span class="taskbox">□</span>3.2 为非锁定 <code>MoveLoop</code> 实现 <code>RotationValue</code> 限幅、归零或表现层平滑策略，使奔跑转向不长期越过跑步左右阈值。</li>
+<li><span class="taskbox">□</span>3.3 如需缓存平滑值，将缓存放在 <code>PlayerViewComponent</code> 或 <code>PlayerAnimViewSystem</code> 私有表现层状态中，不写入回滚组件。</li>
+<li><span class="taskbox">□</span>3.4 保留或调整 <code>Player locomotion mixer params</code> 诊断，使参数桶变化时可看到 <code>state</code>、<code>SpeedValue</code>、<code>RotationValue</code>、<code>speedGear</code>，且不每帧刷屏。</li>
+<li><span class="taskbox">□</span>3.5 确认本变更不改 <code>PlayerMoveSystem.RotateTowards</code>、固定逻辑帧步长、碰撞、重力或 root motion 位移边界。</li>
+</ul>
+<h2>4. 静态验证</h2>
+<ul>
+<li><span class="taskbox">□</span>4.1 运行当前工作区可用的 GameLogic C# 构建检查；如果无法运行，记录具体原因。</li>
+<li><span class="taskbox">□</span>4.2 运行 <code>openspec validate fix-player-run-turn-side-tilt --strict</code>。</li>
+<li><span class="taskbox">□</span>4.3 检查 <code>PlayerMoveComponent.DeepCopy()</code> 与 <code>PlayerStateComponent.DeepCopy()</code>，确认没有新增 Animancer 参数、TransitionAsset 或表现层平滑缓存。</li>
+</ul>
+<h2>5. Unity 运行验证</h2>
+<ul>
+<li><span class="taskbox">□</span>5.1 在 EditorSimulateMode 中进入 Game 场景，确认 <code>PlayerAnimConfig</code> 加载成功且 Console 没有地面 locomotion 配置缺失 warning。</li>
+<li><span class="taskbox">□</span>5.2 正常走路直行、跑步直行时确认动画仍按 <code>SpeedValue</code> 正确切换走/跑分支。</li>
+<li><span class="taskbox">□</span>5.3 按住 Shift 跑步并持续左转，确认角色不再出现明显侧倾。</li>
+<li><span class="taskbox">□</span>5.4 按住 Shift 跑步并持续右转，确认角色不再出现明显侧倾。</li>
+<li><span class="taskbox">□</span>5.5 停止移动后确认角色经 <code>MoveEnd</code> 回到 Idle，且没有因 <code>RotationValue</code> 修正造成收步异常。</li>
+<li><span class="taskbox">□</span>5.6 确认 Console 中 <code>MoveLoop</code> 的 <code>RotationValue</code> 不再频繁越过跑步左右阈值，并记录真实运行验证结果。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-4-specs-framesync-player-turn-locomotion-mixer-spec-md" data-panel="doc-4-specs-framesync-player-turn-locomotion-mixer-spec-md" role="tabpanel" aria-labelledby="tab-doc-4-specs-framesync-player-turn-locomotion-mixer-spec-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>新增需求</h2>
+<h3>需求：MoveLoop 奔跑转向不得误入侧跑分支</h3>
+<p>FrameSync 玩家在非锁定 <code>MoveLoop</code> 状态下奔跑左右转时，系统 SHALL 以表现层策略控制 <code>RotationValue</code>，避免因 <code>PlayerMoveSystem.faceDir</code> 的逻辑帧转向滞后而长期选择左右跑或斜跑动画分支。</p>
+<h4>场景：非锁定奔跑左转保持自然前进跑姿态</h4>
+<ul>
+<li><strong>当</strong> 玩家在非锁定状态按住跑步输入并持续向左调整移动方向</li>
+<li><strong>则</strong> <code>MoveLoop</code> 的可见动画 SHALL 保持自然前进跑转向姿态，不出现由左右跑分支误选导致的明显侧倾</li>
+</ul>
+<h4>场景：非锁定奔跑右转保持自然前进跑姿态</h4>
+<ul>
+<li><strong>当</strong> 玩家在非锁定状态按住跑步输入并持续向右调整移动方向</li>
+<li><strong>则</strong> <code>MoveLoop</code> 的可见动画 SHALL 保持自然前进跑转向姿态，不出现由左右跑分支误选导致的明显侧倾</li>
+</ul>
+<h3>需求：RotationValue 修正不得污染确定性逻辑</h3>
+<p>系统 MUST 将 <code>RotationValue</code> 的限幅、归零、平滑或诊断缓存限制在表现层，不得写入 <code>PlayerMoveComponent</code>、<code>PlayerStateComponent</code> 或其它参与回滚快照的逻辑组件。</p>
+<h4>场景：表现层参数不进入回滚快照</h4>
+<ul>
+<li><strong>当</strong> <code>PlayerAnimViewSystem</code> 为奔跑转向计算并写入 Animancer <code>RotationValue</code></li>
+<li><strong>则</strong> <code>PlayerMoveComponent.DeepCopy()</code> 和 <code>PlayerStateComponent.DeepCopy()</code> 的回滚数据 MUST 不包含 Animancer 参数、平滑缓存或 TransitionAsset 引用</li>
+</ul>
+<h3>需求：起步方向选择保持可用</h3>
+<p>系统 SHALL 保留 <code>MoveStart</code> 的起步方向选择能力，不得为了稳定 <code>MoveLoop</code> 奔跑转向而让起步动画全部退化为正前方向。</p>
+<h4>场景：斜向起步仍播放对应 MoveStart</h4>
+<ul>
+<li><strong>当</strong> 玩家从 Idle 输入斜向移动并进入 <code>MoveStart</code></li>
+<li><strong>则</strong> 系统 SHALL 继续根据 <code>faceDir</code> 与 <code>moveDir</code> 的夹角选择相应的 <code>moveStart_*</code> 动画</li>
+</ul>
+<h3>需求：运行诊断能证明 RotationValue 范围</h3>
+<p>系统 SHALL 保留可搜索的 locomotion 参数诊断，并在参数桶变化时输出 <code>state</code>、<code>SpeedValue</code>、<code>RotationValue</code>、<code>speedGear</code>，用于确认 <code>MoveLoop</code> 奔跑转向不再频繁越过跑步左右阈值。</p>
+<h4>场景：参数变化时输出可读诊断</h4>
+<ul>
+<li><strong>当</strong> <code>MoveLoop</code> 中 <code>RotationValue</code> 或 <code>SpeedValue</code> 的诊断桶发生变化</li>
+<li><strong>则</strong> Console SHALL 输出包含 <code>Player locomotion mixer params</code>、<code>state=MoveLoop</code>、<code>SpeedValue</code>、<code>RotationValue</code> 和 <code>speedGear</code> 的日志</li>
+</ul>
+<h4>场景：诊断不每帧刷屏</h4>
+<ul>
+<li><strong>当</strong> 玩家持续奔跑且参数桶没有变化</li>
+<li><strong>则</strong> 系统 MUST 不为每个渲染帧重复输出相同的 locomotion 参数日志</li>
+</ul>
+<h3>需求：Unity 复测必须区分参数问题与资源问题</h3>
+<p>实现完成后，验证流程 MUST 包含 <code>RotationValue=0</code> 对照或等价诊断，以区分侧倾是否来自 mixer 参数误选、跑步 clip 本身或 Transform 旋转。</p>
+<h4>场景：RotationValue 归零对照</h4>
+<ul>
+<li><strong>当</strong> 本地验证将非锁定 <code>MoveLoop</code> 的 <code>RotationValue</code> 临时固定为 <code>0</code></li>
+<li><strong>则</strong> 验证记录 MUST 明确说明奔跑左右转侧倾是否消失，并据此判断后续修复方向</li>
+</ul>
+  </div>
+</section>
+    </main>
+  </div>
+  <script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('[data-tab]'));
+  const panels = Array.from(document.querySelectorAll('[data-panel]'));
+  const panelIds = new Set(panels.map((panel) => panel.id));
+  const copyButton = document.querySelector('.copy-command');
+  const applyCommand = "/prompts:opsx-apply fix-player-run-turn-side-tilt";
+
+  async function copyText(text) {
+    const errors = [];
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+    if (copyWithEvent(text)) { return; }
+    if (copyWithTextarea(text)) { return; }
+    throw errors[0] || new Error('copy command rejected');
+  }
+
+  function copyWithEvent(text) {
+    const handler = (event) => {
+      event.clipboardData.setData('text/plain', text);
+      event.preventDefault();
+    };
+    document.addEventListener('copy', handler, true);
+    try {
+      return document.execCommand('copy');
+    } catch (error) {
+      return false;
+    } finally {
+      document.removeEventListener('copy', handler, true);
+    }
+  }
+
+  function copyWithTextarea(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    try {
+      return document.execCommand('copy');
+    } catch (error) {
+      return false;
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+
+  function showCopyState(state, label) {
+    if (!copyButton) { return; }
+    copyButton.textContent = label;
+    copyButton.classList.toggle('copied', state === 'copied');
+    copyButton.classList.toggle('failed', state === 'failed');
+    window.clearTimeout(copyButton.copyTimer);
+    copyButton.copyTimer = window.setTimeout(() => {
+      copyButton.textContent = '复制命令';
+      copyButton.classList.remove('copied', 'failed');
+    }, 1600);
+  }
+
+  function activate(id, updateHash) {
+    const targetId = panelIds.has(id) ? id : (tabs[0] && tabs[0].dataset.tab);
+    if (!targetId) { return; }
+    let activeTab = null;
+    tabs.forEach((tab) => {
+      const active = tab.dataset.tab === targetId;
+      tab.classList.toggle('active', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      tab.setAttribute('tabindex', active ? '0' : '-1');
+      if (active) { activeTab = tab; }
+    });
+    panels.forEach((panel) => { panel.hidden = panel.id !== targetId; });
+    if (updateHash && window.location.hash !== '#' + targetId) {
+      history.pushState(null, '', '#' + targetId);
+    }
+    return activeTab;
+  }
+
+  if (copyButton) {
+    copyButton.addEventListener('click', async () => {
+      try {
+        await copyText(applyCommand);
+        showCopyState('copied', '已复制');
+      } catch (error) {
+        showCopyState('failed', '复制失败');
+      }
+    });
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', (event) => {
+      event.preventDefault();
+      activate(tab.dataset.tab, true);
+    });
+    tab.addEventListener('keydown', (event) => {
+      const current = tabs.indexOf(tab);
+      let next = current;
+      if (event.key === 'ArrowRight') { next = (current + 1) % tabs.length; }
+      else if (event.key === 'ArrowLeft') { next = (current - 1 + tabs.length) % tabs.length; }
+      else if (event.key === 'Home') { next = 0; }
+      else if (event.key === 'End') { next = tabs.length - 1; }
+      else { return; }
+      event.preventDefault();
+      const activeTab = activate(tabs[next].dataset.tab, true);
+      if (activeTab) { activeTab.focus(); }
+    });
+  });
+  window.addEventListener('hashchange', () => activate(window.location.hash.slice(1), false));
+  activate(window.location.hash.slice(1), false);
+})();
+  </script>
+</body>
+</html>
