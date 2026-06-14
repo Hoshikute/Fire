@@ -25,16 +25,16 @@ FrameSync 玩家在非锁定 `MoveLoop` 状态下奔跑左右转时，系统 SHA
 - **WHEN** 玩家从 Idle 输入斜向移动并进入 `MoveStart`
 - **THEN** 系统 SHALL 继续根据 `faceDir` 与 `moveDir` 的夹角选择相应的 `moveStart_*` 动画
 
-### Requirement: 运行诊断能证明 RotationValue 范围
-系统 SHALL 保留可搜索的 locomotion 参数诊断，并在参数桶变化时输出 `state`、`SpeedValue`、`RotationValue`、`speedGear`，用于确认 `MoveLoop` 奔跑转向不再频繁越过跑步左右阈值。
+### Requirement: 临时运行诊断验证完成后必须清理
+系统 MAY 在验证期使用可搜索的 locomotion 参数诊断证明 `MoveLoop` 奔跑转向不再频繁越过跑步左右阈值，但在修复确认后 MUST 清理普通 Info 诊断，避免 Console 长期刷屏。
 
-#### Scenario: 参数变化时输出可读诊断
-- **WHEN** `MoveLoop` 中 `RotationValue` 或 `SpeedValue` 的诊断桶发生变化
-- **THEN** Console SHALL 输出包含 `Player locomotion mixer params`、`state=MoveLoop`、`SpeedValue`、`RotationValue` 和 `speedGear` 的日志
+#### Scenario: 侧倾诊断日志不进入最终常规运行
+- **WHEN** 奔跑转向侧倾已通过 Unity Editor 复测确认消失
+- **THEN** Console MUST 不再输出 `Player locomotion mixer params` 或 `side-tilt diag` 普通 Info 日志
 
-#### Scenario: 诊断不每帧刷屏
-- **WHEN** 玩家持续奔跑且参数桶没有变化
-- **THEN** 系统 MUST 不为每个渲染帧重复输出相同的 locomotion 参数日志
+#### Scenario: 异常告警仍然保留
+- **WHEN** 动画配置、相机初始化或其它关键运行依赖异常
+- **THEN** 系统 SHALL 继续输出 warning 或 error 级别告警
 
 ### Requirement: Unity 复测必须区分参数问题与资源问题
 实现完成后，验证流程 MUST 包含 `RotationValue=0` 对照或等价诊断，以区分侧倾是否来自 mixer 参数误选、跑步 clip 本身或 Transform 旋转。

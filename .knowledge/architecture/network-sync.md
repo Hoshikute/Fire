@@ -29,11 +29,14 @@
 | `DebugMsg` | 调试快照 | frame, List<EntityInfo> |
 
 ## 指令数据（CommandInfo）
-玩家一帧的输入：`frame` / `id` / `moveDir`(SyncVector3) / `skillDir`(SyncVector3) / `element1` / `element2` / `isFire`。
+玩家一帧的输入：`frame` / `id` / `moveDir`(SyncVector3) / `skillDir`(SyncVector3) / `jump` / `toggleLock` / `platformJump` / `speedGear` / `element1` / `element2` / `isFire`。
 - `FromCommand(CommandComponent)` / `ToCommand()` 在网络结构与 ECS 组件间转换，**用 SyncVector3.DeepCopy 保证定点数不被引用共享**。
+- `PlayerInputComponent.ToCommand` / `WriteToCommand` 是本地输入单例进入本地玩家实体帧指令的统一转换点；`PlayerInputCommandSystem` 在普通逻辑帧只把本地输入记录到 `PlayerComponent.isLocal` 的实体，且不会覆盖已存在的同帧缓存命令；非本地实体只使用已缓存或预测的命令。这里的 `CommandComponent.frame` 是 `WorldBase` 已递增后的逻辑执行帧。
+- `PlayerCommandRecordComponent.RecordCommand` 和 `GetInputCache` 都返回/保存命令副本，避免后续网络层或预测逻辑复用命令对象时污染历史帧输入；`EnsureDefaultCommand` / `RecordForecastIfMissing` 用于在缺权威命令时生成默认/预测命令。
+- `GetForecastInput(frame)` 可沿用上一帧的连续输入（例如移动方向），但会清掉 `jump` / `toggleLock` / `platformJump` 这类 one-shot 边沿输入，避免缺帧预测时重复跳跃或重复切换锁定。`PlayerInputCommandSystem` 在 Recalc 或非本地实体缺命令时会把预测命令写回缓存，以便连续缺帧预测不断链；后续真实/权威同帧命令可通过 `RecordCommand` 替换。
 
 ## 核心流程（概念）
-1. 本地采集输入 → `CommandComponent`，打上当前 frame/time。
+1. 本地采集输入 → `PlayerInputComponent`；逻辑帧开始前由 `PlayerInputCommandSystem` 固化为本地实体 `CommandComponent`，打上当前执行 frame/id；Move/State 系统之后按实体从 `PlayerCommandRecordComponent` 读取该帧命令。
 2. 上行给服务器；服务器汇总后用 `CommandMsg` 按帧广播权威指令。
 3. 客户端用权威指令在对应帧执行；预测与权威不符时，服务器/逻辑通过 `PursueMsg.recalcFrame` 指示从某帧重算 → 触发回滚（见 rollback.md）。
 4. `AffirmMsg` 确认输入已被接收，用于清理本地待确认队列。
@@ -41,6 +44,8 @@
 ## 注意事项 / 坑
 - 指令里的方向用 `SyncVector3`（定点数），不要在协议里塞 `float`/`Vector3` 直传，跨端浮点不一致会破坏确定性。
 - `EqualsCmd` 用于判断预测指令与权威指令是否一致 → 决定是否需要回滚，实现要覆盖所有影响逻辑的字段。
+- 预测命令只能延续持续性输入；边沿触发字段必须在预测帧清空，除非该帧有真实记录或权威指令。
+- 当前 Fire 本地角色路径只完成了“本地输入→帧指令记录→重算恢复”的确定性边界；服务器权威命令下发、冲突检测和追帧回滚接线仍是后续工作，不能把本地记录当成联网已完成。
 - `advanceCount` 是客户端领先服务器的帧数（预测深度），影响手感与回滚频率。
 
 ## 相关代码位置

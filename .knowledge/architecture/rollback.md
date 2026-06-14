@@ -24,11 +24,12 @@
 1. 每逻辑帧执行后 Record 当前状态（快照入环形/列表缓冲）。
 2. 收到服务器权威输入，发现某历史帧 F 的预测输入与权威不符。
 3. 对所有记录系统 `RevertToFrame(F)` —— 世界回到第 F 帧状态。
-4. 用正确输入从 F 重新 FixedLoop 推进到当前帧（重算，`m_isRecalc = true`）。
-5. `ClearAfter` 清理被重算覆盖的旧快照。
+4. 用正确输入从 F 重新 `Recalc` 推进到当前帧（`WorldBase.Recalc` 执行期间会临时置 `m_isRecalc = true`；每次 `Recalc` 先 `FrameCount++`，再执行该执行帧的 `OnlyCallByRecalc` / `FixedUpdate`）。
+5. 重算批次结束后调用 `EndRecalc` 派发创建/销毁回滚缓存，再用 `ClearAfter` 清理被重算覆盖的旧快照。
 
 ## 注意事项 / 坑（重点，见 pitfalls/rollback-bugs.md）
-- **DeepCopy 必须是真深拷贝**：`RecordSystem.Record` 和 `RevertToFrame` 都靠 `DeepCopy()`。若组件里有引用类型字段而 DeepCopy 只拷了引用（浅拷贝），回滚后新旧状态会共享同一对象，导致状态污染、表现诡异、跨端不一致。
+- **DeepCopy 必须是真深拷贝**：`RecordSystem.Record` 和 `RevertToFrame` 都靠 `DeepCopy()`。每个 `MomentComponentBase` 的副本必须复制业务字段、引用字段的独立对象，以及基类 `ID` / `Frame`；若组件里有引用类型字段而 DeepCopy 只拷了引用（浅拷贝），回滚后新旧状态会共享同一对象，导致状态污染、表现诡异、跨端不一致。
+- **快照读取也必须隔离**：`RecordSystem.GetRecord(id, frame)` 对外返回历史快照时同样返回 `DeepCopy()`，避免调试、校验或后续追帧逻辑拿到内部快照对象后污染历史记录。
 - **创建/销毁也要可回滚**：实体的"创建"和"销毁"在回滚时需要撤销/重做，靠 WorldBase 的 create/destroy rollback cache。新增实体生命周期逻辑时别忘了维护这两个缓存。
 - **快照内存与清理**：不及时 `ClearBefore` 会让快照无限增长。确认回滚窗口大小并定期清理。
 - **重算期间禁止副作用**：`m_isRecalc` 为 true 时不应触发表现层特效、音效、网络发送等不可回退的副作用。

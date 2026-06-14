@@ -1,27 +1,27 @@
 # 玩家控制器 — 已删除（Player Controller — Deleted）
 
 ## 一句话
-**已删除。** 原 `ThirdPersonController` → `PlayerFrameSyncEntry` + FrameSync ECS。所有功能已迁移至 `player-framesync-ecs.md`。
+**已删除。** 原 `ThirdPersonController` → `TPBattleContext` + FrameSync ECS。所有功能已迁移至 `player-framesync-ecs.md`。
 
 ## 迁移映射（旧 → 新）
 
 | 旧 TPC（ThirdPersonController） | 新 FrameSync ECS（GameLogic） | 状态 |
 |------|------|------|
-| `Player.cs` + FSM 状态机 | `PlayerFrameSyncEntry` + `PlayerStateSystem`（确定性状态推导） | ✅ 完成 |
+| `Player.cs` + FSM 状态机 | `TPBattleContext` 创建 `PlayerWorld` + `PlayerStateSystem`（确定性状态推导） | ✅ 完成 |
 | `PlayerReusableData` / `BindableProperty` | `PlayerStateComponent`（可回滚值类型枚举）+ `PlayerViewComponent`（表现数据） | ✅ 完成 |
 | `PlayerReusableLogic`（Animancer 驱动位移） | `PlayerMoveSystem`（定点积分位移）+ `PlayerAnimViewSystem`（只读枚举播动画） | ✅ 完成 |
 | `MonoSingleton` / `NoMonoSingleton` | 迁移至 `TEngine` 命名空间（`Runtime/Utility/`） | ✅ 完成 |
 | `BindableProperty` | 迁移至 `TEngine` 命名空间（仅表现层可用，逻辑层禁止） | ✅ 完成 |
 | `ToolFunction`（角度/跳跃速度） | 迁移至 `TEngine` 命名空间 | ✅ 完成 |
 | 44 个 .cs 文件 | 全部删除 | ✅ 完成 |
-| `Player.prefab` 挂 `ThirdPersonController.Player` | 挂 `GameLogic.PlayerFrameSyncEntry` | ✅ 完成 |
+| `Player.prefab` 挂 `ThirdPersonController.Player` | `TPBattleContext` 动态加载 Player prefab 后创建 `PlayerWorld` 和本地玩家实体 | ✅ 完成 |
 | `CharacterModule` API：`SetThirdPersonPlayerPrefab` | `SetCharacterPrefab` / `LoadCharacterAsync` | ✅ 完成 |
-| 相机：`Player.cs` 内 Awake 绑定 | `PlayerFrameSyncEntry.TryBindCamera`（Start 延迟绑定） | ✅ 完成 |
+| 相机：`Player.cs` 内 Awake 绑定 | `TPBattleContext` 在本地玩家实体创建后解析 `LookAt` 并绑定 Cinemachine | ✅ 完成 |
 
 ## 历史文件（已删除，仅供考古）
 ```
 Player/Controller/
-├── Core/Player/Player.cs                 ← PlayerFrameSyncEntry
+├── Core/Player/Player.cs                 ← TPBattleContext + PlayerWorld
 ├── Core/CharacterBase/CharacterBase.cs   ← PlayerStateComponent + PlayerViewComponent
 ├── Core/StateMachine/State/*             ← PlayerStateSystem
 ├── Core/Player/State/PlayerMovemenState/* ← PlayerMoveSystem + PlayerAnimViewSystem

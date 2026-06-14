@@ -12,7 +12,7 @@
 | 处理网络消息、指令下发、追帧 | `architecture/network-sync.md` |
 | 理解 ECS（World/Entity/Component/System） | `architecture/ecs.md` |
 | 改 Player 控制器代码 | `modules/player-controller.md`（已删除，迁移至 `player-framesync-ecs.md`） |
-| 改帧同步版角色控制 / 角色 ECS / 定点移动 / 斜坡 / 碰撞 / 动画配置 / 渲染插值 | `modules/player-framesync-ecs.md` |
+| 改帧同步版角色控制 / 角色 ECS / 定点移动 / 斜坡 / 碰撞 / 动画配置 / 渲染插值 / Game 场景启动入口 | `modules/player-framesync-ecs.md` |
 | 改动画切换 / FSM 状态 | `modules/animancer-fsm.md` |
 | 调一个诡异的 Bug | 先扫 `pitfalls/` 下所有文件 |
 | 想知道某个设计为什么这么做 | `decisions/` 下的 ADR |
@@ -29,7 +29,7 @@
 
 ### modules/ — 模块说明
 - `player-controller.md` — 已删除的旧 TPC 文档（迁移映射）
-- `player-framesync-ecs.md` — 帧同步版角色控制（确定性逻辑层 ECS + 表现层 + PlayerWorld + 碰撞/斜坡/攀爬/动画配置 + 渲染插值）
+- `player-framesync-ecs.md` — 帧同步版角色控制（TPBattleContext 启动入口 + 确定性逻辑层 ECS + 表现层 + PlayerWorld + 碰撞/斜坡/攀爬/动画配置 + 渲染插值）
 - `animancer-fsm.md` — Animancer 动画 + TEngine FSM 状态机
 
 ### conventions/ — 规范

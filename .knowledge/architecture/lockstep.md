@@ -12,17 +12,19 @@
 
 ## 核心流程（逻辑帧循环）
 `FrameSyncModule.Update` 每个渲染帧被调用：
-1. `m_updateTimer += elapseSeconds * 1000`（累积真实时间，毫秒）
+1. 将引擎传入的 `elapseSeconds` 四舍五入成整数微秒，累积到 `m_updateTimerUs`（真实时间只用于调度应该补几帧）
 2. `UpdateWorlds(deltaTime)` — **渲染帧**更新（表现层，可变步长）
-3. `while (m_updateTimer > m_intervalTime)` — 当累积时间超过一个逻辑帧步长：
+3. `while (m_updateTimerUs >= m_intervalTime * 1000)` — 当累积时间达到一个逻辑帧步长：
    - `FixedUpdateWorlds(m_intervalTime)` — **固定逻辑帧**更新（帧同步核心，定长 200ms）
-   - `m_updateTimer -= m_intervalTime`
+   - `m_updateTimerUs -= m_intervalTime * 1000`
 
 > 渲染帧（Loop）做插值/表现，逻辑帧（FixedLoop）做确定性计算 —— 这是"逻辑与表现分离"的物理体现。
 
+`WorldBase.FixedLoop` 内部的帧号顺序是：先 `Record(FrameCount)` 记录当前快照帧，再 `FrameCount++` 进入本次逻辑执行帧，之后才调用 `NoRecalcBeforeFixedUpdate` / `FixedUpdate`。因此 `CommandComponent.frame` 对应的是执行帧号，而不是刚写入快照的旧帧号。
+
 ## 确定性保证（同步的命根子）
 - **定点数**：`SyncVector3` 用 `int x/y/z` + `SCALE=1000f`，避免浮点误差跨端不一致。逻辑里的坐标/向量都该用它，不要直接用 `Vector3` 参与逻辑运算。
-- **固定步长**：逻辑帧恒为 `m_intervalTime = 200ms`（5 帧/秒逻辑帧），绝不依赖真实帧率或 `Time.deltaTime`。
+- **固定步长**：逻辑帧恒为 `m_intervalTime = 200ms`（5 帧/秒逻辑帧），调度累积器使用整数微秒，逻辑计算绝不依赖真实帧率或 `Time.deltaTime`。
 - **指令带帧号**：`PlayerCommandBase` 含 `frame` / `time` / `id`，保证输入在确定帧上执行。
 
 ## 注意事项 / 坑

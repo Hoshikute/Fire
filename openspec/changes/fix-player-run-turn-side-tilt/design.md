@@ -49,11 +49,11 @@ FrameSync 玩家当前通过 `TPBattleContext -> PlayerAnimConfig -> PlayerAnimV
 
 备选方案：把平滑后的方向参数作为逻辑组件字段保存。这样会把视觉 mixer 细节变成回滚事实，破坏逻辑/表现边界。
 
-### D4：日志按参数桶变化输出，不能每帧刷屏
+### D4：侧倾诊断是验证期临时证据，修复确认后必须清理普通 Info 日志
 
-现有 `[CODEX_LOG] Player locomotion mixer params` 已按快照变化输出。修复后应继续保留少量诊断，至少能看出 `state`、`SpeedValue`、`RotationValue`、`speedGear`，并在 `MoveLoop` 期间确认 `RotationValue` 不再频繁越过跑步左右阈值。
+验证阶段可临时使用 `[CODEX_LOG] Player locomotion mixer params` 和 `side-tilt diag` 对比实际写入的 `RotationValue`、原始差角和资源阈值。用户确认奔跑左右转不再侧倾后，最终代码应清理这些普通 Info 诊断，只保留 warning/error 与配置异常告警。
 
-备选方案：删除日志会降低复测可见性；每帧打印会淹没 Console，影响用户判断。
+备选方案：长期保留诊断会让 Console 在正常移动中被刷屏，掩盖真正的 warning/error。
 
 ## Risks / Trade-offs
 
@@ -67,9 +67,10 @@ FrameSync 玩家当前通过 `TPBattleContext -> PlayerAnimConfig -> PlayerAnimV
 1. 复核 `MoveMoveLoop.asset`、`MoveRunLoop.asset`、`MoveWalkLoop.asset` 的 `SpeedValue`/`RotationValue` 参数名和阈值，确认 `RotationValue` 的左右分支边界。
 2. 在本地验证或代码分支中临时强制非锁定 `MoveLoop` 的 `RotationValue=0`，用 Unity Editor 观察奔跑左右转侧倾是否消失。
 3. 若验证成立，在 `PlayerAnimViewSystem` 中实现表现层 `RotationValue` 策略：非锁定 `MoveLoop` 对原始差角进行限幅、归零或平滑，保留其它状态的必要方向参数。
-4. 保留参数变更日志，确认 `MoveLoop` 跑步转向期间 `RotationValue` 不再频繁越过跑步左右阈值。
+4. 使用参数变更日志确认 `MoveLoop` 跑步转向期间 `RotationValue` 不再频繁越过跑步左右阈值。
 5. 运行 GameLogic C# 构建检查和 `openspec validate fix-player-run-turn-side-tilt --strict`。
 6. 在 Unity EditorSimulateMode 复测直行跑、左转跑、右转跑、停止回 Idle，并明确记录是否完成真实运行验证。
+7. 修复确认后清理侧倾专项、输入按钮和相机 ready 等普通 Info 调试日志，保留 warning/error。
 
 ## Open Questions
 

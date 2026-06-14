@@ -8,7 +8,7 @@
 
 - 调整 FrameSync 玩家 `MoveLoop`/地面 locomotion 的 `RotationValue` 来源、范围和平滑策略，避免奔跑左右转时长期选中带明显侧倾的左右跑/斜跑动画分支。
 - 保留 `MoveStart` 的起步方向选择能力，但明确 `MoveLoop` 持续移动阶段不应因为逻辑朝向滞后而被误判为横向跑。
-- 增加一次性或变更触发的诊断，能够对比“运行时 `RotationValue`”“资源阈值”“当前状态/速度档位”，避免每帧刷屏。
+- 验证期使用一次性或变更触发的诊断对比“运行时 `RotationValue`”“资源阈值”“当前状态/速度档位”；确认修复后清理普通 Info 诊断，避免 Console 长期刷屏。
 - 保持 FrameSync 确定性边界：动画参数平滑、Animancer mixer 权重和视觉验证均停留在表现层，不写入 `PlayerMoveComponent`、`PlayerStateComponent` 等回滚快照。
 - 不重新启用 root motion 驱动位移，不回退到旧 `ThirdPersonController` 链路。
 
