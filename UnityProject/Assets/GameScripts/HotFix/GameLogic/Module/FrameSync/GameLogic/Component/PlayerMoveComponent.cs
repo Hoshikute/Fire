@@ -16,6 +16,15 @@ namespace GameLogic
         /// <summary>当前朝向（定点单位向量）。</summary>
         public SyncVector3 faceDir = SyncVector3.FromRaw(0, 0, SyncVector3.ONE);
 
+        /// <summary>
+        /// 本逻辑帧的移动意图方向（来自帧指令，定点单位向量）。
+        /// 供表现层按实体驱动方向动画，不直接读取全局输入单例。
+        /// </summary>
+        public SyncVector3 moveIntentDir = SyncVector3.Zero;
+
+        /// <summary>本逻辑帧速度档位（1 = 走，2 = 跑），来自帧指令。</summary>
+        public int speedGear = 1;
+
         /// <summary>水平移动速度（定点，单位：毫单位 / 秒，与 SyncVector3 同量纲）。</summary>
         public int moveSpeed = 4000;
 
@@ -44,6 +53,8 @@ namespace GameLogic
             c.Frame = Frame;
             c.pos = pos.DeepCopy();
             c.faceDir = faceDir.DeepCopy();
+            c.moveIntentDir = moveIntentDir.DeepCopy();
+            c.speedGear = speedGear;
             c.moveSpeed = moveSpeed;
             c.verticalSpeed = verticalSpeed;
             c.isOnGround = isOnGround;

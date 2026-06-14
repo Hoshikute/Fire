@@ -20,6 +20,9 @@ namespace GameLogic
             set => m_frame = value;
         }
 
+        /// <summary>
+        /// 回滚快照必须返回完整副本：业务字段、引用字段深拷贝，以及基类 ID/Frame 都要复制。
+        /// </summary>
         public abstract MomentComponentBase DeepCopy();
     }
 }

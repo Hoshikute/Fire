@@ -212,7 +212,27 @@ namespace GameLogic
             };
 
             m_playerEntityId = LOCAL_PLAYER_ENTITY_KEY.ToHash();
-            m_playerWorld.CreateEntity(m_playerEntityId, move, state, view);
+            PlayerComponent player = new PlayerComponent
+            {
+                playerId = m_playerEntityId,
+                playerName = LOCAL_PLAYER_ENTITY_KEY,
+                isLocal = true,
+            };
+
+            PlayerCommandRecordComponent commandRecord = new PlayerCommandRecordComponent
+            {
+                m_defaultInput = new CommandComponent
+                {
+                    id = m_playerEntityId,
+                    frame = 0,
+                    time = 0,
+                    moveDir = SyncVector3.Zero,
+                    skillDir = SyncVector3.Zero,
+                    speedGear = 1,
+                },
+            };
+
+            m_playerWorld.CreateEntity(m_playerEntityId, player, move, state, view, commandRecord);
         }
 
         private void TryBindCamera(Transform playerRoot)

@@ -73,7 +73,7 @@ namespace GameLogic
             {
                 if (rc.m_record[i].ID == id && rc.m_record[i].Frame == frame)
                 {
-                    return rc.m_record[i];
+                    return rc.m_record[i].DeepCopy();
                 }
             }
             return null;

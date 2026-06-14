@@ -16,6 +16,8 @@ namespace GameLogic
     /// </summary>
     public class SimpleCollisionWorld : ICollisionWorld
     {
+        private const int MinSweepStep = 100;
+
         private readonly List<AABB> m_boxes = new List<AABB>();
 
         public void AddBox(SyncVector3 min, SyncVector3 max)
@@ -48,22 +50,40 @@ namespace GameLogic
 
         public CollisionResult CapsuleSweep(SyncVector3 from, SyncVector3 to, int radius, int height)
         {
-            // 简化实现：先检测新位置是否重叠；若重叠则计算穿透和法线
-            if (CapsuleOverlap(to, radius, height))
-            {
-                // 计算分离信息：取第一个相交的 AABB
-                int halfHeight = height / 2;
-                SyncVector3 bottom = SyncVector3.FromRaw(to.x, to.y - halfHeight, to.z);
-                SyncVector3 top    = SyncVector3.FromRaw(to.x, to.y + halfHeight, to.z);
+            int maxDelta = Max3(Abs(to.x - from.x), Abs(to.y - from.y), Abs(to.z - from.z));
+            int stepSize = radius > 0 ? Max(MinSweepStep, radius / 2) : MinSweepStep;
+            int steps = Max(1, (maxDelta + stepSize - 1) / stepSize);
 
-                for (int i = 0; i < m_boxes.Count; i++)
+            for (int step = 0; step <= steps; step++)
+            {
+                SyncVector3 sample = SyncVector3.FromRaw(
+                    from.x + (int)((long)(to.x - from.x) * step / steps),
+                    from.y + (int)((long)(to.y - from.y) * step / steps),
+                    from.z + (int)((long)(to.z - from.z) * step / steps));
+
+                CollisionResult result = GetCapsulePenetration(sample, radius, height);
+                if (result.hit)
                 {
-                    AABB box = m_boxes[i];
-                    CollisionResult? result = CapsuleAABBPenetration(bottom, top, radius, box);
-                    if (result.HasValue)
-                    {
-                        return result.Value;
-                    }
+                    return result;
+                }
+            }
+
+            return CollisionResult.None;
+        }
+
+        private CollisionResult GetCapsulePenetration(SyncVector3 center, int radius, int height)
+        {
+            int halfHeight = height / 2;
+            SyncVector3 bottom = SyncVector3.FromRaw(center.x, center.y - halfHeight, center.z);
+            SyncVector3 top    = SyncVector3.FromRaw(center.x, center.y + halfHeight, center.z);
+
+            for (int i = 0; i < m_boxes.Count; i++)
+            {
+                AABB box = m_boxes[i];
+                CollisionResult? result = CapsuleAABBPenetration(bottom, top, radius, box);
+                if (result.HasValue)
+                {
+                    return result.Value;
                 }
             }
 
@@ -119,9 +139,14 @@ namespace GameLogic
             long distSq = dx * dx + dy * dy + dz * dz;
 
             long radiusSq = (long)radius * radius;
-            if (distSq >= radiusSq || distSq == 0)
+            if (distSq >= radiusSq)
             {
                 return null;
+            }
+
+            if (distSq == 0)
+            {
+                return BuildInsidePenetration(midX, midY, midZ, radius, box);
             }
 
             // 定点距离（开平方用整数牛顿迭代或近似）
@@ -154,6 +179,52 @@ namespace GameLogic
             if (val < min) return min;
             if (val > max) return max;
             return val;
+        }
+
+        private static CollisionResult BuildInsidePenetration(int midX, int midY, int midZ, int radius, AABB box)
+        {
+            int bestDistance = midX - box.min.x;
+            SyncVector3 normal = SyncVector3.FromRaw(-SyncVector3.ONE, 0, 0);
+            SyncVector3 point = SyncVector3.FromRaw(box.min.x, midY, midZ);
+
+            TryUseFace(box.max.x - midX, SyncVector3.FromRaw(SyncVector3.ONE, 0, 0), SyncVector3.FromRaw(box.max.x, midY, midZ), ref bestDistance, ref normal, ref point);
+            TryUseFace(midY - box.min.y, SyncVector3.FromRaw(0, -SyncVector3.ONE, 0), SyncVector3.FromRaw(midX, box.min.y, midZ), ref bestDistance, ref normal, ref point);
+            TryUseFace(box.max.y - midY, SyncVector3.FromRaw(0, SyncVector3.ONE, 0), SyncVector3.FromRaw(midX, box.max.y, midZ), ref bestDistance, ref normal, ref point);
+            TryUseFace(midZ - box.min.z, SyncVector3.FromRaw(0, 0, -SyncVector3.ONE), SyncVector3.FromRaw(midX, midY, box.min.z), ref bestDistance, ref normal, ref point);
+            TryUseFace(box.max.z - midZ, SyncVector3.FromRaw(0, 0, SyncVector3.ONE), SyncVector3.FromRaw(midX, midY, box.max.z), ref bestDistance, ref normal, ref point);
+
+            return new CollisionResult
+            {
+                hit = true,
+                normal = normal,
+                penetration = radius + bestDistance,
+                point = point,
+            };
+        }
+
+        private static void TryUseFace(int distance, SyncVector3 normal, SyncVector3 point, ref int bestDistance, ref SyncVector3 bestNormal, ref SyncVector3 bestPoint)
+        {
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                bestNormal = normal;
+                bestPoint = point;
+            }
+        }
+
+        private static int Abs(int val)
+        {
+            return val < 0 ? -val : val;
+        }
+
+        private static int Max(int a, int b)
+        {
+            return a > b ? a : b;
+        }
+
+        private static int Max3(int a, int b, int c)
+        {
+            return Max(Max(a, b), c);
         }
 
         /// <summary>定点整数开平方（牛顿迭代）。</summary>

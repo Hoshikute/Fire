@@ -6,7 +6,7 @@ namespace GameLogic
 {
     /// <summary>
     /// 玩家状态系统（确定性逻辑层）。
-    /// 在固定逻辑帧里根据 PlayerMoveComponent 的物理事实（接地 / 竖直速度 / 移动输入）
+    /// 在固定逻辑帧里根据 PlayerMoveComponent 的物理事实（接地 / 竖直速度 / 移动意图）
     /// 以及 PlayerStateComponent 的辅助字段（锁定 / 平台跳 / 墙体类型）
     /// 推导出 PlayerStateComponent.state，并维护「在状态内经过的逻辑帧数」。
     ///
@@ -43,45 +43,50 @@ namespace GameLogic
 
         public override Type[] GetFilter()
         {
-            return new Type[] { typeof(PlayerMoveComponent), typeof(PlayerStateComponent) };
+            return new Type[] { typeof(PlayerMoveComponent), typeof(PlayerStateComponent), typeof(PlayerCommandRecordComponent) };
         }
 
         public override void FixedUpdate(int deltaTime)
         {
-            PlayerInputComponent input = m_world.GetSingletonComp<PlayerInputComponent>();
-
             var entities = GetEntityList();
             for (int i = 0; i < entities.Count; i++)
             {
                 PlayerMoveComponent  move  = entities[i].GetComp<PlayerMoveComponent>();
                 PlayerStateComponent st    = entities[i].GetComp<PlayerStateComponent>();
-                Step(move, st, input);
+                PlayerCommandRecordComponent record = entities[i].GetComp<PlayerCommandRecordComponent>();
+                record.EnsureDefaultCommand(entities[i].ID);
+                CommandComponent command = record.GetOrForecastInput(m_world.FrameCount) as CommandComponent;
+
+                if (command != null)
+                {
+                    Step(move, st, command);
+                }
             }
         }
 
         // ── 核心推导 ────────────────────────────────────────────────────
 
-        private void Step(PlayerMoveComponent move, PlayerStateComponent st, PlayerInputComponent input)
+        private void Step(PlayerMoveComponent move, PlayerStateComponent st, CommandComponent command)
         {
-            // 锁定切换（边沿消费在 PlayerMoveSystem.ConsumeOneShot 后，但 State 先读）
-            if (input.toggleLock)
+            // 锁定切换（边沿输入在本系统读完后统一消费）
+            if (command.toggleLock)
             {
                 st.isLocked = !st.isLocked;
             }
 
             // 平台跳请求写入状态组件（由交互触发，此处仅中继）
-            if (input.platformJump)
+            if (command.platformJump)
             {
                 st.platformJumpRequested = true;
             }
 
-            PlayerLogicState next = Decide(move, st, input);
+            PlayerLogicState next = Decide(move, st);
 
-            if (next != st.state)
+            if (next != st.state && !m_world.m_isRecalc)
             {
                 Log.Info($"[PlayerStateSystem] F#{m_world.FrameCount} st={st.state}→{next} " +
                          $"isOnGround={move.isOnGround} vSpeed={move.verticalSpeed} " +
-                         $"moveDirMag={input.moveDir.SqrMagnitude()} isLocked={st.isLocked}");
+                         $"moveDirMag={move.moveIntentDir.SqrMagnitude()} isLocked={st.isLocked}");
             }
 
             st.prevState = st.state;
@@ -115,8 +120,7 @@ namespace GameLogic
         /// </summary>
         private PlayerLogicState Decide(
             PlayerMoveComponent  move,
-            PlayerStateComponent st,
-            PlayerInputComponent input)
+            PlayerStateComponent st)
         {
             // ── 1. 交互动作：进入后须等最小帧数才能退出 ──────────────────
             if (IsInteractState(st.state))
@@ -166,7 +170,7 @@ namespace GameLogic
                 }
             }
 
-            bool hasMoveInput = input.moveDir.SqrMagnitude() > 0;
+            bool hasMoveInput = move.moveIntentDir.SqrMagnitude() > 0;
 
             // ── 6. 锁定模式 ───────────────────────────────────────────────
             if (st.isLocked)

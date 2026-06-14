@@ -3,8 +3,10 @@ namespace GameLogic
 {
     /// <summary>
     /// 玩家输入组件（单例）。
-    /// 表现层（渲染帧）采集 Unity 输入写入这里，逻辑层（逻辑帧）读取它驱动确定性移动。
-    /// 这是「表现 → 逻辑」唯一允许的写入通道：输入意图本质是玩家指令，
+    /// 当前本地路径由表现层（渲染帧）采集 Unity 输入写入这里，
+    /// 逻辑帧开始时由 PlayerInputCommandSystem 固化为本地玩家实体的 CommandComponent。
+    /// 这是本地控制下「表现 → 逻辑」唯一允许的写入通道：
+    /// 这里只承载会进入帧指令 / 影响逻辑推进的输入意图，
     /// 真正的状态推进仍由逻辑层在固定 200ms 逻辑帧里完成。
     /// 方向用 SyncVector3 定点数，禁止在逻辑里用 float 参与运算。
     /// </summary>
@@ -28,21 +30,45 @@ namespace GameLogic
 
         /// <summary>
         /// 速度档位（1 = 走，2 = 跑）。
-        /// 由输入采集系统根据 Shift 键写入，PlayerMoveSystem 读取选择对应速度常量。
-        /// 放在单例组件（不参与回滚），避免渲染帧直写回滚组件污染快照。
+        /// 由输入采集系统根据 Shift 键写入，再进入本地玩家实体的帧指令。
+        /// 放在单例组件（不参与回滚），避免渲染帧直写回滚组件污染快照；
+        /// CommandComponent 已承载此字段；Move/State 系统按实体帧指令读取，不直接读这里。
         /// </summary>
         public int speedGear = 1;
 
         /// <summary>
-        /// 下蹲姿态开关（true = 蹲伏，false = 站立）。
-        /// 旧 TPC 的 Crouch 是边沿触发切换 StandValue；当前只用于表现层 Animancer mixer，
-        /// 不写入回滚组件，也不改变碰撞或确定性移动。
+        /// 生成当前逻辑帧的玩家指令快照。
+        /// time 由网络层/调用方填入；本地确定性路径不要在这里读取真实时间。
         /// </summary>
-        public bool isCrouching;
+        public CommandComponent ToCommand(int frame, int id, int time)
+        {
+            CommandComponent command = new CommandComponent
+            {
+                frame = frame,
+                id = id,
+                time = time,
+            };
+            WriteToCommand(command);
+            return command;
+        }
+
+        /// <summary>
+        /// 将当前本地输入意图写入帧指令。
+        /// 供后续接入权威输入/回滚时复用，避免影响逻辑的输入字段散落转换。
+        /// </summary>
+        public void WriteToCommand(CommandComponent command)
+        {
+            command.moveDir = moveDir.DeepCopy();
+            command.jump = jump;
+            command.toggleLock = toggleLock;
+            command.platformJump = platformJump;
+            command.speedGear = speedGear;
+        }
 
         /// <summary>
         /// 把所有边沿触发型输入清空。
-        /// 逻辑帧消费完后调用，避免一次按键在多帧重复触发。
+        /// PlayerInputCommandSystem 已把本帧输入写入 CommandComponent 后调用，
+        /// 避免一次按键在多帧重复触发。
         /// 注意：moveDir 不清空——移动是持续性输入，松开摇杆时表现层会写回 Zero。
         /// </summary>
         public void ConsumeOneShot()

@@ -75,8 +75,8 @@ namespace GameLogic
         public int framesInState = 0;
 
         /// <summary>
-        /// 上一帧的逻辑状态。用于表现层检测「状态刚切换」，驱动动画过渡。
-        /// 逻辑层本身不使用此字段。
+        /// 上一逻辑帧的状态，用于快照/诊断时保留确定性状态变化轨迹。
+        /// 表现层动画切换使用 PlayerViewComponent.lastPlayedState，不依赖此字段。
         /// </summary>
         public PlayerLogicState prevState = PlayerLogicState.Idle;
 

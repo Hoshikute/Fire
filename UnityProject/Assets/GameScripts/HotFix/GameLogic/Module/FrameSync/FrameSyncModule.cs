@@ -8,14 +8,17 @@ namespace GameLogic
     /// </summary>
     public class FrameSyncModule : Module, IFrameSyncModule, IUpdateModule
     {
+        private const int SecondsToMicroseconds = 1000000;
+        private const int MillisecondsToMicroseconds = 1000;
+
         private List<WorldBase> m_worldList = new List<WorldBase>();
-        private float m_updateTimer = 0f;
+        private long m_updateTimerUs = 0;
         private int m_intervalTime = 200; // 毫秒
 
         public int IntervalTime
         {
             get => m_intervalTime;
-            set => m_intervalTime = value;
+            set => m_intervalTime = value > 0 ? value : 1;
         }
 
         public List<WorldBase> WorldList => m_worldList;
@@ -49,17 +52,24 @@ namespace GameLogic
 
         public void Update(float elapseSeconds, float realElapseSeconds)
         {
-            int deltaTimeMs = (int)(elapseSeconds * 1000f);
-            m_updateTimer += elapseSeconds * 1000f;
+            // 真实帧耗时只用于调度应该推进几个固定逻辑帧；逻辑计算仍只接收 m_intervalTime。
+            long deltaTimeUs = (long)System.Math.Round(elapseSeconds * SecondsToMicroseconds, System.MidpointRounding.AwayFromZero);
+            if (deltaTimeUs < 0)
+            {
+                deltaTimeUs = 0;
+            }
+            int deltaTimeMs = (int)(deltaTimeUs / MillisecondsToMicroseconds);
+            m_updateTimerUs += deltaTimeUs;
 
             // 渲染帧更新
             UpdateWorlds(deltaTimeMs);
 
             // 固定帧更新（帧同步核心）
-            while (m_updateTimer > m_intervalTime)
+            long intervalTimeUs = (long)m_intervalTime * MillisecondsToMicroseconds;
+            while (m_updateTimerUs >= intervalTimeUs)
             {
                 FixedUpdateWorlds(m_intervalTime);
-                m_updateTimer -= m_intervalTime;
+                m_updateTimerUs -= intervalTimeUs;
             }
         }
 

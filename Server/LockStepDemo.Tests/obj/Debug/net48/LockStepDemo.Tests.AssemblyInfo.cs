@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LockStepDemo.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5c0c6d67af3b552bf41c652cf9b0c39bbff6053")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a96802c7cfde7508e53ecce3cf3c6a8cc2c0f311")]
 [assembly: System.Reflection.AssemblyProductAttribute("LockStepDemo.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LockStepDemo.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

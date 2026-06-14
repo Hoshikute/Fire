@@ -46,6 +46,18 @@ namespace GameLogic
         public bool animInitialized;
 
         /// <summary>
+        /// 表现层上一次已播放的逻辑状态。
+        /// 仅用于动画切换检测，不参与逻辑快照 / 回滚。
+        /// </summary>
+        public PlayerLogicState lastPlayedState = PlayerLogicState.Idle;
+
+        /// <summary>
+        /// 下蹲姿态开关，仅用于 Animancer idle/locomotion mixer 参数。
+        /// 不影响碰撞、移动或状态机，因此不能进入逻辑输入/回滚快照。
+        /// </summary>
+        public bool isCrouching;
+
+        /// <summary>
         /// Animancer 动画播放组件引用。
         /// 由 TPBattleContext 在生成本地玩家实体时从角色 GameObject 上取得并注入。
         /// </summary>

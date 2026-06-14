@@ -121,7 +121,7 @@ namespace GameLogic
 
         /// <summary>
         /// 把表现层的 Vector2 摇杆输入转换为定点归一化方向，供写入 PlayerInputComponent。
-        /// 相机朝向修正（cameraForward / cameraRight）也在此完成，保证定点输出确定性。
+        /// 相机朝向修正（cameraForward / cameraRight）也在表现层完成；逻辑层只读取转换后的定点输入意图。
         /// 结果是水平面上的归一化 SyncVector3（y = 0）。
         /// </summary>
         /// <param name="moveInput">GameModule.Input.Move（Vector2）。</param>

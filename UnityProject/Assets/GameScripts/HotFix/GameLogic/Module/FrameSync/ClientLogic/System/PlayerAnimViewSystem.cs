@@ -60,7 +60,6 @@ namespace GameLogic
 
         public override void Update(int deltaTime)
         {
-            PlayerInputComponent input = m_world.GetSingletonComp<PlayerInputComponent>();
             var entities = GetEntityList();
             for (int i = 0; i < entities.Count; i++)
             {
@@ -72,25 +71,27 @@ namespace GameLogic
                 if (!EnsureAnimationDependencies(entity.ID, view))
                     continue;
 
-                RefreshLocomotionParameters(entity.ID, move, st, view, input);
+                RefreshLocomotionParameters(entity.ID, move, st, view);
 
                 // 首次执行时无条件播放当前状态动画
                 if (!view.animInitialized)
                 {
                     view.animInitialized = true;
-                    PlayAnim(entity.ID, move, st, view, input);
+                    PlayAnim(entity.ID, move, st, view);
+                    view.lastPlayedState = st.state;
                     continue;
                 }
 
                 // 状态切换时触发播放
-                if (st.state != st.prevState)
+                if (st.state != view.lastPlayedState)
                 {
-                    PlayAnim(entity.ID, move, st, view, input);
+                    PlayAnim(entity.ID, move, st, view);
+                    view.lastPlayedState = st.state;
                 }
                 else
                 {
                     // 同状态内持续更新：PlatformerUp 阶段切换
-                    UpdateOngoingState(entity.ID, move, st, view, input);
+                    UpdateOngoingState(entity.ID, move, st, view);
                 }
             }
         }
@@ -100,12 +101,11 @@ namespace GameLogic
             int entityId,
             PlayerMoveComponent move,
             PlayerStateComponent st,
-            PlayerViewComponent view,
-            PlayerInputComponent input)
+            PlayerViewComponent view)
         {
             if (st.state == PlayerLogicState.Idle || st.state == PlayerLogicState.LockIdle)
             {
-                ApplyIdleStanceMixerWeights(view.animancer.States.Current, entityId, st.isLocked, input.isCrouching);
+                ApplyIdleStanceMixerWeights(view.animancer.States.Current, entityId, st.isLocked, view.isCrouching);
             }
 
             // PlatformerUp 阶段推进
@@ -142,8 +142,7 @@ namespace GameLogic
             int entityId,
             PlayerMoveComponent move,
             PlayerStateComponent st,
-            PlayerViewComponent view,
-            PlayerInputComponent input)
+            PlayerViewComponent view)
         {
             AnimancerComponent animancer = view.animancer;
             PlayerAnimConfig   cfg       = view.animConfig;
@@ -155,11 +154,11 @@ namespace GameLogic
             {
                 // ── 地面常态 ────────────────────────────────────────────
                 case PlayerLogicState.Idle:
-                    PlayIdleStance(animancer, cfg.idle, entityId, st.state, nameof(cfg.idle), st.isLocked, input.isCrouching);
+                    PlayIdleStance(animancer, cfg.idle, entityId, st.state, nameof(cfg.idle), st.isLocked, view.isCrouching);
                     break;
 
                 case PlayerLogicState.MoveStart:
-                    PlayMoveStartDirectional(entityId, move, st, view, input);
+                    PlayMoveStartDirectional(entityId, move, st, view);
                     break;
 
                 case PlayerLogicState.MoveLoop:
@@ -176,7 +175,7 @@ namespace GameLogic
 
                 // ── 锁定模式 ────────────────────────────────────────────
                 case PlayerLogicState.LockIdle:
-                    PlayIdleStance(animancer, cfg.GetLockIdleTransition(), entityId, st.state, $"{nameof(cfg.lockIdle)} or {nameof(cfg.idle)} fallback", st.isLocked, input.isCrouching);
+                    PlayIdleStance(animancer, cfg.GetLockIdleTransition(), entityId, st.state, $"{nameof(cfg.lockIdle)} or {nameof(cfg.idle)} fallback", st.isLocked, view.isCrouching);
                     break;
 
                 // ── 空中 ────────────────────────────────────────────────
@@ -219,28 +218,27 @@ namespace GameLogic
                     break;
             }
 
-            RefreshLocomotionParameters(entityId, move, st, view, input);
+            RefreshLocomotionParameters(entityId, move, st, view);
         }
 
         // ── 子状态分发 ─────────────────────────────────────────────────
 
         /// <summary>
         /// MoveStart 按 8 方向选择 clip。
-        /// 计算 faceDir（当前朝向）与 input.moveDir（期望移动方向）的夹角，
+        /// 计算 faceDir（当前朝向）与 move.moveIntentDir（本实体移动意图）的夹角，
         /// 按参考项目的 22.5°~157.5° 区间选择对应 clip。
         /// </summary>
         private void PlayMoveStartDirectional(
             int entityId,
             PlayerMoveComponent move,
             PlayerStateComponent st,
-            PlayerViewComponent view,
-            PlayerInputComponent input)
+            PlayerViewComponent view)
         {
             PlayerAnimConfig cfg = view.animConfig;
             AnimancerComponent animancer = view.animancer;
 
             // 如果没有移动输入，fallback 到正前方向
-            if (input.moveDir.SqrMagnitude() == 0)
+            if (move.moveIntentDir.SqrMagnitude() == 0)
             {
                 PlayOrWarn(animancer, cfg.moveStart_F, entityId, st.state, nameof(cfg.moveStart_F));
                 return;
@@ -250,8 +248,8 @@ namespace GameLogic
             // 定点 → float：除以 ONE(1000)
             float fx = move.faceDir.x / 1000f;
             float fz = move.faceDir.z / 1000f;
-            float mx = input.moveDir.x / 1000f;
-            float mz = input.moveDir.z / 1000f;
+            float mx = move.moveIntentDir.x / 1000f;
+            float mz = move.moveIntentDir.z / 1000f;
 
             float dot   = fx * mx + fz * mz;
             float cross = fx * mz - fz * mx;
@@ -399,15 +397,14 @@ namespace GameLogic
             int entityId,
             PlayerMoveComponent move,
             PlayerStateComponent st,
-            PlayerViewComponent view,
-            PlayerInputComponent input)
+            PlayerViewComponent view)
         {
             AnimancerComponent animancer = view.animancer;
 
-            float standValue = input.isCrouching ? CrouchingStanceParameter : StandingStanceParameter;
-            float speedValue = input.speedGear >= 2 ? RunSpeedParameter : WalkSpeedParameter;
-            float rawRotationValue = CalculateRotationValue(move, input);
-            float rotationValue = CalculateEffectiveRotationValue(st, input, speedValue, rawRotationValue);
+            float standValue = view.isCrouching ? CrouchingStanceParameter : StandingStanceParameter;
+            float speedValue = move.speedGear >= 2 ? RunSpeedParameter : WalkSpeedParameter;
+            float rawRotationValue = CalculateRotationValue(move);
+            float rotationValue = CalculateEffectiveRotationValue(st, move, speedValue, rawRotationValue);
             float lockValue = st.isLocked ? LockedParameter : UnlockedParameter;
 
             animancer.Parameters.SetValue(StandValueParameterName, standValue);
@@ -416,9 +413,9 @@ namespace GameLogic
             animancer.Parameters.SetValue(LockValueParameterName, lockValue);
         }
 
-        private static float CalculateEffectiveRotationValue(PlayerStateComponent st, PlayerInputComponent input, float speedValue, float rawRotationValue)
+        private static float CalculateEffectiveRotationValue(PlayerStateComponent st, PlayerMoveComponent move, float speedValue, float rawRotationValue)
         {
-            if (ShouldUseForwardRunRotation(st, input, speedValue))
+            if (ShouldUseForwardRunRotation(st, move, speedValue))
             {
                 return ForwardRunRotationValue;
             }
@@ -426,25 +423,25 @@ namespace GameLogic
             return rawRotationValue;
         }
 
-        private static bool ShouldUseForwardRunRotation(PlayerStateComponent st, PlayerInputComponent input, float speedValue)
+        private static bool ShouldUseForwardRunRotation(PlayerStateComponent st, PlayerMoveComponent move, float speedValue)
         {
             return st.state == PlayerLogicState.MoveLoop
                 && !st.isLocked
                 && speedValue >= RunSpeedParameter
-                && input.moveDir.SqrMagnitude() != 0;
+                && move.moveIntentDir.SqrMagnitude() != 0;
         }
 
-        private static float CalculateRotationValue(PlayerMoveComponent move, PlayerInputComponent input)
+        private static float CalculateRotationValue(PlayerMoveComponent move)
         {
-            if (input.moveDir.SqrMagnitude() == 0 || move.faceDir.SqrMagnitude() == 0)
+            if (move.moveIntentDir.SqrMagnitude() == 0 || move.faceDir.SqrMagnitude() == 0)
             {
                 return 0f;
             }
 
             float fx = move.faceDir.x / 1000f;
             float fz = move.faceDir.z / 1000f;
-            float mx = input.moveDir.x / 1000f;
-            float mz = input.moveDir.z / 1000f;
+            float mx = move.moveIntentDir.x / 1000f;
+            float mz = move.moveIntentDir.z / 1000f;
 
             float dot = fx * mx + fz * mz;
             float cross = fx * mz - fz * mx;

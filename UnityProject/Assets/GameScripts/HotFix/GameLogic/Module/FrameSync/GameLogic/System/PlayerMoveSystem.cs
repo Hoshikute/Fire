@@ -6,7 +6,7 @@ namespace GameLogic
 {
     /// <summary>
     /// 玩家移动系统（确定性逻辑层）。
-    /// 在固定逻辑帧（200ms）里运行：读取单例 PlayerInputComponent 的输入意图，
+    /// 在固定逻辑帧（200ms）里运行：读取每个实体自己的 CommandComponent 帧指令，
     /// 用定点数推进每个带 PlayerMoveComponent 实体的位置 / 朝向 / 竖直速度。
     ///
     /// 完整对齐原 ThirdPersonController 的移动特性：
@@ -76,24 +76,25 @@ namespace GameLogic
 
         public override Type[] GetFilter()
         {
-            return new Type[] { typeof(PlayerMoveComponent) };
+            return new Type[] { typeof(PlayerMoveComponent), typeof(PlayerStateComponent), typeof(PlayerCommandRecordComponent) };
         }
 
         public override void FixedUpdate(int deltaTime)
         {
-            PlayerInputComponent input = m_world.GetSingletonComp<PlayerInputComponent>();
-
             var entities = GetEntityList();
             for (int i = 0; i < entities.Count; i++)
             {
                 PlayerMoveComponent  move  = entities[i].GetComp<PlayerMoveComponent>();
                 PlayerStateComponent st    = entities[i].GetComp<PlayerStateComponent>();
+                PlayerCommandRecordComponent record = entities[i].GetComp<PlayerCommandRecordComponent>();
+                record.EnsureDefaultCommand(entities[i].ID);
+                CommandComponent command = record.GetOrForecastInput(m_world.FrameCount) as CommandComponent;
 
-                Step(move, st, input, deltaTime);
+                if (command != null)
+                {
+                    Step(move, st, command, deltaTime);
+                }
             }
-
-            // 边沿输入消费（跳跃 / 锁定切换 / 平台跳）
-            input.ConsumeOneShot();
         }
 
         // ── 单帧推进 ────────────────────────────────────────────────────
@@ -105,12 +106,13 @@ namespace GameLogic
         private void Step(
             PlayerMoveComponent  move,
             PlayerStateComponent st,
-            PlayerInputComponent input,
+            CommandComponent command,
             int deltaTimeMs)
         {
             // 交互状态期间（Vault/Climb/LedgeClimb/PlatformerUp/MoveToWall）
             // 玩家主动水平移动交给动画根运动（表现层），逻辑层仅维护重力
             bool isInteracting = IsInteractState(st.state);
+            SyncVector3 preMovePos = move.pos;
 
             // ── 攀爬/翻越轨迹推进 ──────────────────────────────────────────
             if (isInteracting && ClimbConfig != null)
@@ -127,12 +129,15 @@ namespace GameLogic
                 }
             }
 
+            bool hasMoveInput = command.moveDir.SqrMagnitude() > 0;
+            move.moveIntentDir = hasMoveInput ? command.moveDir.DeepCopy() : SyncVector3.Zero;
+            move.speedGear = command.speedGear >= 2 ? 2 : 1;
+
             // ── 速度档位 ──────────────────────────────────────────────
-            // speedGear 由输入采集系统写入 PlayerInputComponent（1=走, 2=跑）
-            int targetSpeed = input.speedGear >= 2 ? RunSpeed : WalkSpeed;
+            // speedGear 来自本实体帧指令，再固化到可回滚的 PlayerMoveComponent。
+            int targetSpeed = move.speedGear >= 2 ? RunSpeed : WalkSpeed;
 
             // ── 加减速曲线 ────────────────────────────────────────────
-            bool hasMoveInput = input.moveDir.SqrMagnitude() > 0;
             if (hasMoveInput)
             {
                 // 加速：向目标速度逼近
@@ -165,7 +170,7 @@ namespace GameLogic
             // ── 水平移动 ──────────────────────────────────────────────
             if (!isInteracting)
             {
-                SyncVector3 dir = input.moveDir;
+                SyncVector3 dir = move.moveIntentDir;
                 if (dir.SqrMagnitude() > 0)
                 {
                     if (move.isOnGround)
@@ -225,7 +230,6 @@ namespace GameLogic
             // 在水平位移后执行胶囊扫掠，分离穿透 + 沿表面滑动
             if (m_collision != null)
             {
-                SyncVector3 preMovePos = move.pos;
                 CollisionResult col = m_collision.CapsuleSweep(
                     preMovePos, move.pos,
                     move.capsuleRadius, move.capsuleHeight);
@@ -258,12 +262,12 @@ namespace GameLogic
             }
 
             // ── 跳跃（边沿消费，仅接地时生效）───────────────────────────
-            if (input.jump && move.isOnGround && !isInteracting)
+            if (command.jump && move.isOnGround && !isInteracting)
             {
                 move.verticalSpeed = JumpSpeed;
                 move.isOnGround    = false;
                 // 记录是否原地跳跃（无移动输入），供 PlayerStateSystem 选择 Jump vs JumpInPlace
-                st.isInPlaceJump = input.moveDir.SqrMagnitude() == 0;
+                st.isInPlaceJump = !hasMoveInput;
             }
 
             // ── 重力 / 竖直积分 ───────────────────────────────────────

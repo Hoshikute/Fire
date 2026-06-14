@@ -177,12 +177,22 @@ namespace GameLogic
 
         public void Recalc(int frame, int deltaTime)
         {
-            FrameCount++;
-            OnlyCallByReCalc(frame, deltaTime);
-            BeforeFixedUpdate(deltaTime);
-            FixedUpdate(deltaTime);
-            LateFixedUpdate(deltaTime);
-            LazyExecuteEntityOperation();
+            bool previousIsRecalc = m_isRecalc;
+            m_isRecalc = true;
+
+            try
+            {
+                FrameCount++;
+                OnlyCallByReCalc(frame, deltaTime);
+                BeforeFixedUpdate(deltaTime);
+                FixedUpdate(deltaTime);
+                LateFixedUpdate(deltaTime);
+                LazyExecuteEntityOperation();
+            }
+            finally
+            {
+                m_isRecalc = previousIsRecalc;
+            }
         }
 
         void BeforeUpdate(int deltaTime)

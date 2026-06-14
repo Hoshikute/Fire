@@ -12,9 +12,12 @@ namespace GameLogic
     ///   PlayerInputCollectSystem  ──▶  PlayerInputComponent(单例)
     ///                                   │
     ///                                   ▼
-    ///                                  PlayerMoveSystem  ──▶  PlayerMoveComponent(可回滚)
-    ///                                                          │
-    ///   PlayerViewSystem  ◀──────────────────────────────────┘ (只读)
+    ///                              PlayerInputCommandSystem ──▶ PlayerCommandRecordComponent(按实体帧指令)
+    ///                                   │
+    ///                                   ▼
+    ///                              PlayerMoveSystem ──▶ PlayerMoveComponent(可回滚)
+    ///                                                   │
+    ///   PlayerViewSystem  ◀────────────────────────────┘ (只读)
     ///
     /// System 注册顺序 = 调用顺序。采集系统排最前，保证逻辑帧推进前输入已就绪；
     /// 表现系统排最后，渲染最新逻辑状态。
@@ -27,10 +30,11 @@ namespace GameLogic
             return new Type[]
             {
                 typeof(PlayerInputCollectSystem), // 表现层：渲染帧采集 Unity 输入（含相机修正）→ 单例
-                typeof(PlayerMoveSystem),         // 逻辑层：逻辑帧确定性移动（走/跑/跳/重力/空中惯性）
-                typeof(PlayerStateSystem),        // 逻辑层：逻辑帧确定性状态推导（排在 Move 之后）
+                typeof(PlayerInputCommandSystem), // 逻辑层：本地输入固化为本地实体帧指令，非本地实体按缓存/预测命令
+                typeof(PlayerMoveSystem),         // 逻辑层：按实体帧指令确定性移动（走/跑/跳/重力/空中惯性）
+                typeof(PlayerStateSystem),        // 逻辑层：按实体帧指令+物理事实推导状态（排在 Move 之后）
                 typeof(PlayerViewSystem),         // 表现层：渲染帧读 pos/faceDir 驱动 Transform 插值
-                typeof(PlayerAnimViewSystem),     // 表现层：渲染帧读 PlayerStateComponent 驱动 Animancer
+                typeof(PlayerAnimViewSystem),     // 表现层：渲染帧读 State/Move/View 驱动 Animancer
             };
         }
 
