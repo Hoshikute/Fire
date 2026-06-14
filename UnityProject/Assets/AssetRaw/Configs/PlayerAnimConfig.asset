@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d81b285b3c8e85448aa90f15bfb7a2ee, type: 3}
+  m_Name: PlayerAnimConfig
+  m_EditorClassIdentifier: 
+  idle: {fileID: 11400000, guid: b1519a13db0380c41ba6dd60b3b32262, type: 2}
+  moveStart_F: {fileID: 11400000, guid: 60f8c68084a2fac469a2ce692d12c90a, type: 2}
+  moveStart_R45: {fileID: 11400000, guid: 2d7b70df949118d4d8785fec63f3b966, type: 2}
+  moveStart_R90: {fileID: 11400000, guid: 2d37e1f5b28bead4ebbbd88069f9e971, type: 2}
+  moveStart_R135: {fileID: 11400000, guid: 39607935205f0014ebc1e2a97587558f, type: 2}
+  moveStart_R180: {fileID: 11400000, guid: e617ef6da8f9a4d4280e6b759341554a, type: 2}
+  moveStart_L135: {fileID: 11400000, guid: 300de475731cb84429674e4a4896258f, type: 2}
+  moveStart_L90: {fileID: 11400000, guid: 849c0c81f46ed754f983984f3e53530a, type: 2}
+  moveStart_L45: {fileID: 11400000, guid: be52c68bdc1eace46a628e2c1a646268, type: 2}
+  moveLoop: {fileID: 11400000, guid: c4d72ffdfc3326c4082db72d2c1738cb, type: 2}
+  moveEnd_L: {fileID: 11400000, guid: 1cf926f503199d3449b0ba8997b9703e, type: 2}
+  moveEnd_R: {fileID: 11400000, guid: d395dfc6341c6dc458176bf775fda299, type: 2}
+  moveToWall: {fileID: 11400000, guid: 1cf926f503199d3449b0ba8997b9703e, type: 2}
+  lockIdle: {fileID: 11400000, guid: b1519a13db0380c41ba6dd60b3b32262, type: 2}
+  jumpForward: {fileID: 11400000, guid: 26d9c668a5b84e419f657f2dffca753d, type: 2}
+  jumpInPlace: {fileID: 11400000, guid: cafe439158084cc1a620dc29761c6625, type: 2}
+  fallStart: {fileID: 11400000, guid: ac400e92d9184443bf51f73bae133081, type: 2}
+  fallLoop: {fileID: 11400000, guid: 9d661f3035f14c4e8b5849ecb8c097de, type: 2}
+  land: {fileID: 11400000, guid: 71a87571a84b4cfea4d47fd575100b3f, type: 2}
+  platformerUpStart: {fileID: 11400000, guid: 36b0d950ec354fc78cc5f941af0445e4, type: 2}
+  platformerUpLoop: {fileID: 11400000, guid: 18be191ff6944c86b760590793e160d0, type: 2}
+  platformerDownLoop: {fileID: 11400000, guid: 948867f7315b41d683158259c62eb95f, type: 2}
+  vault: {fileID: 0}
+  climb: {fileID: 0}
+  ledgeClimb: {fileID: 0}
