@@ -59,13 +59,13 @@ namespace GameLogic
 
         /// <summary>
         /// Animancer 动画播放组件引用。
-        /// 由 TPBattleContext 在生成本地玩家实体时从角色 GameObject 上取得并注入。
+        /// 由 BattleContext 在生成本地玩家实体时从角色 GameObject 上取得并注入。
         /// </summary>
         public AnimancerComponent animancer;
 
         /// <summary>
         /// 动画剪辑配置（ScriptableObject）。
-        /// 由 TPBattleContext 加载 PlayerAnimConfig 资源后注入，解耦动画资源路径。
+        /// 由 BattleContext 加载 PlayerAnimConfig 资源后注入，解耦动画资源路径。
         /// </summary>
         public PlayerAnimConfig animConfig;
 

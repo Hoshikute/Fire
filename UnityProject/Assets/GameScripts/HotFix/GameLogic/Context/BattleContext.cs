@@ -10,12 +10,12 @@ namespace GameLogic
     /// Game 世界控制器。
     /// 负责管理 Game 场景的初始化顺序：相机设置 → Player 动态加载。
     /// </summary>
-    public class TPBattleContext : Module, ITPBattleContext
+    public class BattleContext : Module, IBattleContext
     {
         private const string PLAYER_PREFAB_PATH = "Player";
         private const string PLAYER_ANIM_CONFIG_PATH = "PlayerAnimConfig";
         private const string LOCAL_PLAYER_ENTITY_KEY = "LocalPlayer";
-        private const string TraceHeader = "[TPBattleContext]";
+        private const string TraceHeader = "[BattleContext]";
 
         private readonly Vector3 _playerSpawnPos = Vector3.zero;
         private WorldBase        m_playerWorld;
@@ -144,18 +144,18 @@ namespace GameLogic
         {
             if (m_playerWorld != null)
             {
-                Log.Warning($"{TraceHeader} PlayerWorld already exists, skip duplicate startup.");
+                Log.Warning($"{TraceHeader} BattleWorld already exists, skip duplicate startup.");
                 return;
             }
 
             AnimancerComponent animancer = player.GetComponent<AnimancerComponent>();
             if (animancer == null)
             {
-                Log.Error($"{TraceHeader} AnimancerComponent missing on Player, PlayerWorld startup aborted.");
+                Log.Error($"{TraceHeader} AnimancerComponent missing on Player, BattleWorld startup aborted.");
                 return;
             }
 
-            m_playerWorld = GameModule.FrameSync.CreateWorld<PlayerWorld>();
+            m_playerWorld = GameModule.FrameSync.CreateWorld<BattleWorld>();
             m_playerWorld.SyncRule = SyncRule.Frame;
 
             Log.Info($"{TraceHeader} playerSpawnPos = {_playerSpawnPos}, fixed = {SyncVector3.FromVector3(_playerSpawnPos)}");
@@ -165,7 +165,7 @@ namespace GameLogic
             m_playerWorld.FlushEntityOperations();
             m_playerWorld.IsStart = true;
 
-            Log.Info($"{TraceHeader} PlayerWorld started, logic frame step {GameModule.FrameSync.IntervalTime}ms.");
+            Log.Info($"{TraceHeader} BattleWorld started, logic frame step {GameModule.FrameSync.IntervalTime}ms.");
             TryBindCamera(player.transform);
         }
 

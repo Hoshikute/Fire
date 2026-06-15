@@ -25,21 +25,28 @@ namespace GameLogic
     /// </summary>
     public class PlayerStateSystem : SystemBase
     {
-        // ── 帧计数阈值（200ms / 帧）────────────────────────────────────
-        /// <summary>落地缓冲帧数（≈200ms）。</summary>
-        private const int LandBufferFrames = 1;
+        // ── 帧计数阈值（毫秒意图 → 帧数 = ms / FrameConfig.LogicFrameIntervalMs）────
+        // 通过毫秒表达意图，帧数自动跟随配置的帧间隔变化，避免改帧率时遗漏。
 
-        /// <summary>MoveStart 持续帧数（≈200ms）。</summary>
-        private const int MoveStartFrames = 1;
+        private const int LandBufferDurationMs    = 200;
+        private const int MoveStartDurationMs     = 200;
+        private const int MoveEndDurationMs       = 200;
+        private const int InteractMinDurationMs   = 600;
 
-        /// <summary>MoveEnd 持续帧数（≈200ms）。</summary>
-        private const int MoveEndFrames = 1;
+        /// <summary>落地缓冲帧数。</summary>
+        private static readonly int LandBufferFrames = LandBufferDurationMs / FrameConfig.LogicFrameIntervalMs;
+
+        /// <summary>MoveStart 持续帧数。</summary>
+        private static readonly int MoveStartFrames = MoveStartDurationMs / FrameConfig.LogicFrameIntervalMs;
+
+        /// <summary>MoveEnd 持续帧数。</summary>
+        private static readonly int MoveEndFrames = MoveEndDurationMs / FrameConfig.LogicFrameIntervalMs;
 
         /// <summary>
-        /// Vault / Climb / LedgeClimb / PlatformerUp 最小持续帧数（≈600ms）。
+        /// Vault / Climb / LedgeClimb / PlatformerUp 最小持续帧数。
         /// 防止攀爬动画还没结束就被打断切回 Idle。
         /// </summary>
-        private const int InteractMinFrames = 3;
+        private static readonly int InteractMinFrames = InteractMinDurationMs / FrameConfig.LogicFrameIntervalMs;
 
         public override Type[] GetFilter()
         {

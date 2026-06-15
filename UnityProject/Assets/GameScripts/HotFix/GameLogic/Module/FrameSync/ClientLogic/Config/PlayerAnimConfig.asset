@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d81b285b3c8e85448aa90f15bfb7a2ee, type: 3}
+  m_Name: PlayerAnimConfig
+  m_EditorClassIdentifier: 
+  idle: {fileID: 11400000, guid: b1519a13db0380c41ba6dd60b3b32262, type: 2}
+  moveStart_F: {fileID: 11400000, guid: 60f8c68084a2fac469a2ce692d12c90a, type: 2}
+  moveStart_R45: {fileID: 0}
+  moveStart_R90: {fileID: 0}
+  moveStart_R135: {fileID: 0}
+  moveStart_R180: {fileID: 0}
+  moveStart_L135: {fileID: 0}
+  moveStart_L90: {fileID: 0}
+  moveStart_L45: {fileID: 0}
+  moveLoop: {fileID: 11400000, guid: 83cdc48c8e5748a4fad6a344020962dc, type: 2}
+  moveEnd_L: {fileID: 11400000, guid: a084c2c3fceac8f43a746d168bc0219a, type: 2}
+  moveEnd_R: {fileID: 0}
+  moveToWall: {fileID: 11400000, guid: b1519a13db0380c41ba6dd60b3b32262, type: 2}
+  lockIdle: {fileID: 11400000, guid: 85b50a2613773a44590bf93746cb6e25, type: 2}
+  jumpForward: {fileID: 0}
+  jumpInPlace: {fileID: 0}
+  fallStart: {fileID: 0}
+  fallLoop: {fileID: 0}
+  land: {fileID: 0}
+  platformerUpStart: {fileID: 11400000, guid: f428a895456abc0459ec48a7061ba6a5, type: 2}
+  platformerUpLoop: {fileID: 0}
+  platformerDownLoop: {fileID: 0}
+  vault: {fileID: 11400000, guid: f428a895456abc0459ec48a7061ba6a5, type: 2}
+  climb: {fileID: 11400000, guid: f428a895456abc0459ec48a7061ba6a5, type: 2}
+  ledgeClimb: {fileID: 11400000, guid: f428a895456abc0459ec48a7061ba6a5, type: 2}

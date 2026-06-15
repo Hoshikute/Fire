@@ -129,9 +129,9 @@ public class GameModule
     /// <summary>
     /// 获取 Game 世界控制器。
     /// </summary>
-    public static ITPBattleContext TPBattleContext => _tpBattleContext ??= Get<ITPBattleContext>();
+    public static IBattleContext BattleContext => _battleContext ??= Get<IBattleContext>();
 
-    private static ITPBattleContext _tpBattleContext;
+    private static IBattleContext _battleContext;
     #endregion
     
     /// <summary>
@@ -168,6 +168,6 @@ public class GameModule
         _camera = null;
         _network = null;
         _frameSync = null;
-        _tpBattleContext = null;
+        _battleContext = null;
     }
 }

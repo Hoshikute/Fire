@@ -19,9 +19,6 @@ namespace GameLogic
         /// <summary>朝向插值速度（每秒系数）。</summary>
         private const float RotLerpSpeed = 12f;
 
-        /// <summary>逻辑帧时长（秒），对应 FrameSyncModule.IntervalTime = 200ms。</summary>
-        private const float LogicFrameDuration = 0.2f;
-
         /// <summary>
         /// 位置跳变保护阈值（米）。逻辑位置跳变超过此值时直接 snap，
         /// 不插值追逐（避免回滚/传送后"飞过去"）。
@@ -92,7 +89,7 @@ namespace GameLogic
                 }
 
                 // ── 插值推进 ──────────────────────────────────────────
-                view.interpT += dt / LogicFrameDuration;
+                view.interpT += dt / FrameConfig.LogicFrameDurationSeconds;
 
                 Vector3 fromPos = view.prevLogicPos.ToVector();
                 Vector3 toPos   = logicPos;
@@ -104,7 +101,7 @@ namespace GameLogic
                     float extra = view.interpT - 1.0f;
                     Vector3 faceDir = move.faceDir.ToVector();
                     float speedMps  = move.currentSpeed / 1000f; // 毫单位/秒 → 米/秒
-                    Vector3 extrapDelta = faceDir * speedMps * extra * LogicFrameDuration;
+                    Vector3 extrapDelta = faceDir * speedMps * extra * FrameConfig.LogicFrameDurationSeconds;
                     toPos += extrapDelta * ExtrapolationFactor;
                 }
 

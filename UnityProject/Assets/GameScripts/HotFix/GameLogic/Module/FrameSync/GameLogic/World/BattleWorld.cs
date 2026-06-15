@@ -4,10 +4,10 @@ using System;
 namespace GameLogic
 {
     /// <summary>
-    /// 玩家帧同步世界。
+    /// 战斗帧同步世界（Demo 唯一 World）。
     /// 按 FrameSync 设计哲学组装一套「最小可跑」的角色控制 ECS：
     ///
-    ///   表现层（渲染帧 Update）         逻辑层（逻辑帧 FixedUpdate, 200ms）
+    ///   表现层（渲染帧 Update）         逻辑层（逻辑帧 FixedUpdate）
     ///   ─────────────────────         ──────────────────────────────
     ///   PlayerInputCollectSystem  ──▶  PlayerInputComponent(单例)
     ///                                   │
@@ -23,7 +23,7 @@ namespace GameLogic
     /// 表现系统排最后，渲染最新逻辑状态。
     /// 可回滚组件通过 GetRecordTypes 声明，World 用 RecordSystem&lt;T&gt; 自动给它做快照（支持预测回滚）。
     /// </summary>
-    public class PlayerWorld : WorldBase
+    public class BattleWorld : WorldBase
     {
         public override Type[] GetSystemTypes()
         {

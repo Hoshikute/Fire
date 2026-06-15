@@ -306,7 +306,7 @@ namespace GameLogic
             await GameModule.Scene.LoadSceneAsync("Game");
 
             // 初始化 Game 场景（设置相机 + 加载 Player）
-            await GameModule.TPBattleContext.InitializeGameScene();
+            await GameModule.BattleContext.InitializeGameScene();
 
             Log.Info("[LoginUI] 进入游戏完成");
         }

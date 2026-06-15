@@ -13,7 +13,7 @@ namespace GameLogic
 
         private List<WorldBase> m_worldList = new List<WorldBase>();
         private long m_updateTimerUs = 0;
-        private int m_intervalTime = 200; // 毫秒
+        private int m_intervalTime = FrameConfig.LogicFrameIntervalMs; // 毫秒
 
         public int IntervalTime
         {
@@ -90,6 +90,7 @@ namespace GameLogic
 
         private void FixedUpdateWorlds(int deltaTime)
         {
+            FrameConfig.FrameId++;
             for (int i = 0; i < m_worldList.Count; i++)
             {
                 try

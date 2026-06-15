@@ -356,7 +356,7 @@ namespace GameLogic
 
             GameModule.UI.CloseUI<LoginWindow>();
             await GameModule.Scene.LoadSceneAsync("Game");
-            await GameModule.TPBattleContext.InitializeGameScene();
+            await GameModule.BattleContext.InitializeGameScene();
 
             _isEntering = false;
             _loginRequestSent = false;

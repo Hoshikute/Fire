@@ -11,7 +11,7 @@ namespace GameLogic
     /// 使用方式：
     ///   1. 在 Unity Editor 中创建 ClimbConfig 资产。
     ///   2. 从老 TPC 动画曲线提取关键位移量，填入各轨迹表的帧数据。
-    ///   3. 挂到 PlayerWorld / PlayerMoveSystem 的序列化字段上。
+    ///   3. 挂到 BattleWorld / PlayerMoveSystem 的序列化字段上。
     ///
     /// 轨迹推进：
     ///   逻辑帧索引 i → ClimbFrameDelta[i].ToDelta() → 叠加到 PlayerMoveComponent.pos。

@@ -18,7 +18,7 @@ namespace GameLogic
     /// 使用方式：
     ///   1. 在 Project 里 Create → GameLogic → PlayerAnimConfig 创建 SO 资产。
     ///   2. 在 Inspector 里把各状态的动画剪辑拖入对应字段。
-    ///   3. 资源地址约定为 "PlayerAnimConfig"，由 TPBattleContext 加载后注入 PlayerViewComponent。
+    ///   3. 资源地址约定为 "PlayerAnimConfig"，由 BattleContext 加载后注入 PlayerViewComponent。
     ///
     /// 命名规范：字段名与 PlayerLogicState 枚举值一一对应，方便检索。
     /// 可选字段（nullable）不赋值时表现系统会跳过播放并打 Log.Warning 提示。
