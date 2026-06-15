@@ -1,3 +1,7 @@
+---
+title: TEngine 框架文档
+aliases: [tengine-repowiki]
+---
 # TEngine 框架文档（RepoWiki）
 
 > 本页是 `.knowledge` 对 **TEngine 框架百科**（`UnityProject/repowiki/`）的收录与导航。

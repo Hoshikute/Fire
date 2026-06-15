@@ -1,7 +1,10 @@
+---
+title: TPC→FrameSync 迁移决策
+aliases: [0002-tpc-to-framesync-migration]
+---
 # ADR 0002: 删除 ThirdPersonController，迁移到 TEngine + FrameSync
 
 状态：**进行中**（核查完成，决策 1 已定为 B）
-作者：HuHu
 日期：2026-06
 
 ## 背景与目标

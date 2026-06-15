@@ -1,3 +1,7 @@
+---
+title: Animancer 动画与 FSM 状态机
+aliases: [animancer-fsm]
+---
 # Animancer 动画 + TEngine FSM 状态机
 
 ## 一句话
@@ -42,4 +46,4 @@
 `UnityProject/Assets/GameScripts/HotFix/GameLogic/Player/Controller/Core/Player/State/`
 
 ## 关联文档
-- 控制器入口：`modules/player-controller.md`
+- 控制器入口：[[modules/玩家控制器-已删除|玩家控制器（已删除）]]

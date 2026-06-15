@@ -1,3 +1,7 @@
+---
+title: ECS 框架
+aliases: [ecs]
+---
 # ECS 框架（帧同步专用）
 
 ## 一句话
@@ -32,5 +36,5 @@
 `UnityProject/Assets/GameScripts/HotFix/GameLogic/Module/FrameSync/ECS/`
 
 ## 关联文档
-- 帧同步循环：`architecture/lockstep.md`
-- 回滚：`architecture/rollback.md`
+- 帧同步循环：[[architecture/帧同步|帧同步]]
+- 回滚：[[architecture/预测回滚|预测回滚]]

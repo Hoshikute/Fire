@@ -1,3 +1,7 @@
+---
+title: 玩家帧同步 ECS
+aliases: [player-framesync-ecs]
+---
 # 玩家帧同步 ECS（Player FrameSync ECS）
 
 ## 一句话
@@ -202,11 +206,11 @@ position = Lerp(prevLogicPos, lastLogicPos + extrap, interpT)
 - 主循环：`Module/FrameSync/FrameSyncModule.cs`
 
 ## 关联文档
-- 帧同步循环：`architecture/lockstep.md`
-- ECS 框架：`architecture/ecs.md`
-- 回滚：`architecture/rollback.md`
-- 网络/指令：`architecture/network-sync.md`
-- 规范：`conventions/coding-style.md`
-- 迁移决策：`decisions/0002-tpc-to-framesync-migration.md`
-- 迁移踩坑：`decisions/0004-tpc-migration-lessons.md`
-- 旧 TPC（已删）：`modules/player-controller.md`
+- 帧同步循环：[[architecture/帧同步|帧同步]]
+- ECS 框架：[[architecture/ECS框架|ECS 框架]]
+- 回滚：[[architecture/预测回滚|预测回滚]]
+- 网络/指令：[[architecture/网络同步|网络同步]]
+- 规范：[[conventions/代码规范|代码规范]]
+- 迁移决策：[[decisions/0002-TPC迁移FrameSync|TPC→FrameSync 迁移]]
+- 迁移踩坑：[[decisions/0004-迁移踩坑记录|迁移踩坑记录]]
+- 旧 TPC（已删）：[[modules/玩家控制器-已删除|玩家控制器（已删除）]]
