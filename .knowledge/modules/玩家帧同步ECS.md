@@ -5,15 +5,17 @@ aliases: [player-framesync-ecs]
 # 玩家帧同步 ECS（Player FrameSync ECS）
 
 ## 一句话
-完全替代老 `ThirdPersonController` 的角色控制系统：`TPBattleContext` 作为 Game 场景启动入口，动态加载 Player prefab 后创建 `PlayerWorld` 和本地玩家实体；逻辑层用确定性 ECS（定点数 `SyncVector3` + 200ms 逻辑帧 + 可回滚 `MomentComponentBase`）做移动/物理/状态推导；表现层渲染帧只读逻辑状态，Lerp 驱动 Transform + Animancer 播动画。老 TPC 已删除。
+完全替代老 `ThirdPersonController` 的角色控制系统：`BattleContext` 作为 Game 场景启动入口，动态加载 Player prefab 后创建 `BattleWorld` 和本地玩家实体；逻辑层用确定性 ECS（定点数 `SyncVector3` + 可配逻辑帧 + 可回滚 `MomentComponentBase`）做移动/物理/状态推导；表现层渲染帧只读逻辑状态，Lerp 驱动 Transform + Animancer 播动画。老 TPC 已删除。
 
 ## 目录与文件（当前完整树）
 
 ```
 Context/
-└── TPBattleContext.cs                  Game 场景入口：加载 Player prefab、创建 PlayerWorld、生成本地玩家实体、绑定相机、清理 world
+└── BattleContext.cs                  Game 场景入口：加载 Player prefab、创建 BattleWorld、生成本地玩家实体、绑定相机、清理 world
 
 Module/FrameSync/
+├── FrameSyncModule.cs              模块入口与主循环，m_intervalTime 从 FrameConfig 读取
+├── FrameConfig.cs                  帧同步配置（LogicFrameIntervalMs、LogicFrameDurationSeconds、FrameId）
 ├── Calc/                             ← 确定性数学
 │   ├── SyncVector3.cs                  定点向量（int, SCALE=1000, Equals/Normalized/Sqrt/DeepCopy）
 │   └── HashExtensions.cs               字符串→int 稳定哈希（跨端一致）
@@ -56,7 +58,7 @@ Module/FrameSync/
 │   │   ├── IDeterministicGround.cs     确定性地面接口（SampleHeight/GetNormal/IsGrounded）
 │   │   └── FlatGround.cs              恒定高度平地实现（GetNormal 返回 (0,ONE,0)）
 │   └── World/
-│       └── PlayerWorld.cs             组装：GetSystemTypes（6 个系统）+ GetRecordTypes（2 个组件）
+│       └── BattleWorld.cs            组装：GetSystemTypes（6 个系统）+ GetRecordTypes（2 个组件）
 ├── ClientLogic/                      ← 表现层
 │   ├── Component/
 │   │   └── PlayerViewComponent.cs      表现组件：viewRoot/animancer/animConfig/
@@ -99,7 +101,7 @@ Module/FrameSync/
 
 `ViewSystemBase` 会 sealed 掉逻辑帧 / 回滚重算生命周期（`FixedUpdate`、`OnlyCallByRecalc`、`EndFrame` 等），只允许子类在渲染帧 `Update`/`LateUpdate` 做表现层工作。
 
-**注册顺序 = 调用顺序**（在 `PlayerWorld.GetSystemTypes()`）：
+**注册顺序 = 调用顺序**（在 `BattleWorld.GetSystemTypes()`）：
 ```
 PlayerInputCollectSystem → PlayerInputCommandSystem → PlayerMoveSystem → PlayerStateSystem → PlayerViewSystem → PlayerAnimViewSystem
 ```
@@ -108,12 +110,12 @@ PlayerInputCollectSystem → PlayerInputCommandSystem → PlayerMoveSystem → P
 
 ```
 Game 场景启动:
-  TPBattleContext.InitializeGameScene
+  BattleContext.InitializeGameScene
     → SetupMainCamera
     → CharacterModule.SetCharacterPrefab("Player")
     → CharacterModule.LoadCharacterAsync()
     → ResourceModule.LoadAssetAsync<PlayerAnimConfig>("PlayerAnimConfig")
-    → FrameSyncModule.CreateWorld<PlayerWorld>()
+    → FrameSyncModule.CreateWorld<BattleWorld>()
     → CreateEntity(LocalPlayer, PlayerComponent(isLocal), PlayerMoveComponent, PlayerStateComponent, PlayerViewComponent, PlayerCommandRecordComponent)
     → FlushEntityOperations()
     → world.IsStart = true
@@ -133,8 +135,8 @@ Game 场景启动:
     → state!=view.lastPlayedState? → PlayAnim(newState), 更新 lastPlayedState
     → MoveStart/Rotation/Speed 参数来自 move.moveIntentDir + move.speedGear，不读全局输入单例
 
-逻辑帧 FixedUpdate（200ms 间隔）:
-  FrameSyncModule.Update → while(累积>=200ms) → World.FixedLoop(200)
+逻辑帧 FixedUpdate（间隔从 FrameConfig.LogicFrameIntervalMs 读取，默认 200ms）:
+  FrameSyncModule.Update → while(累积>=FrameConfig.LogicFrameIntervalMs) → World.FixedLoop
     → Record(FrameCount) → 快照 PlayerMoveComponent+PlayerStateComponent
     → FrameCount++ → 进入本次逻辑执行帧
     → PlayerInputCommandSystem:
@@ -157,7 +159,7 @@ Game 场景启动:
 ## 确定性要点（命根子）
 
 - **全程 int / SyncVector3**：位移 `delta = speed × dtMs / 1000`（long 中转防溢出），方向/归一化/开方全部定点牛顿迭代
-- **固定步长 200ms**：逻辑帧恒为 `FrameSyncModule.IntervalTime = 200`，不依赖 `Time.deltaTime`
+- **固定步长**：逻辑帧步长恒为 `FrameConfig.LogicFrameIntervalMs`（默认 200ms），不依赖 `Time.deltaTime`。改帧率只需改 `FrameConfig` 一处，`PlayerStateSystem` 帧阈值（MoveStartFrames 等）自动按毫秒意图常量换算。
 - **确定性碰撞**：`ICollisionWorld`/`SimpleCollisionWorld` 用 AABB + 胶囊查询，`CapsuleSweep` 按固定整数步长采样 from→to，不调用 Unity Physics
 - **逻辑与表现分离**：`Vector3.Lerp/Slerp`/`Animancer.Play` 只影响画面，不回写逻辑组件；`isCrouching` 仅用于 Animancer mixer，放在 `PlayerViewComponent`，不进入 `PlayerInputComponent` / `CommandComponent`
 - **回滚**: `PlayerMoveComponent`+`PlayerStateComponent` ∈ `GetRecordTypes()`，World 自动用 `RecordSystem<T>` 每帧 `DeepCopy()` 快照；`PlayerMoveComponent` 内含 `moveIntentDir`/`speedGear`，状态与动画表现按实体读取这份可回滚移动意图；`PlayerInputComponent` 只是本地输入采集单例，不进快照，也不被 Move/State 直接读取
@@ -168,7 +170,7 @@ Game 场景启动:
 `PlayerViewSystem` 不在两个 Transform 位置间 lerp——而是在**两个逻辑快照**间插值：
 
 ```
-interpT += dt / 0.2s                           ← 每个渲染帧累加进度
+interpT += dt / FrameConfig.LogicFrameDurationSeconds          ← 每个渲染帧累加进度
 position = Lerp(prevLogicPos, lastLogicPos + extrap, interpT)
 ```
 
@@ -178,9 +180,14 @@ position = Lerp(prevLogicPos, lastLogicPos + extrap, interpT)
 | **跳变保护** | 位置差 > 3m（回滚/传送）→ 直接 snap，不追逐 |
 | **死推外推** | `interpT > 1.0` 时用 `faceDir × currentSpeed × extra × 30%` 向前微推，手感更跟手 |
 
+## 帧同步配置
+
+- **`FrameConfig`**（静态类，`Module/FrameSync/FrameConfig.cs`）：`LogicFrameIntervalMs=200`（逻辑帧间隔毫秒）、`LogicFrameDurationSeconds=0.2f`（间隔秒，供表现层插值）、`FrameId`（全局逻辑帧计数器，由 `FrameSyncModule` 每逻辑帧递增）
+- 帧率调整只需改 `FrameConfig.LogicFrameIntervalMs`，`PlayerStateSystem` 的 MoveStart/MoveEnd/Land 帧阈值自动跟随换算
+
 ## 动画配置
 
-- **`PlayerAnimConfig`**（ScriptableObject）：14 个 `TransitionAsset` 字段（idle/moveStart/moveLoop/…/platformerUp），资源地址约定为 `"PlayerAnimConfig"`，由 `TPBattleContext` 加载后注入 `PlayerViewComponent`
+- **`PlayerAnimConfig`**（ScriptableObject）：14 个 `TransitionAsset` 字段（idle/moveStart/moveLoop/…/platformerUp），资源地址约定为 `"PlayerAnimConfig"`，由 `BattleContext` 加载后注入 `PlayerViewComponent`
 - **首帧播放**：`PlayerViewComponent.animInitialized` 首次无条件播放当前状态；后续用 `lastPlayedState` 做表现层切换检测
 - **`ClimbConfig`**（ScriptableObject）：4 个 `List<ClimbFrameDelta>` 逐帧位移表
 
@@ -190,8 +197,8 @@ position = Lerp(prevLogicPos, lastLogicPos + extrap, interpT)
 - **动画首帧不播放**：`SpawnPlayer` 后表现层尚未播放过任何状态；`PlayerAnimViewSystem` 通过 `animInitialized` 首帧无条件播放，之后用 `PlayerViewComponent.lastPlayedState` 检测切换
 - **`TransitionAsset` vs `ClipTransition`**：`PlayerAnimConfig` 字段类型应为 `TransitionAsset`（可直接 `Play(asset)`），原 `ClipTransition` 导致创建 SO 时无法序列化嵌套引用
 - **实体延迟就绪**：`CreateEntity` 进入 createCache，下一 `FixedLoop` 的 `LazyExecuteEntityOperation` 才真正入世界——首帧容忍无实体
-- **启动入口在 TPBattleContext**：`PlayerWorld` 只声明系统和快照组件，不加载 prefab、不绑定相机、不管理场景生命周期
-- **本地表现输入只改本地实体**：`TPBattleContext` 给本地玩家挂 `PlayerComponent(isLocal=true)`；`PlayerInputCollectSystem` 只切换 isLocal 玩家 `PlayerViewComponent.isCrouching`，避免未来远端表现实体被本地 Crouch 输入影响
+- **启动入口在 BattleContext**：`BattleWorld` 只声明系统和快照组件，不加载 prefab、不绑定相机、不管理场景生命周期
+- **本地表现输入只改本地实体**：`BattleContext` 给本地玩家挂 `PlayerComponent(isLocal=true)`；`PlayerInputCollectSystem` 只切换 isLocal 玩家 `PlayerViewComponent.isCrouching`，避免未来远端表现实体被本地 Crouch 输入影响
 - **`PlayerViewComponent` 不进快照**：继承 `ComponentBase`（非 `MomentComponentBase`），持有 `Transform`/`AnimancerComponent`/`isCrouching` 等纯表现状态，是逻辑/表现的硬边界
 - **`PlayerInputCollectSystem` 写 `PlayerInputComponent.speedGear`**：当前本地路径避免渲染帧直写 `PlayerMoveComponent` 等可回滚组件；进入逻辑帧后由 `PlayerInputCommandSystem` 只转成本地实体 `CommandComponent` 并记录，真正网络权威指令下发/冲突回滚仍需后续接入
 - **逻辑/表现不读全局输入单例**：`PlayerMoveSystem` / `PlayerStateSystem` 按实体读取 `PlayerCommandRecordComponent` 的本帧 `CommandComponent`；`PlayerAnimViewSystem` 的 MoveStart 方向、RotationValue、SpeedValue 都从本实体 `PlayerMoveComponent` 读取，避免未来远端实体被本地输入影响
@@ -200,10 +207,11 @@ position = Lerp(prevLogicPos, lastLogicPos + extrap, interpT)
 ## 相关代码位置
 - 逻辑层：`Module/FrameSync/GameLogic/`
 - 表现层：`Module/FrameSync/ClientLogic/`
-- Game 场景入口：`Context/TPBattleContext.cs`
+- Game 场景入口：`Context/BattleContext.cs`
 - 框架基类：`Module/FrameSync/ECS/`
 - 世界循环：`Module/FrameSync/Core/WorldBase.cs`
 - 主循环：`Module/FrameSync/FrameSyncModule.cs`
+- 帧配置：`Module/FrameSync/FrameConfig.cs`
 
 ## 关联文档
 - 帧同步循环：[[architecture/帧同步|帧同步]]
