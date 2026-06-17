@@ -9,10 +9,22 @@ public class CommandComponent : PlayerCommandBase
     public SyncVector3 moveDir = new SyncVector3();
     public SyncVector3 skillDir = new SyncVector3();
 
+    public bool jump;
+    public bool toggleLock;
+    public bool platformJump;
+    public int speedGear = 1;
+
     public int element1;
     public int element2;
 
     public bool isFire = false;
+
+    public void ClearOneShotInputs()
+    {
+        jump = false;
+        toggleLock = false;
+        platformJump = false;
+    }
 
     public override PlayerCommandBase DeepCopy()
     {
@@ -20,11 +32,16 @@ public class CommandComponent : PlayerCommandBase
 
         cc.id = id;
         cc.frame = frame;
+        cc.time = time;
 
         cc.isFire    = isFire;
         cc.moveDir   = moveDir.DeepCopy();
         cc.skillDir  = skillDir.DeepCopy();
 
+        cc.jump = jump;
+        cc.toggleLock = toggleLock;
+        cc.platformJump = platformJump;
+        cc.speedGear = speedGear;
         cc.element1 = element1;
         cc.element2 = element2;
 
@@ -47,6 +64,18 @@ public class CommandComponent : PlayerCommandBase
             return false;
 
         if (isFire != cc.isFire)
+            return false;
+
+        if (jump != cc.jump)
+            return false;
+
+        if (toggleLock != cc.toggleLock)
+            return false;
+
+        if (platformJump != cc.platformJump)
+            return false;
+
+        if (speedGear != cc.speedGear)
             return false;
 
         if (element1 != cc.element1)

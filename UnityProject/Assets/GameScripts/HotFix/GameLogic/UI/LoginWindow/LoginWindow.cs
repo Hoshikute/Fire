@@ -190,7 +190,7 @@ namespace GameLogic
         {
             if (!GameModule.Network.IsInitialized)
             {
-                GameModule.Network.Init<ProtocolService>(ProtocolType.Tcp);
+                GameModule.Network.Init<ProtocolService>(ProtocolType.Udp);
             }
         }
 

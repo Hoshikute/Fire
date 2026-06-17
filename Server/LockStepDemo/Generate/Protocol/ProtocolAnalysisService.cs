@@ -87,13 +87,17 @@ public static class ProtocolAnalysisService
 						data4.Add("z", msg.msg[i2].moveDir.z);
 						data2.Add("movedir",data4);
 					}
-					{
-						Dictionary<string, object> data4 = new Dictionary<string, object>();
-						data4.Add("x", msg.msg[i2].skillDir.x);
-						data4.Add("y", msg.msg[i2].skillDir.y);
-						data4.Add("z", msg.msg[i2].skillDir.z);
-						data2.Add("skilldir",data4);
-					}
+				{
+					Dictionary<string, object> data4 = new Dictionary<string, object>();
+					data4.Add("x", msg.msg[i2].skillDir.x);
+					data4.Add("y", msg.msg[i2].skillDir.y);
+					data4.Add("z", msg.msg[i2].skillDir.z);
+					data2.Add("skilldir",data4);
+				}
+				data2.Add("jump", msg.msg[i2].jump);
+				data2.Add("togglelock", msg.msg[i2].toggleLock);
+				data2.Add("platformjump", msg.msg[i2].platformJump);
+				data2.Add("speedgear", msg.msg[i2].speedGear);
 				data2.Add("element1", msg.msg[i2].element1);
 				data2.Add("element2", msg.msg[i2].element2);
 				data2.Add("isfire", msg.msg[i2].isFire);
@@ -211,6 +215,10 @@ public static class ProtocolAnalysisService
 			}
 		data.Add("element1", msg.element1);
 		data.Add("element2", msg.element2);
+		data.Add("jump", msg.jump);
+		data.Add("togglelock", msg.toggleLock);
+		data.Add("platformjump", msg.platformJump);
+		data.Add("speedgear", msg.speedGear);
 		data.Add("isfire", msg.isFire);
 		data.Add("id", msg.id);
 		data.Add("frame", msg.frame);
@@ -346,6 +354,10 @@ public static class ProtocolAnalysisService
 					tmp4.z = (int)data4["z"];
 					tmp2.skillDir = tmp4;
 				}
+				tmp2.jump = (bool)data2[i2]["jump"];
+				tmp2.toggleLock = (bool)data2[i2]["togglelock"];
+				tmp2.platformJump = (bool)data2[i2]["platformjump"];
+				tmp2.speedGear = (int)data2[i2]["speedgear"];
 				tmp2.element1 = (int)data2[i2]["element1"];
 				tmp2.element2 = (int)data2[i2]["element2"];
 				tmp2.isFire = (bool)data2[i2]["isfire"];
@@ -466,6 +478,10 @@ public static class ProtocolAnalysisService
 			tmp2.z = (int)data2["z"];
 			msg.skillDir = tmp2;
 		}
+		msg.jump = (bool)e.m_data["jump"];
+		msg.toggleLock = (bool)e.m_data["togglelock"];
+		msg.platformJump = (bool)e.m_data["platformjump"];
+		msg.speedGear = (int)e.m_data["speedgear"];
 		msg.element1 = (int)e.m_data["element1"];
 		msg.element2 = (int)e.m_data["element2"];
 		msg.isFire = (bool)e.m_data["isfire"];

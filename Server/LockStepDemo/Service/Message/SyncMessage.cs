@@ -104,6 +104,11 @@ namespace Protocol
         public SyncVector3 moveDir = new SyncVector3();
         public SyncVector3 skillDir = new SyncVector3();
 
+        public bool jump;
+        public bool toggleLock;
+        public bool platformJump;
+        public int speedGear = 1;
+
         public int element1;
         public int element2;
 
@@ -114,6 +119,10 @@ namespace Protocol
             moveDir = comp.moveDir.DeepCopy();
             skillDir = comp.skillDir.DeepCopy();
 
+            jump = comp.jump;
+            toggleLock = comp.toggleLock;
+            platformJump = comp.platformJump;
+            speedGear = comp.speedGear;
             element1 = comp.element1;
             element2 = comp.element2;
             isFire   = comp.isFire;
@@ -128,6 +137,10 @@ namespace Protocol
 
             cmd.moveDir = moveDir.DeepCopy();
             cmd.skillDir = skillDir.DeepCopy();
+            cmd.jump = jump;
+            cmd.toggleLock = toggleLock;
+            cmd.platformJump = platformJump;
+            cmd.speedGear = speedGear;
             cmd.element1 = element1;
             cmd.element2 = element2;
 

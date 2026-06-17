@@ -29,6 +29,7 @@ namespace GameLogic
         {
             return new Type[]
             {
+                typeof(FrameAuthoritySyncSystem), // 网络层：服务端权威帧命令/确认/追帧进入世界
                 typeof(PlayerInputCollectSystem), // 表现层：渲染帧采集 Unity 输入（含相机修正）→ 单例
                 typeof(PlayerInputCommandSystem), // 逻辑层：本地输入固化为本地实体帧指令，非本地实体按缓存/预测命令
                 typeof(PlayerMoveSystem),         // 逻辑层：按实体帧指令确定性移动（走/跑/跳/重力/空中惯性）

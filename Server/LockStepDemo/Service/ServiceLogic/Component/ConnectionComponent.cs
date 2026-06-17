@@ -37,11 +37,11 @@ public class ConnectionComponent : ServiceComponent
                 {
                     if (m_commandList[i].frame == frame)
                     {
-                        m_lastInputCache = m_commandList[i];
+                        m_lastInputCache = m_commandList[i].DeepCopy();
 
                         m_commandList.RemoveAt(i);
 
-                        return m_lastInputCache;
+                        return m_lastInputCache.DeepCopy();
                     }
                 }
             }
@@ -69,6 +69,11 @@ public class ConnectionComponent : ServiceComponent
         //PlayerCommandBase cmd = new CommandComponent();
         cmd.frame = frame;
         cmd.id = Entity.ID;
+        cmd.time = ServiceTime.GetServiceTime();
+        if (cmd is CommandComponent command)
+        {
+            command.ClearOneShotInputs();
+        }
         return cmd;
     }
 

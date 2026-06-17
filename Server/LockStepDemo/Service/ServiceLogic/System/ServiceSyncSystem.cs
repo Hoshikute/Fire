@@ -174,6 +174,8 @@ public class ServiceSyncSystem : ServiceSystem
         msg.advanceCount = 1; //客户端提前一帧
         msg.intervalTime = UpdateEngine.IntervalTime;
         msg.createEntityIndex = m_world.EntityIndex;
+        msg.SyncRule = SyncRule.Frame;
+        m_world.SyncRule = SyncRule.Frame;
 
         ProtocolAnalysisService.SendMsg(session, msg);
     }

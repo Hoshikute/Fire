@@ -36,8 +36,9 @@ namespace GameLogic
                 {
                     if (record.GetInputCache(executionFrame) == null)
                     {
-                        CommandComponent command = input.ToCommand(executionFrame, entity.ID, 0);
+                        CommandComponent command = input.ToCommand(executionFrame, entity.ID, ClientTime.GetTime());
                         record.RecordCommand(command);
+                        SendPredictionCommand(command);
                     }
                 }
                 else
@@ -49,6 +50,21 @@ namespace GameLogic
             // 本地输入已经进入本帧 CommandComponent，边沿输入留在命令记录中供 Move/State 读取。
             // 清空单例，避免没有渲染帧刷新时同一次按键被下一逻辑帧重复记录。
             input.ConsumeOneShot();
+        }
+
+        private void SendPredictionCommand(CommandComponent command)
+        {
+            if (m_world.m_isRecalc || !GameModule.Network.IsConnected)
+            {
+                return;
+            }
+
+            ConnectStatusComponent connectStatus = m_world.GetSingletonComp<ConnectStatusComponent>();
+            if (!connectStatus.unConfirmFrame.Contains(command.frame))
+            {
+                connectStatus.unConfirmFrame.Add(command.frame);
+            }
+            FrameAuthorityMessageCodec.SendCommand(command);
         }
 
         public override void OnlyCallByRecalc(int frame, int deltaTime)

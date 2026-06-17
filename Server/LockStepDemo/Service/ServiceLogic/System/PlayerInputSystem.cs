@@ -23,22 +23,23 @@ public class PlayerInputSystem : ServiceSystem /*where T : PlayerCommandBase, ne
             CommandComponent cmd = (CommandComponent)comp.GetCommand(m_world.FrameCount);
             cmd.id = list[i].ID;
             cmd.frame = m_world.FrameCount;
+            cmd.time = ServiceTime.GetServiceTime();
 
             list[i].ChangeComp(cmd);
 
-            //到了这一帧还没有发送命令的，给预测一个并广播给所有前端
-            if (comp.lastInputFrame < m_world.FrameCount)
+            // 服务端每帧只广播自己最终选择的权威命令：真实输入或缺帧预测。
+            for (int j = 0; j < list.Count; j++)
             {
-                for (int j = 0; j < list.Count; j++)
+                ConnectionComponent conn = list[j].GetComp<ConnectionComponent>();
+                lock (conn.unConfirmFrame)
                 {
-                    ConnectionComponent conn = list[j].GetComp<ConnectionComponent>();
-                    lock (conn.unConfirmFrame)
+                    if (!conn.unConfirmFrame.Contains(cmd.frame))
                     {
                         conn.unConfirmFrame.Add(cmd.frame);
                     }
-
-                    ProtocolAnalysisService.SendMsg(conn.m_session, cmd);
                 }
+
+                ProtocolAnalysisService.SendMsg(conn.m_session, cmd);
             }
         }
     }

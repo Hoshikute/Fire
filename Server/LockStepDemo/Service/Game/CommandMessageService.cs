@@ -39,11 +39,9 @@ public class CommandMessageService<T> where T : PlayerCommandBase, new()
 
             if (msg.frame > world.FrameCount)
             {
-                BroadcastCommand(world, connectComp, msg,false);
-
                 lock (connectComp.m_commandList)
                 {
-                    connectComp.m_commandList.Add(msg);
+                    connectComp.m_commandList.Add(msg.DeepCopy());
                 }
                 connectComp.lastInputFrame = msg.frame;
             }
@@ -52,7 +50,7 @@ public class CommandMessageService<T> where T : PlayerCommandBase, new()
                 //把玩家的这次上报当做最新的操作并转发
                 Debug.Log("帧数落后  world.FrameCount: " + world.FrameCount + " msg frame:" + msg.frame + " 预测列表计数 " + connectComp.m_forecastList.Count);
                 //Debug.Log("接收玩家数据 " + Serializer.Serialize(msg));
-                connectComp.m_lastInputCache = msg;
+                connectComp.m_lastInputCache = msg.DeepCopy();
                 connectComp.lastInputFrame = world.FrameCount;
 
                 //并且让这个玩家提前
@@ -110,14 +108,19 @@ public class CommandMessageService<T> where T : PlayerCommandBase, new()
         for (int i = 0; i < list.Count; i++)
         {
             ConnectionComponent cp = list[i].GetComp<ConnectionComponent>();
-            if (!(includeSelf && cp != connectComp))
+            if (!includeSelf && cp == connectComp)
             {
-                lock (cp.unConfirmFrame)
+                continue;
+            }
+
+            lock (cp.unConfirmFrame)
+            {
+                if (!cp.unConfirmFrame.Contains(cmd.frame))
                 {
                     cp.unConfirmFrame.Add(cmd.frame);
                 }
-                ProtocolAnalysisService.SendMsg(cp.m_session, cmd);
             }
+            ProtocolAnalysisService.SendMsg(cp.m_session, cmd);
         }
     }
 }

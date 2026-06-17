@@ -163,9 +163,18 @@ namespace GameLogic
 
             // 立即提交实体，避免首帧系统因 LazyExecuteEntityOperation 尚未执行而读不到玩家。
             m_playerWorld.FlushEntityOperations();
-            m_playerWorld.IsStart = true;
+            bool waitForServerStart = GameModule.Network.IsConnected;
+            m_playerWorld.m_isLocal = !waitForServerStart;
+            m_playerWorld.IsStart = !waitForServerStart;
 
-            Log.Info($"{TraceHeader} BattleWorld started, logic frame step {GameModule.FrameSync.IntervalTime}ms.");
+            if (waitForServerStart)
+            {
+                Log.Info($"{TraceHeader} BattleWorld prepared, waiting for StartSyncMsg.");
+            }
+            else
+            {
+                Log.Info($"{TraceHeader} BattleWorld started, logic frame step {GameModule.FrameSync.IntervalTime}ms.");
+            }
             TryBindCamera(player.transform);
         }
 
