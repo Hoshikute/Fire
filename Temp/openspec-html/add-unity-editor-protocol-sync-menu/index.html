@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenSpec 变更 add-unity-editor-protocol-sync-menu</title>
+  <style>
+:root {
+  color-scheme: light;
+  --page: #e6f4f4;
+  --paper: #f5fafa;
+  --paper-soft: #d5eded;
+  --paper-mute: #c2e5e5;
+  --ink: #2a4b4c;
+  --muted: #526f70;
+  --line: rgba(42, 75, 76, .12);
+  --line-soft: rgba(42, 75, 76, .06);
+  --nav: rgba(157, 200, 200, .94);
+  --teal: #519D9E;
+  --teal-bright: #58C9B9;
+  --mint: #9DC8C8;
+  --primary: #D1B6E1;
+  --primary-soft: rgba(209, 182, 225, .6);
+  --primary-mute: rgba(209, 182, 225, .2);
+  --accent: #519D9E;
+  --accent-soft: rgba(88, 201, 185, .18);
+  --accent-text: #214d4e;
+  --missing: #8f3a1a;
+  --missing-soft: rgba(209, 182, 225, .24);
+  --code-bg: #263238;
+  --code-text: #F8F8F8;
+  --inline-code-bg: #d5eded;
+  --shadow: 0 18px 46px rgba(42, 75, 76, .10);
+  --radius: 7px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #263238;
+    --paper: #304a4b;
+    --paper-soft: #37474F;
+    --paper-mute: #2D3B41;
+    --ink: #F8F8F8;
+    --muted: #c2d6d6;
+    --line: rgba(248, 248, 248, .12);
+    --line-soft: rgba(248, 248, 248, .06);
+    --nav: rgba(38, 50, 56, .92);
+    --teal: #58C9B9;
+    --teal-bright: #58C9B9;
+    --mint: #519D9E;
+    --primary: #D1B6E1;
+    --primary-soft: rgba(209, 182, 225, .6);
+    --primary-mute: rgba(209, 182, 225, .2);
+    --accent: #519D9E;
+    --accent-soft: rgba(209, 182, 225, .2);
+    --accent-text: #F8F8F8;
+    --missing: #f0b79b;
+    --missing-soft: rgba(163, 59, 22, .16);
+    --code-bg: #172126;
+    --code-text: #F8F8F8;
+    --inline-code-bg: #37474F;
+    --shadow: 0 18px 46px rgba(0, 0, 0, .24);
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Microsoft YaHei UI", "Segoe UI Variable", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    linear-gradient(135deg, var(--primary-mute), rgba(88, 201, 185, .13) 42%, rgba(157, 200, 200, .28)),
+    var(--page);
+  text-rendering: optimizeLegibility;
+}
+a { color: inherit; }
+.page { min-height: 100vh; }
+.topbar {
+  position: relative;
+  background: var(--nav);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(42, 75, 76, .08);
+}
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, var(--teal), var(--teal-bright), var(--primary));
+}
+.topbar-inner {
+  width: min(1680px, 100%);
+  margin: 0 auto;
+  padding: 22px clamp(14px, 2.4vw, 34px) 0;
+}
+.title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.topbar h1 {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.15;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+.copy-command {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  min-width: 96px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-soft);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+.copy-command:hover {
+  border-color: var(--teal-bright);
+  background: var(--teal-bright);
+}
+.copy-command:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+.copy-command:active { transform: translateY(1px); }
+.copy-command.copied {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+.copy-command.failed {
+  border-color: var(--missing);
+  background: var(--missing-soft);
+  color: var(--missing);
+}
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  overflow-x: auto;
+  padding: 0;
+}
+.tab {
+  flex: 0 0 auto;
+  min-width: 92px;
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-mute);
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.3;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+.tab:hover { background: var(--teal-bright); border-color: var(--teal-bright); }
+.tab:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+.tab.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+main {
+  width: 100%;
+  margin: 0;
+  padding: 0 0 52px;
+}
+.doc {
+  margin: 0 0 20px;
+  overflow: hidden;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: none;
+}
+.doc[hidden] { display: none; }
+.content {
+  padding: 16px clamp(14px, 2vw, 26px) 24px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.content > :first-child { margin-top: 0; }
+.content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
+  margin: .85em 0 .35em;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+.content h1 {
+  font-size: 24px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 7px;
+}
+.content h2 { font-size: 21px; }
+.content h3 { font-size: 18px; }
+.content p { margin: .45em 0; }
+ul, ol { padding-left: 25px; }
+li { margin: .2em 0; }
+blockquote {
+  margin: 14px 0;
+  padding: 11px 14px;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+code {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: var(--inline-code-bg);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: .92em;
+}
+pre {
+  margin: 16px 0;
+  padding: 15px;
+  border-radius: var(--radius);
+  overflow: auto;
+  background: var(--code-bg);
+  color: var(--code-text);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+pre code { padding: 0; background: transparent; color: inherit; }
+.missing {
+  display: inline-block;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--missing-soft);
+  color: var(--missing);
+  font-weight: 700;
+}
+.taskbox {
+  display: inline-block;
+  width: 1.25em;
+  color: var(--accent);
+  font-weight: 700;
+}
+hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .doc:not([hidden]) {
+    animation: panel-in .18s ease-out;
+  }
+  @keyframes panel-in {
+    from { opacity: .82; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+@media (max-width: 820px) {
+  .topbar-inner { padding-top: 18px; }
+  .title-row { display: block; }
+  .copy-command { display: inline-block; margin-top: 10px; }
+  main { padding-top: 0; }
+}
+@media (max-width: 560px) {
+  .tabs { gap: 8px; }
+  .tab { min-width: 82px; padding: 9px 11px; }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="title-row">
+          <div>
+            <div class="eyebrow">OpenSpec Review</div>
+            <h1>add-unity-editor-protocol-sync-menu</h1>
+          </div>
+          <button class="copy-command" type="button" aria-label="复制执行命令">复制命令</button>
+        </div>
+        <nav class="tabs" role="tablist" aria-label="OpenSpec 产物页签">
+          <a class="tab" id="tab-doc-1-proposal-md" role="tab" href="#doc-1-proposal-md" data-tab="doc-1-proposal-md" aria-controls="doc-1-proposal-md">提案</a><a class="tab" id="tab-doc-2-design-md" role="tab" href="#doc-2-design-md" data-tab="doc-2-design-md" aria-controls="doc-2-design-md">设计</a><a class="tab" id="tab-doc-3-tasks-md" role="tab" href="#doc-3-tasks-md" data-tab="doc-3-tasks-md" aria-controls="doc-3-tasks-md">任务</a><a class="tab" id="tab-doc-4-specs-editor-protocol-sync-spec-md" role="tab" href="#doc-4-specs-editor-protocol-sync-spec-md" data-tab="doc-4-specs-editor-protocol-sync-spec-md" aria-controls="doc-4-specs-editor-protocol-sync-spec-md">规格：editor-protocol-sync</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="doc" id="doc-1-proposal-md" data-panel="doc-1-proposal-md" role="tabpanel" aria-labelledby="tab-doc-1-proposal-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>为什么</h2>
+<p>当前客户端协议资源与 server 运行目录协议文件存在漂移风险：协议源文件已经更新后，如果 server 运行目录仍保留旧的 <code>Network/ProtocolInfo.txt</code> 或 <code>Network/MethodInfo.txt</code>，客户端会按新字段解析旧消息，出现类似 <code>playerloginmsg.nickname</code> 读取越界的运行时错误。</p>
+<p>需要在 Unity Editor 内提供一个明确、可点击的同步入口，让开发者在启动本地联机或排查协议问题前，可以把协议文件同步到 server 运行目录，并得到一致性检查结果。</p>
+<h2>变更内容</h2>
+<ul>
+<li>新增 Unity Editor 菜单项，用于一键同步协议文件。</li>
+<li>菜单项执行时检查客户端与 server 源协议文件是否一致，不一致时中止并提示具体文件。</li>
+<li>菜单项将 server 源协议文件同步到 server 运行目录的 <code>bin/Debug/Network/</code>。</li>
+<li>同步完成后输出 <code>[CODEX_LOG]</code> 日志，列出同步文件与目标目录。</li>
+<li>如果检测到本地 server 端口已监听，提示正在运行的 server 需要重启后才能加载新的协议文件。</li>
+</ul>
+<h2>能力</h2>
+<h3>新增能力</h3>
+<ul>
+<li><code>editor-protocol-sync</code>: Unity Editor 内的协议文件同步能力，覆盖菜单入口、一致性检查、运行目录复制和结果提示。</li>
+</ul>
+<h3>修改能力</h3>
+<p>无。</p>
+<h2>影响</h2>
+<ul>
+<li>影响 Unity Editor 扩展代码，预计新增或修改 <code>UnityProject/Assets/Editor/</code> 下的编辑器工具类。</li>
+<li>读取协议源文件：</li>
+<li><code>Server/LockStepDemo/Network/ProtocolInfo.txt</code></li>
+<li><code>Server/LockStepDemo/Network/MethodInfo.txt</code></li>
+<li><code>UnityProject/Assets/Resources/Protocol/ProtocolInfo.txt</code></li>
+<li><code>UnityProject/Assets/Resources/Protocol/MethodInfo.txt</code></li>
+<li>写入 server 运行目录：</li>
+<li><code>Server/LockStepDemo/bin/Debug/Network/ProtocolInfo.txt</code></li>
+<li><code>Server/LockStepDemo/bin/Debug/Network/MethodInfo.txt</code></li>
+<li>不改变协议生成器、网络协议格式、SceneLauncher 启动流程或运行时通信协议。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-2-design-md" data-panel="doc-2-design-md" role="tabpanel" aria-labelledby="tab-doc-2-design-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>背景</h2>
+<p>Fire 的客户端协议读取入口在 <code>UnityProject/Assets/Resources/Protocol/</code>，server 运行时从当前工作目录下的 <code>Network/ProtocolInfo.txt</code> 和 <code>Network/MethodInfo.txt</code> 读取协议描述。开发时如果只更新了源协议文件，或者 SceneLauncher 复用了一个已经监听端口的 server，server 运行目录可能继续保留旧协议文件，导致客户端按新协议字段解析旧消息。</p>
+<p>当前 <code>SceneLauncher</code> 已经在 Unity Editor 侧具备仓库根目录解析、server 配置读取、端口监听检查和 <code>[CODEX_LOG]</code> 日志约定。本变更在 Editor 菜单中补一个显式同步入口，优先解决“开发者知道要同步什么、同步到哪里、失败原因是什么”的问题。</p>
+<h2>目标 / 非目标</h2>
+<p><strong>目标：</strong></p>
+<ul>
+<li>在 Unity Editor 菜单中提供“同步协议”的可点击入口。</li>
+<li>在复制前检查客户端与 server 源协议文件内容一致，避免把不一致协议推进运行目录。</li>
+<li>将 server 源协议文件复制到 server 运行目录 <code>Server/LockStepDemo/bin/Debug/Network/</code>。</li>
+<li>对同步成功、校验失败、文件缺失、server 已运行等情况输出清晰日志。</li>
+</ul>
+<p><strong>非目标：</strong></p>
+<ul>
+<li>不新增或修改协议生成器。</li>
+<li>不改变协议字段格式、消息序列化规则或 TCP/UDP 通信实现。</li>
+<li>不自动提交或追踪 <code>bin/Debug</code> 运行目录文件。</li>
+<li>不自动停止、重启或热更新正在运行的 server。</li>
+<li>不改变 SceneLauncher 的启动流程；后续如需要自动同步，可基于本菜单工具抽取复用。</li>
+</ul>
+<h2>决策</h2>
+<h3>菜单入口放在 TEngine/Protocol 下</h3>
+<p>新增 Editor MenuItem，例如 <code>TEngine/Protocol/同步协议到Server运行目录</code>。项目已有 <code>TEngine/Settings/*</code> 与 <code>TEngine/查找资产引用</code> 菜单，继续放在 <code>TEngine</code> 下比新增顶层 <code>Fire</code> 菜单更贴近当前编辑器工具分组。</p>
+<p>替代方案是放到 <code>Tools/Fire/*</code>。该方案更通用，但会新增一个项目内没有使用过的顶层菜单分组，查找成本略高。</p>
+<h3>以源协议一致性作为复制前置条件</h3>
+<p>菜单执行时比较以下两组源文件：</p>
+<ul>
+<li><code>Server/LockStepDemo/Network/ProtocolInfo.txt</code> 对比 <code>UnityProject/Assets/Resources/Protocol/ProtocolInfo.txt</code></li>
+<li><code>Server/LockStepDemo/Network/MethodInfo.txt</code> 对比 <code>UnityProject/Assets/Resources/Protocol/MethodInfo.txt</code></li>
+</ul>
+<p>比较时读取文本并归一化 UTF-8 BOM 与换行符，避免 Windows 换行差异造成误报。只要任意一组不一致，工具中止复制并通过 <code>Debug.LogError</code> 输出两端路径。</p>
+<p>替代方案是无条件复制 server 源文件到运行目录。该方案可以修复运行目录滞后，但会掩盖 client/server 源协议本身已经分叉的问题。</p>
+<h3>运行目录只作为同步目标</h3>
+<p>同步目标固定为：</p>
+<ul>
+<li><code>Server/LockStepDemo/bin/Debug/Network/ProtocolInfo.txt</code></li>
+<li><code>Server/LockStepDemo/bin/Debug/Network/MethodInfo.txt</code></li>
+</ul>
+<p>工具负责创建 <code>Network</code> 目录并覆盖目标文件。<code>bin/Debug</code> 仍然是本地运行产物，不作为 Git 源文件管理。</p>
+<h3>运行中的 server 只提示重启</h3>
+<p>菜单可读取 <code>Server/LockStepDemo/App.config</code> 的协议与端口，并检查本地监听状态。如果目标端口已经监听，工具同步磁盘文件后输出 warning，提示当前进程不会自动重新加载协议，需要重启 server。</p>
+<p>替代方案是自动杀进程或重启 server。该方案副作用较大，且当前需求只是 Editor 菜单同步协议，因此不纳入本次范围。</p>
+<h2>风险 / 取舍</h2>
+<ul>
+<li>运行中的 server 不会自动加载新文件 -&gt; 同步完成后检测到端口监听时输出明确重启提示。</li>
+<li><code>bin/Debug</code> 目录不存在 -&gt; 工具创建目标目录；如果写入失败则输出错误并保持 Play Mode/运行流程不受影响。</li>
+<li>源协议文件本身不一致 -&gt; 工具中止复制，要求先重新生成或手动修正协议源文件。</li>
+<li>与 SceneLauncher 仍是两个入口 -&gt; 本次只提供手动同步能力；后续可将同步逻辑抽成公共 Editor 工具并在 SceneLauncher 启动前调用。</li>
+</ul>
+<h2>迁移计划</h2>
+<ol>
+<li>新增 Editor 菜单工具。</li>
+<li>在 Unity Editor 点击菜单，验证运行目录协议文件被覆盖为当前 server 源协议。</li>
+<li>如果 server 已经运行，手动重启 server 后再进行本地联机验证。</li>
+</ol>
+<p>回滚时删除该 Editor 菜单工具即可，不影响协议格式、server 工程或客户端运行时代码。</p>
+<h2>待确认问题</h2>
+<p>无。</p>
+  </div>
+</section> <section class="doc" id="doc-3-tasks-md" data-panel="doc-3-tasks-md" role="tabpanel" aria-labelledby="tab-doc-3-tasks-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>1. Editor 菜单入口</h2>
+<ul>
+<li><span class="taskbox">✓</span>1.1 在 <code>UnityProject/Assets/Editor/</code> 下新增协议同步 Editor 工具类</li>
+<li><span class="taskbox">✓</span>1.2 添加 <code>TEngine/Protocol/同步协议到Server运行目录</code> MenuItem 入口</li>
+<li><span class="taskbox">✓</span>1.3 通过 <code>Application.dataPath</code> 解析仓库根目录，并组装协议源文件与运行目录路径</li>
+</ul>
+<h2>2. 协议一致性校验</h2>
+<ul>
+<li><span class="taskbox">✓</span>2.1 校验 server 与客户端源 <code>ProtocolInfo.txt</code> 是否存在且内容一致</li>
+<li><span class="taskbox">✓</span>2.2 校验 server 与客户端源 <code>MethodInfo.txt</code> 是否存在且内容一致</li>
+<li><span class="taskbox">✓</span>2.3 校验失败时中止同步，并输出带 <code>[CODEX_LOG]</code> 前缀的错误日志</li>
+</ul>
+<h2>3. 运行目录同步</h2>
+<ul>
+<li><span class="taskbox">✓</span>3.1 创建 <code>Server/LockStepDemo/bin/Debug/Network/</code> 目标目录</li>
+<li><span class="taskbox">✓</span>3.2 将 server 源 <code>ProtocolInfo.txt</code> 覆盖复制到运行目录</li>
+<li><span class="taskbox">✓</span>3.3 将 server 源 <code>MethodInfo.txt</code> 覆盖复制到运行目录</li>
+<li><span class="taskbox">✓</span>3.4 同步成功后输出带 <code>[CODEX_LOG]</code> 前缀的同步摘要日志</li>
+</ul>
+<h2>4. server 运行态提示</h2>
+<ul>
+<li><span class="taskbox">✓</span>4.1 读取 <code>Server/LockStepDemo/App.config</code> 中的协议与端口</li>
+<li><span class="taskbox">✓</span>4.2 检查目标协议端口是否已经监听</li>
+<li><span class="taskbox">✓</span>4.3 如果 server 已运行，在同步完成后输出需要重启 server 的 warning 日志</li>
+</ul>
+<h2>5. 验证</h2>
+<ul>
+<li><span class="taskbox">✓</span>5.1 运行 <code>openspec validate add-unity-editor-protocol-sync-menu --strict</code></li>
+<li><span class="taskbox">□</span>5.2 在 Unity Editor 中确认菜单项可见</li>
+<li><span class="taskbox">□</span>5.3 手动点击菜单，确认运行目录协议文件与 server 源协议文件一致</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-4-specs-editor-protocol-sync-spec-md" data-panel="doc-4-specs-editor-protocol-sync-spec-md" role="tabpanel" aria-labelledby="tab-doc-4-specs-editor-protocol-sync-spec-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>新增需求</h2>
+<h3>需求：Unity Editor 提供协议同步菜单</h3>
+<p>系统 SHALL 在 Unity Editor 中提供一个可点击菜单项，用于触发协议同步操作。菜单项 SHALL 位于现有编辑器工具菜单分组下，并以中文明确表达同步协议到 server 运行目录的用途。</p>
+<h4>场景：开发者点击同步协议菜单</h4>
+<ul>
+<li><strong>当</strong> 开发者在 Unity Editor 中点击协议同步菜单</li>
+<li><strong>则</strong> 系统执行协议同步流程</li>
+</ul>
+<h3>需求：协议同步前校验客户端与 server 源协议一致</h3>
+<p>系统 SHALL 在复制文件前校验客户端与 server 的源协议文件内容一致。校验范围 SHALL 包含 <code>ProtocolInfo.txt</code> 与 <code>MethodInfo.txt</code>。如果任意源文件不存在或内容不一致，系统 MUST 中止同步，并输出包含问题文件路径的错误日志。</p>
+<h4>场景：源协议文件一致</h4>
+<ul>
+<li><strong>当</strong> 客户端与 server 的 <code>ProtocolInfo.txt</code> 和 <code>MethodInfo.txt</code> 内容一致</li>
+<li><strong>则</strong> 系统继续执行运行目录同步</li>
+</ul>
+<h4>场景：源协议文件不一致</h4>
+<ul>
+<li><strong>当</strong> 客户端与 server 的任意源协议文件内容不一致</li>
+<li><strong>则</strong> 系统中止同步并输出错误日志</li>
+</ul>
+<h3>需求：协议同步写入 server 运行目录</h3>
+<p>系统 SHALL 将 server 源协议文件复制到 <code>Server/LockStepDemo/bin/Debug/Network/</code>。复制范围 SHALL 包含 <code>ProtocolInfo.txt</code> 与 <code>MethodInfo.txt</code>。目标目录不存在时，系统 SHALL 创建目标目录。</p>
+<h4>场景：server 运行目录协议文件滞后</h4>
+<ul>
+<li><strong>当</strong> server 源协议文件与运行目录协议文件不同</li>
+<li><strong>则</strong> 点击同步菜单后，运行目录协议文件内容与 server 源协议文件一致</li>
+</ul>
+<h4>场景：server 运行目录 Network 目录不存在</h4>
+<ul>
+<li><strong>当</strong> <code>Server/LockStepDemo/bin/Debug/Network/</code> 不存在</li>
+<li><strong>则</strong> 系统创建该目录并写入协议文件</li>
+</ul>
+<h3>需求：协议同步输出可诊断日志</h3>
+<p>系统 SHALL 使用 <code>[CODEX_LOG]</code> 前缀输出协议同步结果。同步成功时日志 SHALL 包含同步文件名和目标目录。同步失败时日志 MUST 包含失败原因。</p>
+<h4>场景：协议同步成功</h4>
+<ul>
+<li><strong>当</strong> 协议文件成功写入 server 运行目录</li>
+<li><strong>则</strong> Unity Console 显示带 <code>[CODEX_LOG]</code> 前缀的成功日志</li>
+</ul>
+<h4>场景：协议同步失败</h4>
+<ul>
+<li><strong>当</strong> 文件缺失、内容不一致或写入失败</li>
+<li><strong>则</strong> Unity Console 显示带 <code>[CODEX_LOG]</code> 前缀的错误日志</li>
+</ul>
+<h3>需求：server 已运行时提示需要重启</h3>
+<p>系统 SHALL 在同步操作中检查本地 server 配置的协议与端口是否已经监听。如果目标端口已经监听，系统 SHALL 在同步完成后输出 warning，提示正在运行的 server 需要重启后才能加载新的协议文件。</p>
+<h4>场景：server 已经监听目标端口</h4>
+<ul>
+<li><strong>当</strong> 协议同步完成且本地 server 目标端口已监听</li>
+<li><strong>则</strong> Unity Console 显示需要重启 server 的 warning 日志</li>
+</ul>
+  </div>
+</section>
+    </main>
+  </div>
+  <script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('[data-tab]'));
+  const panels = Array.from(document.querySelectorAll('[data-panel]'));
+  const panelIds = new Set(panels.map((panel) => panel.id));
+  const copyButton = document.querySelector('.copy-command');
+  const applyCommand = "/prompts:opsx-apply add-unity-editor-protocol-sync-menu";
+
+  async function copyText(text) {
+    const errors = [];
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+    if (copyWithEvent(text)) { return; }
+    if (copyWithTextarea(text)) { return; }
+    throw errors[0] || new Error('copy command rejected');
+  }
+
+  function copyWithEvent(text) {
+    const handler = (event) => {
+      event.clipboardData.setData('text/plain', text);
+      event.preventDefault();
+    };
+    document.addEventListener('copy', handler, true);
+    try {
+      return document.execCommand('copy');
+    } catch (error) {
+      return false;
+    } finally {
+      document.removeEventListener('copy', handler, true);
+    }
+  }
+
+  function copyWithTextarea(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    try {
+      return document.execCommand('copy');
+    } catch (error) {
+      return false;
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+
+  function showCopyState(state, label) {
+    if (!copyButton) { return; }
+    copyButton.textContent = label;
+    copyButton.classList.toggle('copied', state === 'copied');
+    copyButton.classList.toggle('failed', state === 'failed');
+    window.clearTimeout(copyButton.copyTimer);
+    copyButton.copyTimer = window.setTimeout(() => {
+      copyButton.textContent = '复制命令';
+      copyButton.classList.remove('copied', 'failed');
+    }, 1600);
+  }
+
+  function activate(id, updateHash) {
+    const targetId = panelIds.has(id) ? id : (tabs[0] && tabs[0].dataset.tab);
+    if (!targetId) { return; }
+    let activeTab = null;
+    tabs.forEach((tab) => {
+      const active = tab.dataset.tab === targetId;
+      tab.classList.toggle('active', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      tab.setAttribute('tabindex', active ? '0' : '-1');
+      if (active) { activeTab = tab; }
+    });
+    panels.forEach((panel) => { panel.hidden = panel.id !== targetId; });
+    if (updateHash && window.location.hash !== '#' + targetId) {
+      history.pushState(null, '', '#' + targetId);
+    }
+    return activeTab;
+  }
+
+  if (copyButton) {
+    copyButton.addEventListener('click', async () => {
+      try {
+        await copyText(applyCommand);
+        showCopyState('copied', '已复制');
+      } catch (error) {
+        showCopyState('failed', '复制失败');
+      }
+    });
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', (event) => {
+      event.preventDefault();
+      activate(tab.dataset.tab, true);
+    });
+    tab.addEventListener('keydown', (event) => {
+      const current = tabs.indexOf(tab);
+      let next = current;
+      if (event.key === 'ArrowRight') { next = (current + 1) % tabs.length; }
+      else if (event.key === 'ArrowLeft') { next = (current - 1 + tabs.length) % tabs.length; }
+      else if (event.key === 'Home') { next = 0; }
+      else if (event.key === 'End') { next = tabs.length - 1; }
+      else { return; }
+      event.preventDefault();
+      const activeTab = activate(tabs[next].dataset.tab, true);
+      if (activeTab) { activeTab.focus(); }
+    });
+  });
+  window.addEventListener('hashchange', () => activate(window.location.hash.slice(1), false));
+  activate(window.location.hash.slice(1), false);
+})();
+  </script>
+</body>
+</html>
