@@ -37,6 +37,14 @@ namespace Protocol
     public class SyncEntityMsg : SyncModule
     {
         public int frame;
+        public int snapshotId;
+        public int snapshotFrame;
+        public int selfEntityId;
+        public int createEntityIndex;
+        public int intervalTime;
+        public int advanceCount;
+        public bool isSnapshot;
+        public bool isSnapshotComplete;
         public List<EntityInfo> infos;
 
         public List<int> destroyList;

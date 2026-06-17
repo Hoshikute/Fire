@@ -48,6 +48,15 @@ public class MoveSystem : SystemBase
             mc.pos = newPos;
         }
 
+        if (entity.GetExistComp<PlayerMoveComponent>())
+        {
+            PlayerMoveComponent playerMove = entity.GetComp<PlayerMoveComponent>();
+            playerMove.ID = entity.ID;
+            playerMove.Frame = m_world.FrameCount;
+            playerMove.pos = mc.pos.DeepCopy();
+            playerMove.currentSpeed = mc.m_velocity;
+        }
+
         if (SyncDebugSystem.isDebug && SyncDebugSystem.IsFilter("MoveSystem"))
         {
             string content = "id: " + mc.Entity.ID + " m_pos " + mc.pos.ToVector() + " deltaTime " + deltaTime + " m_velocity " + mc.m_velocity + " m_dir " + mc.dir.ToVector();

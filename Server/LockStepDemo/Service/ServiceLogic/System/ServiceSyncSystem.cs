@@ -11,6 +11,16 @@ using UnityEngine;
 
 public class ServiceSyncSystem : ServiceSystem
 {
+    const int SnapshotRetryFrameInterval = 5;
+
+    static readonly HashSet<string> s_sharedSyncComponentNames = new HashSet<string>
+    {
+        "PlayerComponent",
+        "PlayerMoveComponent",
+        "PlayerStateComponent",
+        "CommandComponent",
+    };
+
     public override void Init()
     {
         Debug.Log("ServiceSyncSystem init");
@@ -25,6 +35,13 @@ public class ServiceSyncSystem : ServiceSystem
         m_world.eventSystem.AddListener(ServiceEventDefine.c_playerExit, OnPlayerExit);
 
         m_world.eventSystem.AddListener(ServiceEventDefine.c_ComponentChange, OnCompChange);
+        EventService.AddTypeEvent<AffirmMsg>(OnAffirmMsg);
+    }
+
+    public override void Dispose()
+    {
+        EventService.RemoveTypeEvent<AffirmMsg>(OnAffirmMsg);
+        base.Dispose();
     }
 
     public override Type[] GetFilter()
@@ -36,6 +53,8 @@ public class ServiceSyncSystem : ServiceSystem
 
     public override void EndFrame(int deltaTime)
     {
+        RetryPendingSnapshots();
+
         //全推送
         PushAllData();
 
@@ -103,6 +122,12 @@ public class ServiceSyncSystem : ServiceSystem
         SyncComponent syc = entity.GetComp<SyncComponent>();
 
         comp.m_isWaitPushStart = true;
+        comp.m_isWaitSnapshotAck = true;
+        comp.m_snapshotId = CreateSnapshotId(entity);
+        comp.m_snapshotFrame = m_world.FrameCount;
+        comp.m_snapshotRetryFrame = m_world.FrameCount + SnapshotRetryFrameInterval;
+        comp.m_snapshotRetryCount = 0;
+        comp.m_snapshotSelfEntityId = entity.ID;
 
         List<EntityBase> list = GetEntityList();
         for (int i = 0; i < list.Count; i++)
@@ -137,11 +162,72 @@ public class ServiceSyncSystem : ServiceSystem
         SetAllSync(syc);
     }
 
+    void OnAffirmMsg(SyncSession session, AffirmMsg msg)
+    {
+        if (session == null || session.m_connect == null)
+        {
+            return;
+        }
+
+        ConnectionComponent comp = session.m_connect;
+        if (!comp.m_isWaitSnapshotAck)
+        {
+            return;
+        }
+
+        if (msg.id == comp.m_snapshotSelfEntityId && msg.frame == comp.m_snapshotFrame)
+        {
+            comp.m_isWaitSnapshotAck = false;
+            Debug.Log("Snapshot ACK received player " + comp.playerID + " snapshot " + comp.m_snapshotId);
+        }
+    }
+
     #endregion
 
     #region 推送数据
 
     #region 游戏进程
+
+    int CreateSnapshotId(EntityBase entity)
+    {
+        unchecked
+        {
+            int seed = entity.ID;
+            seed = seed * 397 ^ m_world.FrameCount;
+            seed = seed * 397 ^ ServiceTime.GetServiceTime();
+            return seed;
+        }
+    }
+
+    void RetryPendingSnapshots()
+    {
+        List<EntityBase> connections = GetEntityList(new string[] { "ConnectionComponent" });
+        for (int i = 0; i < connections.Count; i++)
+        {
+            ConnectionComponent comp = connections[i].GetComp<ConnectionComponent>();
+            if (!comp.m_isWaitSnapshotAck || m_world.FrameCount < comp.m_snapshotRetryFrame)
+            {
+                continue;
+            }
+
+            QueueFullSnapshot(comp);
+            comp.m_snapshotRetryCount++;
+            comp.m_snapshotRetryFrame = m_world.FrameCount + SnapshotRetryFrameInterval;
+            Debug.Log("Retry snapshot " + comp.m_snapshotId + " player " + comp.playerID + " count " + comp.m_snapshotRetryCount);
+        }
+    }
+
+    void QueueFullSnapshot(ConnectionComponent comp)
+    {
+        List<EntityBase> list = GetEntityList();
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (!comp.m_waitSyncEntity.Contains(list[i]))
+            {
+                comp.m_waitSyncEntity.Add(list[i]);
+            }
+        }
+    }
 
     void PushStartSyncMsg()
     {
@@ -210,7 +296,10 @@ public class ServiceSyncSystem : ServiceSystem
 
             if(connectionComp.m_waitSyncList[i].m_session != null)
             {
-                connectionComp.m_waitSyncList[i].m_waitSyncEntity.Add(entity);
+                if (!connectionComp.m_waitSyncList[i].m_waitSyncEntity.Contains(entity))
+                {
+                    connectionComp.m_waitSyncList[i].m_waitSyncEntity.Add(entity);
+                }
             }
         }
         connectionComp.m_waitSyncList.Clear();
@@ -226,13 +315,25 @@ public class ServiceSyncSystem : ServiceSystem
 
         SyncEntityMsg msg = new SyncEntityMsg();
         msg.frame = m_world.FrameCount;
+        msg.snapshotId = connect.m_isWaitSnapshotAck ? connect.m_snapshotId : 0;
+        msg.snapshotFrame = connect.m_isWaitSnapshotAck ? connect.m_snapshotFrame : m_world.FrameCount;
+        msg.selfEntityId = connect.m_snapshotSelfEntityId;
+        msg.createEntityIndex = m_world.EntityIndex;
+        msg.intervalTime = UpdateEngine.IntervalTime;
+        msg.advanceCount = 1;
+        msg.isSnapshot = connect.m_isWaitSnapshotAck;
+        msg.isSnapshotComplete = connect.m_isWaitSnapshotAck;
 
         msg.infos = new List<EntityInfo>();
         msg.destroyList = new List<int>();
 
         for (int i = 0; i < connect.m_waitSyncEntity.Count; i++)
         {
-            msg.infos.Add(CreateEntityInfo(connect.m_waitSyncEntity[i], connect.m_session));
+            EntityInfo info = CreateEntityInfo(connect.m_waitSyncEntity[i], connect.m_session);
+            if (info.infos.Count > 0)
+            {
+                msg.infos.Add(info);
+            }
         }
 
         for (int i = 0; i < connect.m_waitDestroyEntity.Count; i++)
@@ -258,7 +359,7 @@ public class ServiceSyncSystem : ServiceSystem
         {
             Type type = c.Value.GetType();
 
-            if (!type.IsSubclassOf(typeof(ServiceComponent)))
+            if (!type.IsSubclassOf(typeof(ServiceComponent)) && s_sharedSyncComponentNames.Contains(type.Name))
             {
                 ComponentInfo info = new ComponentInfo();
                 info.m_compName = type.Name;

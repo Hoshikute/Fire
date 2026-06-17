@@ -42,6 +42,17 @@ public class OperationSystem : SystemBase
             {
                 move.dir.FromVector(Vector3.zero);
             }
+
+            if (list[i].GetExistComp<PlayerMoveComponent>())
+            {
+                PlayerMoveComponent playerMove = list[i].GetComp<PlayerMoveComponent>();
+                playerMove.ID = list[i].ID;
+                playerMove.Frame = m_world.FrameCount;
+                playerMove.moveIntentDir = move.dir.DeepCopy();
+                playerMove.faceDir = pc.faceDir.DeepCopy();
+                playerMove.speedGear = com.speedGear >= 2 ? 2 : 1;
+                playerMove.moveSpeed = move.m_velocity;
+            }
         }
     }
 }

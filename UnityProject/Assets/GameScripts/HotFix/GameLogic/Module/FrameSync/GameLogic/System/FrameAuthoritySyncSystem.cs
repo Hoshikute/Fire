@@ -6,6 +6,13 @@ namespace GameLogic
 {
     public class FrameAuthoritySyncSystem : SystemBase
     {
+        private bool m_hasPendingStartSync;
+        private StartSyncMsg m_pendingStartSync;
+        private bool m_snapshotApplied;
+        private int m_activeSnapshotId;
+        private int m_snapshotFrame;
+        private int m_selfEntityId;
+
         public override void Init()
         {
             base.Init();
@@ -20,6 +27,20 @@ namespace GameLogic
 
         private void OnNetworkMessageReceived(NetWorkMessage message)
         {
+            SyncEntityMsg syncEntityMsg;
+            if (FrameAuthorityMessageCodec.TryReadSyncEntity(message, out syncEntityMsg))
+            {
+                ApplySyncEntity(syncEntityMsg);
+                return;
+            }
+
+            ChangeSingletonComponentMsg singletonMsg;
+            if (FrameAuthorityMessageCodec.TryReadChangeSingleton(message, out singletonMsg))
+            {
+                ApplyChangeSingleton(singletonMsg);
+                return;
+            }
+
             StartSyncMsg startSyncMsg;
             if (FrameAuthorityMessageCodec.TryReadStartSync(message, out startSyncMsg))
             {
@@ -50,6 +71,20 @@ namespace GameLogic
 
         private void ApplyStartSync(StartSyncMsg msg)
         {
+            if (GameModule.Network.IsConnected && !m_snapshotApplied)
+            {
+                m_pendingStartSync = msg;
+                m_hasPendingStartSync = true;
+                Log.Info("[FrameAuthoritySyncSystem] StartSyncMsg cached until snapshot is applied.");
+                return;
+            }
+
+            if (m_snapshotApplied && msg.frame < m_snapshotFrame)
+            {
+                Log.Error($"[FrameAuthoritySyncSystem] StartSyncMsg frame {msg.frame} before snapshot frame {m_snapshotFrame}; start blocked.");
+                return;
+            }
+
             m_world.FrameCount = msg.frame;
             m_world.EntityIndex = msg.createEntityIndex;
             m_world.SyncRule = msg.SyncRule;
@@ -61,6 +96,252 @@ namespace GameLogic
             connectStatus.aheadFrame = msg.advanceCount;
 
             m_world.IsStart = true;
+        }
+
+        private void ApplySyncEntity(SyncEntityMsg msg)
+        {
+            if (msg == null)
+            {
+                return;
+            }
+
+            if (msg.isSnapshot && m_snapshotApplied && msg.snapshotId == m_activeSnapshotId)
+            {
+                FrameAuthorityMessageCodec.SendSnapshotAck(m_snapshotFrame, m_selfEntityId);
+                return;
+            }
+
+            if (msg.isSnapshot)
+            {
+                m_activeSnapshotId = msg.snapshotId;
+                m_snapshotFrame = msg.snapshotFrame;
+                m_selfEntityId = msg.selfEntityId;
+                if (msg.createEntityIndex > m_world.EntityIndex)
+                {
+                    m_world.EntityIndex = msg.createEntityIndex;
+                }
+            }
+
+            ApplyDestroyList(msg.destroyList);
+
+            if (msg.infos != null)
+            {
+                for (int i = 0; i < msg.infos.Count; i++)
+                {
+                    if (!ApplyEntityInfo(msg.infos[i]))
+                    {
+                        return;
+                    }
+                }
+            }
+
+            if (msg.isSnapshot && msg.isSnapshotComplete)
+            {
+                CompleteSnapshot(msg);
+            }
+        }
+
+        private void ApplyChangeSingleton(ChangeSingletonComponentMsg msg)
+        {
+            if (msg == null || msg.info == null)
+            {
+                return;
+            }
+
+            Log.Info($"[FrameAuthoritySyncSystem] ChangeSingletonComponentMsg received: {msg.info.m_compName} frame={msg.frame}");
+        }
+
+        private void ApplyDestroyList(List<int> destroyList)
+        {
+            if (destroyList == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < destroyList.Count; i++)
+            {
+                int entityId = destroyList[i];
+                if (m_world.GetEntityIsExist(entityId))
+                {
+                    m_world.DestroyEntity(entityId);
+                }
+            }
+            m_world.FlushEntityOperations();
+        }
+
+        private bool ApplyEntityInfo(EntityInfo info)
+        {
+            if (info == null)
+            {
+                Log.Error("[FrameAuthoritySyncSystem] SyncEntityMsg contains null EntityInfo; start blocked.");
+                return false;
+            }
+
+            List<ComponentBase> components = new List<ComponentBase>();
+            bool hasPlayerComponent = false;
+            bool isSelf = false;
+            bool isTheir = false;
+
+            if (info.infos != null)
+            {
+                for (int i = 0; i < info.infos.Count; i++)
+                {
+                    ComponentBase component;
+                    bool componentIsSelf;
+                    bool componentIsTheir;
+                    string error;
+                    if (!FrameSyncSnapshotComponentFactory.TryCreateComponent(
+                        info.infos[i],
+                        info.id,
+                        out component,
+                        out componentIsSelf,
+                        out componentIsTheir,
+                        out error))
+                    {
+                        Log.Error($"[FrameAuthoritySyncSystem] snapshot entity {info.id} rejected: {error}");
+                        return false;
+                    }
+
+                    if (componentIsSelf)
+                    {
+                        isSelf = true;
+                    }
+                    if (componentIsTheir)
+                    {
+                        isTheir = true;
+                    }
+                    if (component is PlayerComponent)
+                    {
+                        hasPlayerComponent = true;
+                    }
+                    components.Add(component);
+                }
+            }
+
+            bool entityExists = m_world.GetEntityIsExist(info.id);
+            if (hasPlayerComponent && !entityExists)
+            {
+                EnsureCommandRecordComponent(components, info.id);
+            }
+
+            EntityBase entity = UpsertEntity(info.id, components);
+            if (hasPlayerComponent && !entity.GetExistComp<PlayerCommandRecordComponent>())
+            {
+                PlayerCommandRecordComponent record = entity.AddComp<PlayerCommandRecordComponent>();
+                record.EnsureDefaultCommand(entity.ID);
+            }
+            ApplyOwnership(entity, isSelf, isTheir);
+            return true;
+        }
+
+        private EntityBase UpsertEntity(int entityId, List<ComponentBase> components)
+        {
+            EntityBase entity;
+            if (!m_world.GetEntityIsExist(entityId))
+            {
+                m_world.CreateEntity(entityId, components.ToArray());
+                m_world.FlushEntityOperations();
+                return m_world.GetEntity(entityId);
+            }
+
+            entity = m_world.GetEntity(entityId);
+            for (int i = 0; i < components.Count; i++)
+            {
+                ComponentBase component = components[i];
+                string compName = component.GetType().Name;
+                if (entity.GetExistComp(compName))
+                {
+                    entity.ChangeComp(compName, component);
+                }
+                else
+                {
+                    entity.AddComp(compName, component);
+                }
+            }
+            return entity;
+        }
+
+        private void EnsureCommandRecordComponent(List<ComponentBase> components, int entityId)
+        {
+            for (int i = 0; i < components.Count; i++)
+            {
+                if (components[i] is PlayerCommandRecordComponent)
+                {
+                    return;
+                }
+            }
+
+            PlayerCommandRecordComponent record = new PlayerCommandRecordComponent();
+            record.EnsureDefaultCommand(entityId);
+            components.Add(record);
+        }
+
+        private void ApplyOwnership(EntityBase entity, bool isSelf, bool isTheir)
+        {
+            if (!entity.GetExistComp<PlayerComponent>())
+            {
+                return;
+            }
+
+            PlayerComponent player = entity.GetComp<PlayerComponent>();
+            if (isSelf)
+            {
+                player.isLocal = true;
+                m_selfEntityId = entity.ID;
+                if (!entity.GetExistComp<PlayerCommandRecordComponent>())
+                {
+                    entity.AddComp(new PlayerCommandRecordComponent());
+                }
+                entity.GetComp<PlayerCommandRecordComponent>().EnsureDefaultCommand(entity.ID);
+
+                if (!GameModule.BattleContext.TryBindNetworkPlayerEntity(m_world, entity.ID))
+                {
+                    Log.Error($"[FrameAuthoritySyncSystem] Self entity {entity.ID} view bind failed; start blocked.");
+                }
+            }
+            else if (isTheir)
+            {
+                player.isLocal = false;
+            }
+        }
+
+        private void CompleteSnapshot(SyncEntityMsg msg)
+        {
+            if (m_selfEntityId == 0 || !m_world.GetEntityIsExist(m_selfEntityId))
+            {
+                Log.Error($"[FrameAuthoritySyncSystem] snapshot {msg.snapshotId} missing Self entity {m_selfEntityId}; start blocked.");
+                return;
+            }
+
+            EntityBase self = m_world.GetEntity(m_selfEntityId);
+            if (!self.GetExistComp<SelfComponent>() || !self.GetExistComp<PlayerComponent>())
+            {
+                Log.Error($"[FrameAuthoritySyncSystem] snapshot {msg.snapshotId} Self entity {m_selfEntityId} lacks SelfComponent/PlayerComponent; start blocked.");
+                return;
+            }
+
+            if (!self.GetExistComp<PlayerViewComponent>())
+            {
+                Log.Error($"[FrameAuthoritySyncSystem] snapshot {msg.snapshotId} Self entity {m_selfEntityId} view not bound; start blocked.");
+                return;
+            }
+
+            m_snapshotApplied = true;
+            FrameAuthorityMessageCodec.SendSnapshotAck(msg.snapshotFrame, m_selfEntityId);
+            TryApplyPendingStartSync();
+        }
+
+        private void TryApplyPendingStartSync()
+        {
+            if (!m_hasPendingStartSync)
+            {
+                return;
+            }
+
+            StartSyncMsg msg = m_pendingStartSync;
+            m_pendingStartSync = null;
+            m_hasPendingStartSync = false;
+            ApplyStartSync(msg);
         }
 
         private void ApplyAffirm(AffirmMsg msg)

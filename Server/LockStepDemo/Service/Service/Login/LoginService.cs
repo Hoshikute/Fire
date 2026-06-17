@@ -27,6 +27,7 @@ public class LoginService : ServiceBase
         {
             Debug.Log("" + session.player.playerID + " 已经登录，不需要重复登录！ ");
             SendLoginSuccess(session, session.player);
+            JoinSingletonBattleWorld(session.player);
             return;
         }
 
@@ -35,6 +36,7 @@ public class LoginService : ServiceBase
 
         SendLoginSuccess(session, session.player);
         m_service.OnPlayerLogin(session.player);
+        JoinSingletonBattleWorld(session.player);
     }
 
     public void RecevicePlayerRename(SyncSession session, PlayerRename_s e)
@@ -76,5 +78,36 @@ public class LoginService : ServiceBase
         msg.nickName = player.nickName;
         msg.characterID = player.characterID;
         ProtocolAnalysisService.SendMsg(session, msg);
+    }
+
+    void JoinSingletonBattleWorld(Player player)
+    {
+        if (player == null || player.session == null)
+        {
+            return;
+        }
+
+        if (player.session.m_connect != null)
+        {
+            Debug.Log("玩家已经在 BattleWorld 中: " + player.playerID);
+            return;
+        }
+
+        WorldBase world = WorldManager.GetOrCreateSingletonWorld<DemoWorld>();
+        world.IsStart = true;
+        world.SyncRule = SyncRule.Frame;
+
+        ConnectionComponent conn = new ConnectionComponent();
+        conn.m_session = player.session;
+        conn.playerID = player.playerID;
+
+        SyncComponent sync = new SyncComponent();
+        string entityKey = "Player" + player.playerID;
+        world.CreateEntityImmediately(entityKey, conn, sync);
+        EntityBase entity = world.GetEntity(entityKey.ToHash());
+        player.session.m_connect = conn;
+
+        world.eventSystem.DispatchEvent(ServiceEventDefine.c_playerJoin, entity);
+        Debug.Log("玩家直接进入 BattleWorld: " + player.playerID + " entity " + entity.ID);
     }
 }

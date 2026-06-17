@@ -44,6 +44,10 @@ public class InitSystem : SystemBase
         //将角色ID传入游戏
         playerComp.characterID = connectComp.m_session.player.characterID;
         playerComp.nickName = connectComp.m_session.player.playerID;
+        playerComp.playerId = entity.ID;
+        playerComp.playerName = connectComp.m_session.player.nickName;
+        playerComp.isLocal = false;
+        connectComp.playerID = connectComp.m_session.player.playerID;
 
         ElementData e1 = new ElementData();
         e1.id = 100;
@@ -68,13 +72,23 @@ public class InitSystem : SystemBase
         if (!entity.GetExistComp<CommandComponent>())
         {
             CommandComponent c = new CommandComponent();
+            c.id = entity.ID;
+            c.frame = m_world.FrameCount;
+            c.time = ServiceTime.GetServiceTime();
+            c.speedGear = 1;
             entity.AddComp(c);
         }
+
+        SyncVector3 spawnPos = new SyncVector3();
+        spawnPos.FromVector(new Vector3(15, 0, 0));
+        SyncVector3 forward = new SyncVector3();
+        forward.z = 1000;
 
         if (!entity.GetExistComp<TransfromComponent>())
         {
             TransfromComponent c = new TransfromComponent();
-            c.pos.FromVector(new Vector3(15, 0, 0));
+            c.pos = spawnPos.DeepCopy();
+            c.dir = forward.DeepCopy();
             entity.AddComp(c);
         }
 
@@ -88,8 +102,32 @@ public class InitSystem : SystemBase
         if (!entity.GetExistComp<MoveComponent>())
         {
             MoveComponent c = new MoveComponent();
-            c.pos.FromVector(new Vector3(15, 0, 0));
+            c.pos = spawnPos.DeepCopy();
 
+            entity.AddComp(c);
+        }
+
+        if (!entity.GetExistComp<PlayerMoveComponent>())
+        {
+            PlayerMoveComponent c = new PlayerMoveComponent();
+            c.ID = entity.ID;
+            c.Frame = m_world.FrameCount;
+            c.pos = spawnPos.DeepCopy();
+            c.faceDir = forward.DeepCopy();
+            c.moveIntentDir = new SyncVector3();
+            c.speedGear = 1;
+            c.moveSpeed = playerComp.GetSpeed();
+            c.isOnGround = true;
+            entity.AddComp(c);
+        }
+
+        if (!entity.GetExistComp<PlayerStateComponent>())
+        {
+            PlayerStateComponent c = new PlayerStateComponent();
+            c.ID = entity.ID;
+            c.Frame = m_world.FrameCount;
+            c.state = PlayerLogicState.Idle;
+            c.prevState = PlayerLogicState.Idle;
             entity.AddComp(c);
         }
 
@@ -152,12 +190,24 @@ public class InitSystem : SystemBase
         if (entity.GetExistComp<ConnectionComponent>())
         {
             ConnectionComponent cc = entity.GetComp<ConnectionComponent>();
-            cc.m_lastInputCache = new CommandComponent();
-            cc.m_defaultInput   = new CommandComponent();
+            cc.m_lastInputCache = CreateDefaultCommand(entity.ID);
+            cc.m_defaultInput   = CreateDefaultCommand(entity.ID);
         }
 
         GameTimeComponent gtc = m_world.GetSingletonComp<GameTimeComponent>();
         gtc.GameTime = 10000 * 1000;
+    }
+
+    CommandComponent CreateDefaultCommand(int entityId)
+    {
+        CommandComponent command = new CommandComponent();
+        command.id = entityId;
+        command.frame = m_world.FrameCount;
+        command.time = ServiceTime.GetServiceTime();
+        command.moveDir = new SyncVector3();
+        command.skillDir = new SyncVector3();
+        command.speedGear = 1;
+        return command;
     }
 
     Deserializer deserializer = new Deserializer();

@@ -20,6 +20,19 @@ public static class WorldManager
         return world;
     }
 
+    public static T GetOrCreateSingletonWorld<T>() where T : WorldBase, new()
+    {
+        for (int i = 0; i < s_worldList.Count; i++)
+        {
+            if (s_worldList[i] is T)
+            {
+                return (T)s_worldList[i];
+            }
+        }
+
+        return (T)CreateWorld<T>();
+    }
+
     public static void DestroyWorld(WorldBase world)
     {
         s_worldList.Remove(world);

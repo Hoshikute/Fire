@@ -244,7 +244,9 @@
     <Compile Include="SyncGameLogic\Component\LifeComponent.cs" />
     <Compile Include="SyncGameLogic\Component\LifeSpanComponent.cs" />
     <Compile Include="SyncGameLogic\Component\MoveComponent.cs" />
+    <Compile Include="SyncGameLogic\Component\PlayerMoveComponent.cs" />
     <Compile Include="SyncGameLogic\Component\PlayerComponent.cs" />
+    <Compile Include="SyncGameLogic\Component\PlayerStateComponent.cs" />
     <Compile Include="SyncGameLogic\Component\RankComponent.cs" />
     <Compile Include="SyncGameLogic\Component\SkillStatusComponent.cs" />
     <Compile Include="SyncGameLogic\Component\TransfromComponent.cs" />

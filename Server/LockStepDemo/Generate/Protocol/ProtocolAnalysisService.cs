@@ -165,6 +165,14 @@ public static class ProtocolAnalysisService
 	{
 		Dictionary<string, object> data = new Dictionary<string, object>();
 		data.Add("frame", msg.frame);
+		data.Add("snapshotid", msg.snapshotId);
+		data.Add("snapshotframe", msg.snapshotFrame);
+		data.Add("selfentityid", msg.selfEntityId);
+		data.Add("createentityindex", msg.createEntityIndex);
+		data.Add("intervaltime", msg.intervalTime);
+		data.Add("advancecount", msg.advanceCount);
+		data.Add("issnapshot", msg.isSnapshot);
+		data.Add("issnapshotcomplete", msg.isSnapshotComplete);
 		{
 			List<object> list2 = new List<object>();
 			for(int i2 = 0;i2 <msg.infos.Count ; i2++)
@@ -432,6 +440,14 @@ public static class ProtocolAnalysisService
 	{
 		Protocol.SyncEntityMsg msg = new Protocol.SyncEntityMsg();
 		msg.frame = (int)e.m_data["frame"];
+		msg.snapshotId = (int)e.m_data["snapshotid"];
+		msg.snapshotFrame = (int)e.m_data["snapshotframe"];
+		msg.selfEntityId = (int)e.m_data["selfentityid"];
+		msg.createEntityIndex = (int)e.m_data["createentityindex"];
+		msg.intervalTime = (int)e.m_data["intervaltime"];
+		msg.advanceCount = (int)e.m_data["advancecount"];
+		msg.isSnapshot = (bool)e.m_data["issnapshot"];
+		msg.isSnapshotComplete = (bool)e.m_data["issnapshotcomplete"];
 		{
 			List<Dictionary<string, object>> data2 = (List<Dictionary<string, object>>)e.m_data["infos"];
 			List<Protocol.EntityInfo> list2 = new List<Protocol.EntityInfo>();

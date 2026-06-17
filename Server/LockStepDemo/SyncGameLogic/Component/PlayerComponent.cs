@@ -6,6 +6,10 @@ using System;
 
 public class PlayerComponent : MomentComponentBase
 {
+    public int playerId;
+    public string playerName;
+    public bool isLocal;
+
     public string nickName;
     public string characterID;
 
@@ -23,6 +27,11 @@ public class PlayerComponent : MomentComponentBase
     {
         PlayerComponent pc = new PlayerComponent();
 
+        pc.ID = ID;
+        pc.Frame = Frame;
+        pc.playerId = playerId;
+        pc.playerName = playerName;
+        pc.isLocal = isLocal;
         pc.faceDir = faceDir.DeepCopy();
         pc.elementData.Clear();
         pc.characterID = characterID;

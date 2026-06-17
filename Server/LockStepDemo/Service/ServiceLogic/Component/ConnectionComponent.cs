@@ -11,6 +11,12 @@ public class ConnectionComponent : ServiceComponent
 
     public bool m_isWaitPushStart = false;
     public SyncSession m_session;
+    public bool m_isWaitSnapshotAck = false;
+    public int m_snapshotId = 0;
+    public int m_snapshotFrame = 0;
+    public int m_snapshotRetryFrame = 0;
+    public int m_snapshotRetryCount = 0;
+    public int m_snapshotSelfEntityId = 0;
 
     public List<int> unConfirmFrame = new List<int>(); //未确认的帧
     //public List<int> confirmFrame = new List<int>();   //已确认的帧

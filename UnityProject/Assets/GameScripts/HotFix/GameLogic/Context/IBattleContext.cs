@@ -17,5 +17,10 @@ namespace GameLogic
         /// 初始化 Game 场景。
         /// </summary>
         UniTask InitializeGameScene();
+
+        /// <summary>
+        /// 联网模式下把已加载的本地表现对象绑定到服务端快照中的 Self 实体。
+        /// </summary>
+        bool TryBindNetworkPlayerEntity(WorldBase world, int entityId);
     }
 }

@@ -158,24 +158,86 @@ namespace GameLogic
             m_playerWorld = GameModule.FrameSync.CreateWorld<BattleWorld>();
             m_playerWorld.SyncRule = SyncRule.Frame;
 
+            bool waitForServerStart = GameModule.Network.IsConnected;
+            if (waitForServerStart)
+            {
+                m_playerWorld.m_isLocal = false;
+                m_playerWorld.IsStart = false;
+                Log.Info($"{TraceHeader} BattleWorld prepared for network snapshot, waiting for SyncEntityMsg + StartSyncMsg.");
+                return;
+            }
+
             Log.Info($"{TraceHeader} playerSpawnPos = {_playerSpawnPos}, fixed = {SyncVector3.FromVector3(_playerSpawnPos)}");
             SpawnLocalPlayerEntity(player.transform, animancer, m_playerAnimConfig);
 
             // 立即提交实体，避免首帧系统因 LazyExecuteEntityOperation 尚未执行而读不到玩家。
             m_playerWorld.FlushEntityOperations();
-            bool waitForServerStart = GameModule.Network.IsConnected;
-            m_playerWorld.m_isLocal = !waitForServerStart;
-            m_playerWorld.IsStart = !waitForServerStart;
+            m_playerWorld.m_isLocal = true;
+            m_playerWorld.IsStart = true;
 
-            if (waitForServerStart)
+            Log.Info($"{TraceHeader} BattleWorld started, logic frame step {GameModule.FrameSync.IntervalTime}ms.");
+            TryBindCamera(player.transform);
+        }
+
+        public bool TryBindNetworkPlayerEntity(WorldBase world, int entityId)
+        {
+            if (world == null || m_playerWorld != world)
             {
-                Log.Info($"{TraceHeader} BattleWorld prepared, waiting for StartSyncMsg.");
+                Log.Error($"{TraceHeader} Network bind failed: world mismatch.");
+                return false;
+            }
+
+            if (m_playerInstance == null || m_playerAnimConfig == null)
+            {
+                Log.Error($"{TraceHeader} Network bind failed: player view or anim config not ready.");
+                return false;
+            }
+
+            if (!world.GetEntityIsExist(entityId))
+            {
+                Log.Error($"{TraceHeader} Network bind failed: Self entity not found {entityId}.");
+                return false;
+            }
+
+            AnimancerComponent animancer = m_playerInstance.GetComponent<AnimancerComponent>();
+            if (animancer == null)
+            {
+                Log.Error($"{TraceHeader} Network bind failed: AnimancerComponent missing.");
+                return false;
+            }
+
+            EntityBase entity = world.GetEntity(entityId);
+            if (entity.GetExistComp<PlayerComponent>())
+            {
+                entity.GetComp<PlayerComponent>().isLocal = true;
+            }
+
+            PlayerViewComponent view = new PlayerViewComponent
+            {
+                viewRoot = m_playerInstance.transform,
+                animancer = animancer,
+                animConfig = m_playerAnimConfig,
+            };
+
+            if (entity.GetExistComp<PlayerViewComponent>())
+            {
+                entity.ChangeComp(view);
             }
             else
             {
-                Log.Info($"{TraceHeader} BattleWorld started, logic frame step {GameModule.FrameSync.IntervalTime}ms.");
+                entity.AddComp(view);
             }
-            TryBindCamera(player.transform);
+
+            if (!entity.GetExistComp<PlayerCommandRecordComponent>())
+            {
+                entity.AddComp(new PlayerCommandRecordComponent());
+            }
+            entity.GetComp<PlayerCommandRecordComponent>().EnsureDefaultCommand(entityId);
+
+            m_playerEntityId = entityId;
+            TryBindCamera(m_playerInstance.transform);
+            Log.Info($"{TraceHeader} Network Self entity bound: {entityId}.");
+            return true;
         }
 
         private void SpawnLocalPlayerEntity(Transform playerRoot, AnimancerComponent animancer, PlayerAnimConfig animConfig)
