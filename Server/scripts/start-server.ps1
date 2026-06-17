@@ -1,6 +1,16 @@
+param(
+    [string]$ServerRoot
+)
+
 $ErrorActionPreference = 'Stop'
 
-$serverRoot = 'D:\UGitD\Fire\Server'
+$scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+if ([string]::IsNullOrWhiteSpace($ServerRoot)) {
+    $serverRoot = (Resolve-Path -LiteralPath (Join-Path $scriptRoot '..')).Path
+} else {
+    $serverRoot = (Resolve-Path -LiteralPath $ServerRoot).Path
+}
+
 Set-Location -LiteralPath $serverRoot
 
 $mysqlBase = Join-Path $env:LOCALAPPDATA 'LockStep\mysql'
@@ -56,6 +66,9 @@ if (-not $msbuild) {
 
 Write-Host 'Building server...'
 & $msbuild .\LockStepDemo.sln /p:Configuration=Debug
+if ($LASTEXITCODE -ne 0) {
+    throw "Server build failed. MSBuild exit code: $LASTEXITCODE"
+}
 
 $serverExe = Join-Path $serverRoot 'LockStepDemo\bin\Debug\LockStepDemo.exe'
 if (-not (Test-Path -LiteralPath $serverExe)) {

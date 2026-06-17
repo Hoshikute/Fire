@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenSpec 变更 start-server-environment-from-scenelauncher</title>
+  <style>
+:root {
+  color-scheme: light;
+  --page: #e6f4f4;
+  --paper: #f5fafa;
+  --paper-soft: #d5eded;
+  --paper-mute: #c2e5e5;
+  --ink: #2a4b4c;
+  --muted: #526f70;
+  --line: rgba(42, 75, 76, .12);
+  --line-soft: rgba(42, 75, 76, .06);
+  --nav: rgba(157, 200, 200, .94);
+  --teal: #519D9E;
+  --teal-bright: #58C9B9;
+  --mint: #9DC8C8;
+  --primary: #D1B6E1;
+  --primary-soft: rgba(209, 182, 225, .6);
+  --primary-mute: rgba(209, 182, 225, .2);
+  --accent: #519D9E;
+  --accent-soft: rgba(88, 201, 185, .18);
+  --accent-text: #214d4e;
+  --missing: #8f3a1a;
+  --missing-soft: rgba(209, 182, 225, .24);
+  --code-bg: #263238;
+  --code-text: #F8F8F8;
+  --inline-code-bg: #d5eded;
+  --shadow: 0 18px 46px rgba(42, 75, 76, .10);
+  --radius: 7px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #263238;
+    --paper: #304a4b;
+    --paper-soft: #37474F;
+    --paper-mute: #2D3B41;
+    --ink: #F8F8F8;
+    --muted: #c2d6d6;
+    --line: rgba(248, 248, 248, .12);
+    --line-soft: rgba(248, 248, 248, .06);
+    --nav: rgba(38, 50, 56, .92);
+    --teal: #58C9B9;
+    --teal-bright: #58C9B9;
+    --mint: #519D9E;
+    --primary: #D1B6E1;
+    --primary-soft: rgba(209, 182, 225, .6);
+    --primary-mute: rgba(209, 182, 225, .2);
+    --accent: #519D9E;
+    --accent-soft: rgba(209, 182, 225, .2);
+    --accent-text: #F8F8F8;
+    --missing: #f0b79b;
+    --missing-soft: rgba(163, 59, 22, .16);
+    --code-bg: #172126;
+    --code-text: #F8F8F8;
+    --inline-code-bg: #37474F;
+    --shadow: 0 18px 46px rgba(0, 0, 0, .24);
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Microsoft YaHei UI", "Segoe UI Variable", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    linear-gradient(135deg, var(--primary-mute), rgba(88, 201, 185, .13) 42%, rgba(157, 200, 200, .28)),
+    var(--page);
+  text-rendering: optimizeLegibility;
+}
+a { color: inherit; }
+.page { min-height: 100vh; }
+.topbar {
+  position: relative;
+  background: var(--nav);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(42, 75, 76, .08);
+}
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, var(--teal), var(--teal-bright), var(--primary));
+}
+.topbar-inner {
+  width: min(1680px, 100%);
+  margin: 0 auto;
+  padding: 22px clamp(14px, 2.4vw, 34px) 0;
+}
+.title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.topbar h1 {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.15;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+.copy-command {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  min-width: 96px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-soft);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+.copy-command:hover {
+  border-color: var(--teal-bright);
+  background: var(--teal-bright);
+}
+.copy-command:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+.copy-command:active { transform: translateY(1px); }
+.copy-command.copied {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+.copy-command.failed {
+  border-color: var(--missing);
+  background: var(--missing-soft);
+  color: var(--missing);
+}
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  overflow-x: auto;
+  padding: 0;
+}
+.tab {
+  flex: 0 0 auto;
+  min-width: 92px;
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-mute);
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.3;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+.tab:hover { background: var(--teal-bright); border-color: var(--teal-bright); }
+.tab:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+.tab.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+main {
+  width: 100%;
+  margin: 0;
+  padding: 0 0 52px;
+}
+.doc {
+  margin: 0 0 20px;
+  overflow: hidden;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: none;
+}
+.doc[hidden] { display: none; }
+.content {
+  padding: 16px clamp(14px, 2vw, 26px) 24px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.content > :first-child { margin-top: 0; }
+.content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
+  margin: .85em 0 .35em;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+.content h1 {
+  font-size: 24px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 7px;
+}
+.content h2 { font-size: 21px; }
+.content h3 { font-size: 18px; }
+.content p { margin: .45em 0; }
+ul, ol { padding-left: 25px; }
+li { margin: .2em 0; }
+blockquote {
+  margin: 14px 0;
+  padding: 11px 14px;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+code {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: var(--inline-code-bg);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: .92em;
+}
+pre {
+  margin: 16px 0;
+  padding: 15px;
+  border-radius: var(--radius);
+  overflow: auto;
+  background: var(--code-bg);
+  color: var(--code-text);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+pre code { padding: 0; background: transparent; color: inherit; }
+.missing {
+  display: inline-block;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--missing-soft);
+  color: var(--missing);
+  font-weight: 700;
+}
+.taskbox {
+  display: inline-block;
+  width: 1.25em;
+  color: var(--accent);
+  font-weight: 700;
+}
+hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .doc:not([hidden]) {
+    animation: panel-in .18s ease-out;
+  }
+  @keyframes panel-in {
+    from { opacity: .82; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+@media (max-width: 820px) {
+  .topbar-inner { padding-top: 18px; }
+  .title-row { display: block; }
+  .copy-command { display: inline-block; margin-top: 10px; }
+  main { padding-top: 0; }
+}
+@media (max-width: 560px) {
+  .tabs { gap: 8px; }
+  .tab { min-width: 82px; padding: 9px 11px; }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="title-row">
+          <div>
+            <div class="eyebrow">OpenSpec Review</div>
+            <h1>start-server-environment-from-scenelauncher</h1>
+          </div>
+          <button class="copy-command" type="button" aria-label="复制执行命令">复制命令</button>
+        </div>
+        <nav class="tabs" role="tablist" aria-label="OpenSpec 产物页签">
+          <a class="tab" id="tab-doc-1-proposal-md" role="tab" href="#doc-1-proposal-md" data-tab="doc-1-proposal-md" aria-controls="doc-1-proposal-md">提案</a><a class="tab" id="tab-doc-2-design-md" role="tab" href="#doc-2-design-md" data-tab="doc-2-design-md" aria-controls="doc-2-design-md">设计</a><a class="tab" id="tab-doc-3-tasks-md" role="tab" href="#doc-3-tasks-md" data-tab="doc-3-tasks-md" aria-controls="doc-3-tasks-md">任务</a><a class="tab" id="tab-doc-4-specs-scenelauncher-server-environment-spec-md" role="tab" href="#doc-4-specs-scenelauncher-server-environment-spec-md" data-tab="doc-4-specs-scenelauncher-server-environment-spec-md" aria-controls="doc-4-specs-scenelauncher-server-environment-spec-md">规格：scenelauncher-server-environment</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="doc" id="doc-1-proposal-md" data-panel="doc-1-proposal-md" role="tabpanel" aria-labelledby="tab-doc-1-proposal-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>为什么</h2>
+<p>目前 Unity 编辑器工具栏的 <code>Launcher</code> 只负责打开 <code>main</code> 场景并进入 Play Mode，本地联机调试还需要开发者手动启动 <code>Server/LockStepDemo</code> 及其 MySQL 依赖。随着客户端已接入选服、登录和服务端权威帧同步流程，缺少一键准备 server 环境会让 <code>SceneLauncher</code> 的“从任意场景直接进入联机验证”体验断在登录前。</p>
+<h2>变更内容</h2>
+<ul>
+<li>在 <code>SceneLauncher</code> 的 Editor-only 启动流程中增加“启动 server 环境”的能力，在进入 Play Mode 前确保本地 server 环境可用。</li>
+<li>复用仓库现有 <code>Server/scripts/start-server.*</code> 脚本，避免在 Unity 编辑器代码里重写构建、MySQL、服务端进程启动逻辑。</li>
+<li>启动前检查本地 server 端口状态，已运行时直接进入 Play Mode，未运行时再触发脚本。</li>
+<li>修正 server 启动脚本的仓库路径依赖，使它能从当前 checkout 相对定位 <code>Server</code> 目录。</li>
+<li>在启动失败时给出清晰的 Editor 日志，说明是 MySQL、MSBuild、服务端构建、端口占用还是脚本路径问题。</li>
+<li>明确客户端登录协议和服务端监听配置需要对齐，避免 server 已启动但登录连接失败。</li>
+</ul>
+<h2>能力</h2>
+<h3>新增能力</h3>
+<ul>
+<li><code>scenelauncher-server-environment</code>: 定义 <code>SceneLauncher</code> 在进入 Play Mode 前准备本地 server 环境的行为、可见反馈和失败处理。</li>
+</ul>
+<h3>修改能力</h3>
+<ul>
+<li>无。</li>
+</ul>
+<h2>影响</h2>
+<ul>
+<li>影响 Unity Editor 工具：<code>UnityProject/Assets/Editor/ToolbarExtender/UnityToolbarExtenderLeft/SceneLauncher.cs</code>。</li>
+<li>影响本地 server 启动脚本：<code>Server/scripts/start-server.bat</code>、<code>Server/scripts/start-server.ps1</code>。</li>
+<li>需要核对服务端监听配置：<code>Server/LockStepDemo/App.config</code> 的 <code>port=&quot;7500&quot;</code> / <code>mode=&quot;Udp&quot;</code>。</li>
+<li>需要核对客户端登录网络初始化：<code>LoginWindow</code> 当前使用 <code>ProtocolType.Tcp</code>，实现时必须决定是调整客户端协议、调整服务端模式，还是把协议对齐作为启动前检查/提示的一部分。</li>
+<li>不改变运行时 TEngine <code>Procedure</code> FSM、不改变正式包行为、不改变 <code>BattleContext</code> 的 Game 场景初始化职责。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-2-design-md" data-panel="doc-2-design-md" role="tabpanel" aria-labelledby="tab-doc-2-design-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>背景</h2>
+<p><code>SceneLauncher</code> 是 Unity Editor 工具栏扩展，当前点击 <code>Launcher</code> 后只会打开名为 <code>main</code> 的场景并设置 <code>EditorApplication.isPlaying = true</code>。进入 Play Mode 后，运行时才由 TEngine <code>ProcedureSetting</code> 启动 <code>ProcedureLaunch</code>，再通过 <code>ProcedureModule</code> / <code>FsmModule</code> 跑热更、资源、程序集加载和 <code>GameApp.Entrance</code>。</p>
+<p>联机入口已经在热更层拆成 <code>SelectServerWindow</code> 和 <code>LoginWindow</code>：选服写入 <code>Game.GameData.ServerAddress</code> / <code>ServerPort</code>，登录窗口通过 <code>GameModule.Network.Connect(...)</code> 连接服务端，之后加载 <code>Game</code> 场景并调用 <code>BattleContext.InitializeGameScene()</code>。当前仓库也已有 <code>Server/LockStepDemo</code> 与 <code>Server/scripts/start-server.*</code>，但 <code>start-server.ps1</code> 仍硬编码 <code>D:\UGitD\Fire\Server</code>，而服务端配置为 <code>7500 + Udp</code>，客户端登录初始化仍使用 <code>ProtocolType.Tcp</code>。</p>
+<p>这次变更的边界应保持在 Editor 工作流和本地 server 启动脚本，不改变正式包启动流程，不把 server 启动逻辑塞进 TEngine Procedure FSM。</p>
+<h2>目标 / 非目标</h2>
+<p><strong>目标：</strong></p>
+<ul>
+<li>点击 <code>SceneLauncher</code> 的 <code>Launcher</code> 后，在进入 Play Mode 前准备本地 server 环境。</li>
+<li>已有本地 server 正在监听时直接复用，避免重复启动。</li>
+<li>未监听时复用仓库内 server 启动脚本，完成 MySQL 检查、服务端构建和服务端进程启动。</li>
+<li>去掉启动脚本对旧 checkout 的硬编码路径，保证从当前仓库相对定位 <code>Server</code>。</li>
+<li>给 Unity Console 提供清晰、可搜索的启动结果、失败原因和排查入口。</li>
+<li>在实现阶段明确处理客户端协议与服务端监听模式不一致的问题。</li>
+</ul>
+<p><strong>非目标：</strong></p>
+<ul>
+<li>不改变 TEngine <code>Procedure</code> FSM 链路。</li>
+<li>不改变 <code>GameApp</code>、<code>SelectServerWindow</code>、<code>LoginWindow</code> 的业务入口职责，除非协议对齐需要最小调整。</li>
+<li>不在 Unity Editor 代码中重写 MySQL、MSBuild、服务端构建或服务端主循环。</li>
+<li>不把该能力带入玩家正式包或运行时热更程序集。</li>
+<li>不实现复杂的 server 进程托管面板、日志查看器或停止/重启 UI。</li>
+</ul>
+<h2>决策</h2>
+<h3>Decision: 在 <code>SceneLauncher</code> 进入 Play 前启动 server</h3>
+<p><code>SceneHelper.OnUpdate()</code> 已经是从按钮点击到打开 <code>main</code> 场景、进入 Play Mode 的唯一收束点。server 环境检查应插入在 <code>EditorSceneManager.OpenScene(scenePath)</code> 成功之后、<code>EditorApplication.isPlaying = true</code> 之前。</p>
+<p>这样做的好处是：只有通过编辑器 <code>Launcher</code> 按钮进入时才触发本地 server 准备，普通 Unity Play 按钮、运行时 Procedure FSM、正式包都不受影响。</p>
+<p>备选方案是在 <code>ProcedureLaunch</code> 中启动 server。放弃该方案，因为 <code>ProcedureLaunch</code> 属于运行时流程，会污染正式包，并把编辑器开发环境依赖带进 TEngine 流程 FSM。</p>
+<h3>Decision: 复用 <code>Server/scripts</code>，Editor 只负责编排和检测</h3>
+<p>Editor 侧只做三件事：</p>
+<ul>
+<li>解析仓库根路径和脚本路径。</li>
+<li>检查目标 server 端口是否已经监听。</li>
+<li>启动脚本并等待端口就绪或超时。</li>
+</ul>
+<p>MySQL 启动、MSBuild 查找、server 构建和 <code>LockStepDemo.exe</code> 启动继续交给 <code>Server/scripts/start-server.*</code>。脚本需要支持从自身路径或传参定位仓库内 <code>Server</code> 目录，不能再硬编码 <code>D:\UGitD\Fire\Server</code>。</p>
+<p>备选方案是在 C# Editor 代码里直接调用 MSBuild、启动 MySQL 和 <code>LockStepDemo.exe</code>。放弃该方案，因为它会复制脚本职责，后续维护两套启动逻辑。</p>
+<h3>Decision: 端口检查必须理解 TCP/UDP 差异</h3>
+<p>服务端当前 <code>App.config</code> 是 <code>port=&quot;7500&quot;</code>、<code>mode=&quot;Udp&quot;</code>，而 <code>LoginWindow</code> 当前使用 <code>ProtocolType.Tcp</code> 初始化网络。实现时不能只检查 TCP 端口就认为 server 可用，也不能在协议不一致时静默进入 Play。</p>
+<p>需要在启动前确定本地联机使用的协议策略：</p>
+<ul>
+<li>要么把客户端匿名登录初始化改为与服务端一致的 UDP；</li>
+<li>要么把服务端配置改为 TCP；</li>
+<li>要么在 <code>SceneLauncher</code> 启动前检查到不一致时给出明确错误并阻止“已准备好”的误报。</li>
+</ul>
+<p>备选方案是只检查 <code>127.0.0.1:7500</code> 是否有任意监听。放弃该方案，因为 TCP/UDP 不一致时登录仍会失败，问题会被误导成业务登录失败。</p>
+<h3>Decision: 启动失败时不盲目进入 Play Mode</h3>
+<p>如果脚本路径缺失、MySQL 不存在或启动失败、MSBuild 找不到、构建失败、server 端口未在超时内就绪，<code>SceneLauncher</code> 应取消本次自动进入 Play Mode，并在 Unity Console 中输出错误。这样能让“点击 Launcher 后就是可联机调试环境”的承诺保持可信。</p>
+<p>备选方案是失败后仍进入 Play Mode。放弃该方案，因为用户会在登录界面才看到连接失败，排查成本更高。</p>
+<h2>风险 / 取舍</h2>
+<ul>
+<li>[Risk] 启动脚本是长生命周期进程，Editor 若等待脚本结束会卡住。→ Mitigation: Editor 只等待端口就绪，不等待 server 进程退出；脚本/进程启动应以外部进程方式运行。</li>
+<li>[Risk] 端口已监听但不是当前仓库的 <code>LockStepDemo</code>。→ Mitigation: 第一阶段只把端口监听视为“已有 server 环境”，并在日志中说明复用；后续若需要再加握手验证。</li>
+<li>[Risk] Windows PowerShell 执行策略阻止 <code>.ps1</code>。→ Mitigation: 优先支持 <code>.bat</code> 或用 <code>powershell.exe -ExecutionPolicy Bypass -File</code> 启动 <code>.ps1</code>，并在失败日志中提示执行策略。</li>
+<li>[Risk] MySQL 或 MSBuild 缺失导致启动失败。→ Mitigation: 复用脚本现有检查，并把脚本退出码/日志路径写入 Unity Console。</li>
+<li>[Risk] 客户端 TCP 与服务端 UDP 不一致。→ Mitigation: 在实现任务中先做协议对齐决策，再把检查或调整纳入验收。</li>
+<li>[Risk] 每次点击 Launcher 都构建 server 影响速度。→ Mitigation: 先检查端口，已监听时不触发构建；脚本内部可继续保留构建逻辑以保证首次启动正确。</li>
+</ul>
+<h2>迁移计划</h2>
+<ol>
+<li>先修正 <code>Server/scripts/start-server.ps1</code> 的路径定位，确保脚本从当前仓库运行。</li>
+<li>在 <code>SceneLauncher</code> 增加 Editor-only server 环境检查和脚本启动流程。</li>
+<li>增加端口/协议检查，明确处理 <code>7500 + Udp</code> 与客户端初始化协议的关系。</li>
+<li>验证三条路径：server 已运行、server 未运行但可启动、server 启动失败。</li>
+<li>回归普通 Unity Play 按钮和运行时 Procedure 链路，确认不会触发 server 启动。</li>
+</ol>
+<p>回退策略：移除 <code>SceneLauncher</code> 中的 server 环境检查调用即可恢复旧行为；脚本路径修正可保留，因为它只让脚本更适配当前 checkout。</p>
+<h2>待确认问题</h2>
+<ul>
+<li>本地联机调试最终应该统一使用 TCP 还是 UDP？当前服务端配置和客户端初始化不一致，需要在实现前确认或由本 change 一并修正。</li>
+<li><code>Launcher</code> 点击时 server 启动窗口应保持可见还是隐藏？如果仍依赖按 <code>q</code> 停止 server，可见窗口更利于手动停止；如果后续改成后台服务，则需要额外停止机制。</li>
+<li>是否需要为 server 启动增加 EditorPrefs 开关？当前 proposal 默认点击 <code>Launcher</code> 就准备 server 环境，后续如果单机调试频繁，可再加显式开关。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-3-tasks-md" data-panel="doc-3-tasks-md" role="tabpanel" aria-labelledby="tab-doc-3-tasks-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>1. Server 启动脚本准备</h2>
+<ul>
+<li><span class="taskbox">✓</span>1.1 修正 <code>Server/scripts/start-server.ps1</code> 的 server 根路径定位，移除 <code>D:\UGitD\Fire\Server</code> 硬编码，支持从脚本路径或参数定位当前 checkout 的 <code>Server</code> 目录。</li>
+<li><span class="taskbox">□</span>1.2 确认 <code>Server/scripts/start-server.bat</code> 和 <code>.ps1</code> 在当前仓库路径下都能找到 <code>LockStepDemo.sln</code>、<code>LockStepDemo.exe</code>、MySQL 配置和 MSBuild。</li>
+<li><span class="taskbox">✓</span>1.3 确认本地 server 的监听协议和端口来源，记录 <code>Server/LockStepDemo/App.config</code> 的 <code>7500</code> 与 <code>Udp</code> 配置。</li>
+<li><span class="taskbox">✓</span>1.4 对齐客户端登录协议与服务端监听模式，决定并实施 TCP/UDP 的最小修正或启动前阻断提示策略。</li>
+</ul>
+<h2>2. SceneLauncher 接入</h2>
+<ul>
+<li><span class="taskbox">✓</span>2.1 在 <code>UnityProject/Assets/Editor/ToolbarExtender/UnityToolbarExtenderLeft/SceneLauncher.cs</code> 中增加 Editor-only server 环境检查入口，只从工具栏 <code>Launcher</code> 按钮路径触发。</li>
+<li><span class="taskbox">✓</span>2.2 在 <code>EditorSceneManager.OpenScene(scenePath)</code> 成功后、<code>EditorApplication.isPlaying = true</code> 前调用 server 环境准备逻辑。</li>
+<li><span class="taskbox">✓</span>2.3 实现本地 server 端口就绪检查，已监听时跳过脚本启动并复用现有 server。</li>
+<li><span class="taskbox">✓</span>2.4 实现脚本启动逻辑，调用仓库内 <code>Server/scripts/start-server.*</code>，并避免等待 server 长生命周期进程退出。</li>
+<li><span class="taskbox">✓</span>2.5 实现端口等待与超时控制，server 在超时内就绪才进入 Play Mode。</li>
+</ul>
+<h2>3. 日志与失败处理</h2>
+<ul>
+<li><span class="taskbox">✓</span>3.1 为 server 环境准备过程添加统一日志前缀，输出检查、复用、启动、就绪和失败状态。</li>
+<li><span class="taskbox">✓</span>3.2 当脚本路径缺失、server 方案缺失、MySQL 缺失、MSBuild 缺失、构建失败或端口超时时，取消本次自动进入 Play Mode。</li>
+<li><span class="taskbox">✓</span>3.3 在失败日志中输出可操作信息，包括脚本路径、目标端口、目标协议和下一步排查建议。</li>
+<li><span class="taskbox">✓</span>3.4 确保普通 Unity Play 按钮不会触发 server 启动脚本或 server 环境检查。</li>
+</ul>
+<h2>4. 验证与文档</h2>
+<ul>
+<li><span class="taskbox">□</span>4.1 验证 server 已运行时点击 <code>SceneLauncher</code>：不启动第二个 server，直接打开 <code>main</code> 并进入 Play Mode。</li>
+<li><span class="taskbox">□</span>4.2 验证 server 未运行但环境完整时点击 <code>SceneLauncher</code>：脚本启动 server，端口就绪后进入 Play Mode。</li>
+<li><span class="taskbox">□</span>4.3 验证 server 启动失败路径：故意使用缺失脚本或不可用依赖时，自动 Play Mode 被取消且 Unity Console 输出明确错误。</li>
+<li><span class="taskbox">✓</span>4.4 验证 <code>ProcedureLaunch</code>、<code>GameApp.Entrance</code>、<code>SelectServerWindow</code>、<code>LoginWindow</code> 的运行时职责没有被 server 启动逻辑污染。</li>
+<li><span class="taskbox">✓</span>4.5 运行 <code>openspec validate start-server-environment-from-scenelauncher --strict</code>。</li>
+<li><span class="taskbox">✓</span>4.6 刷新 <code>Temp/openspec-html/start-server-environment-from-scenelauncher/index.html</code> 供审阅。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-4-specs-scenelauncher-server-environment-spec-md" data-panel="doc-4-specs-scenelauncher-server-environment-spec-md" role="tabpanel" aria-labelledby="tab-doc-4-specs-scenelauncher-server-environment-spec-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>新增需求</h2>
+<h3>需求：SceneLauncher prepares local server before Play Mode</h3>
+<p><code>SceneLauncher</code> SHALL prepare the local server environment before it enters Play Mode from the editor toolbar <code>Launcher</code> button.</p>
+<h4>场景：Server is already ready</h4>
+<ul>
+<li><strong>当</strong> the user clicks the editor toolbar <code>Launcher</code> button and the configured local server endpoint is already listening</li>
+<li><strong>则</strong> <code>SceneLauncher</code> opens the <code>main</code> scene and enters Play Mode without starting another server process</li>
+</ul>
+<h4>场景：Server is not ready</h4>
+<ul>
+<li><strong>当</strong> the user clicks the editor toolbar <code>Launcher</code> button and the configured local server endpoint is not listening</li>
+<li><strong>则</strong> <code>SceneLauncher</code> starts the repository server bootstrap script before entering Play Mode</li>
+</ul>
+<h4>场景：Server startup succeeds</h4>
+<ul>
+<li><strong>当</strong> the server bootstrap script starts the local server and the configured endpoint becomes ready before timeout</li>
+<li><strong>则</strong> <code>SceneLauncher</code> enters Play Mode</li>
+</ul>
+<h4>场景：Server startup fails</h4>
+<ul>
+<li><strong>当</strong> the server bootstrap script fails or the configured endpoint does not become ready before timeout</li>
+<li><strong>则</strong> <code>SceneLauncher</code> MUST cancel the automatic Play Mode entry and log an actionable editor error</li>
+</ul>
+<h3>需求：Server bootstrap uses repository-relative paths</h3>
+<p>The server bootstrap script SHALL locate the <code>Server</code> directory relative to the current checkout or an explicit argument, and MUST NOT depend on a hard-coded absolute checkout path.</p>
+<h4>场景：Repository path differs from old local path</h4>
+<ul>
+<li><strong>当</strong> the repository is checked out at <code>E:\EUGIT\Fire</code></li>
+<li><strong>则</strong> the server bootstrap script locates <code>Server/LockStepDemo.sln</code> under that checkout instead of using <code>D:\UGitD\Fire\Server</code></li>
+</ul>
+<h4>场景：Script is launched from SceneLauncher</h4>
+<ul>
+<li><strong>当</strong> <code>SceneLauncher</code> invokes the server bootstrap script</li>
+<li><strong>则</strong> the script runs with a working directory or argument that resolves to the current repository&#x27;s <code>Server</code> directory</li>
+</ul>
+<h3>需求：SceneLauncher reports server preparation status</h3>
+<p><code>SceneLauncher</code> SHALL report server preparation progress and failure reasons through Unity Editor logs.</p>
+<h4>场景：Existing server is reused</h4>
+<ul>
+<li><strong>当</strong> the configured endpoint is already listening</li>
+<li><strong>则</strong> Unity Console logs that the existing local server environment is being reused</li>
+</ul>
+<h4>场景：Script path is missing</h4>
+<ul>
+<li><strong>当</strong> the expected server bootstrap script cannot be found</li>
+<li><strong>则</strong> Unity Console logs the missing path and cancels automatic Play Mode entry</li>
+</ul>
+<h4>场景：Dependency is missing</h4>
+<ul>
+<li><strong>当</strong> MySQL, MSBuild, the server solution, or the server executable cannot be found or started</li>
+<li><strong>则</strong> Unity Console logs the failing dependency or script failure context</li>
+</ul>
+<h3>需求：Client and server protocol configuration is validated</h3>
+<p>The launcher server preparation flow SHALL account for the configured client protocol and server listening mode before claiming the local server environment is ready.</p>
+<h4>场景：Protocol configuration is aligned</h4>
+<ul>
+<li><strong>当</strong> the client network initialization protocol matches the local server listening mode and the configured endpoint is ready</li>
+<li><strong>则</strong> <code>SceneLauncher</code> may proceed into Play Mode</li>
+</ul>
+<h4>场景：Protocol configuration is mismatched</h4>
+<ul>
+<li><strong>当</strong> the client network initialization protocol does not match the local server listening mode</li>
+<li><strong>则</strong> <code>SceneLauncher</code> MUST log a clear protocol mismatch warning or error before Play Mode entry</li>
+</ul>
+<h3>需求：Runtime startup flow remains unchanged</h3>
+<p>The server environment preparation SHALL be limited to the Unity Editor <code>SceneLauncher</code> path and MUST NOT change the runtime TEngine Procedure startup flow.</p>
+<h4>场景：Normal Unity Play button is used</h4>
+<ul>
+<li><strong>当</strong> the user enters Play Mode without clicking the <code>SceneLauncher</code> toolbar <code>Launcher</code> button</li>
+<li><strong>则</strong> the server bootstrap script is not started by this feature</li>
+</ul>
+<h4>场景：ProcedureLaunch runs</h4>
+<ul>
+<li><strong>当</strong> <code>ProcedureLaunch</code> runs after the <code>main</code> scene enters Play Mode</li>
+<li><strong>则</strong> it continues to initialize launcher UI, language, and audio without starting the server environment itself</li>
+</ul>
+<h4>场景：Player build runs</h4>
+<ul>
+<li><strong>当</strong> the project runs as a player build outside the Unity Editor</li>
+<li><strong>则</strong> no <code>SceneLauncher</code> server bootstrap code is included or executed</li>
+</ul>
+  </div>
+</section>
+    </main>
+  </div>
+  <script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('[data-tab]'));
+  const panels = Array.from(document.querySelectorAll('[data-panel]'));
+  const panelIds = new Set(panels.map((panel) => panel.id));
+  const copyButton = document.querySelector('.copy-command');
+  const applyCommand = "/prompts:opsx-apply start-server-environment-from-scenelauncher";
+
+  async function copyText(text) {
+    const errors = [];
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+    if (copyWithEvent(text)) { return; }
+    if (copyWithTextarea(text)) { return; }
+    throw errors[0] || new Error('copy command rejected');
+  }
+
+  function copyWithEvent(text) {
+    const handler = (event) => {
+      event.clipboardData.setData('text/plain', text);
+      event.preventDefault();
+    };
+    document.addEventListener('copy', handler, true);
+    try {
+      return document.execCommand('copy');
+    } catch (error) {
+      return false;
+    } finally {
+      document.removeEventListener('copy', handler, true);
+    }
+  }
+
+  function copyWithTextarea(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    try {
+      return document.execCommand('copy');
+    } catch (error) {
+      return false;
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+
+  function showCopyState(state, label) {
+    if (!copyButton) { return; }
+    copyButton.textContent = label;
+    copyButton.classList.toggle('copied', state === 'copied');
+    copyButton.classList.toggle('failed', state === 'failed');
+    window.clearTimeout(copyButton.copyTimer);
+    copyButton.copyTimer = window.setTimeout(() => {
+      copyButton.textContent = '复制命令';
+      copyButton.classList.remove('copied', 'failed');
+    }, 1600);
+  }
+
+  function activate(id, updateHash) {
+    const targetId = panelIds.has(id) ? id : (tabs[0] && tabs[0].dataset.tab);
+    if (!targetId) { return; }
+    let activeTab = null;
+    tabs.forEach((tab) => {
+      const active = tab.dataset.tab === targetId;
+      tab.classList.toggle('active', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      tab.setAttribute('tabindex', active ? '0' : '-1');
+      if (active) { activeTab = tab; }
+    });
+    panels.forEach((panel) => { panel.hidden = panel.id !== targetId; });
+    if (updateHash && window.location.hash !== '#' + targetId) {
+      history.pushState(null, '', '#' + targetId);
+    }
+    return activeTab;
+  }
+
+  if (copyButton) {
+    copyButton.addEventListener('click', async () => {
+      try {
+        await copyText(applyCommand);
+        showCopyState('copied', '已复制');
+      } catch (error) {
+        showCopyState('failed', '复制失败');
+      }
+    });
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', (event) => {
+      event.preventDefault();
+      activate(tab.dataset.tab, true);
+    });
+    tab.addEventListener('keydown', (event) => {
+      const current = tabs.indexOf(tab);
+      let next = current;
+      if (event.key === 'ArrowRight') { next = (current + 1) % tabs.length; }
+      else if (event.key === 'ArrowLeft') { next = (current - 1 + tabs.length) % tabs.length; }
+      else if (event.key === 'Home') { next = 0; }
+      else if (event.key === 'End') { next = tabs.length - 1; }
+      else { return; }
+      event.preventDefault();
+      const activeTab = activate(tabs[next].dataset.tab, true);
+      if (activeTab) { activeTab.focus(); }
+    });
+  });
+  window.addEventListener('hashchange', () => activate(window.location.hash.slice(1), false));
+  activate(window.location.hash.slice(1), false);
+})();
+  </script>
+</body>
+</html>

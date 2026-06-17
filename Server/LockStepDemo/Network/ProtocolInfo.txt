@@ -123,23 +123,31 @@ message m_commandcomponent_s
 {
 	required syncvector3 movedir = 1;
 	required syncvector3 skilldir = 2;
-	required int32 element1 = 3;
-	required int32 element2 = 4;
-	required bool isfire = 5;
-	required int32 id = 6;
-	required int32 frame = 7;
-	required int32 time = 8;
+	required bool jump = 3;
+	required bool togglelock = 4;
+	required bool platformjump = 5;
+	required int32 speedgear = 6;
+	required int32 element1 = 7;
+	required int32 element2 = 8;
+	required bool isfire = 9;
+	required int32 id = 10;
+	required int32 frame = 11;
+	required int32 time = 12;
 }
 message m_commandcomponent_c
 {
 	required syncvector3 movedir = 1;
 	required syncvector3 skilldir = 2;
-	required int32 element1 = 3;
-	required int32 element2 = 4;
-	required bool isfire = 5;
-	required int32 id = 6;
-	required int32 frame = 7;
-	required int32 time = 8;
+	required bool jump = 3;
+	required bool togglelock = 4;
+	required bool platformjump = 5;
+	required int32 speedgear = 6;
+	required int32 element1 = 7;
+	required int32 element2 = 8;
+	required bool isfire = 9;
+	required int32 id = 10;
+	required int32 frame = 11;
+	required int32 time = 12;
 }
 
 message m_playerloginmsg_c
@@ -216,7 +224,11 @@ message commandinfo
 	required int32 id = 2;
 	required syncvector3 movedir = 3;
 	required syncvector3 skilldir = 4;
-	required int32 element1 = 5;
-	required int32 element2 = 6;
-	required bool isfire = 7;
+	required bool jump = 5;
+	required bool togglelock = 6;
+	required bool platformjump = 7;
+	required int32 speedgear = 8;
+	required int32 element1 = 9;
+	required int32 element2 = 10;
+	required bool isfire = 11;
 }

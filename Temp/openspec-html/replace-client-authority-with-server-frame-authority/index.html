@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenSpec 变更 replace-client-authority-with-server-frame-authority</title>
+  <style>
+:root {
+  color-scheme: light;
+  --page: #e6f4f4;
+  --paper: #f5fafa;
+  --paper-soft: #d5eded;
+  --paper-mute: #c2e5e5;
+  --ink: #2a4b4c;
+  --muted: #526f70;
+  --line: rgba(42, 75, 76, .12);
+  --line-soft: rgba(42, 75, 76, .06);
+  --nav: rgba(157, 200, 200, .94);
+  --teal: #519D9E;
+  --teal-bright: #58C9B9;
+  --mint: #9DC8C8;
+  --primary: #D1B6E1;
+  --primary-soft: rgba(209, 182, 225, .6);
+  --primary-mute: rgba(209, 182, 225, .2);
+  --accent: #519D9E;
+  --accent-soft: rgba(88, 201, 185, .18);
+  --accent-text: #214d4e;
+  --missing: #8f3a1a;
+  --missing-soft: rgba(209, 182, 225, .24);
+  --code-bg: #263238;
+  --code-text: #F8F8F8;
+  --inline-code-bg: #d5eded;
+  --shadow: 0 18px 46px rgba(42, 75, 76, .10);
+  --radius: 7px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #263238;
+    --paper: #304a4b;
+    --paper-soft: #37474F;
+    --paper-mute: #2D3B41;
+    --ink: #F8F8F8;
+    --muted: #c2d6d6;
+    --line: rgba(248, 248, 248, .12);
+    --line-soft: rgba(248, 248, 248, .06);
+    --nav: rgba(38, 50, 56, .92);
+    --teal: #58C9B9;
+    --teal-bright: #58C9B9;
+    --mint: #519D9E;
+    --primary: #D1B6E1;
+    --primary-soft: rgba(209, 182, 225, .6);
+    --primary-mute: rgba(209, 182, 225, .2);
+    --accent: #519D9E;
+    --accent-soft: rgba(209, 182, 225, .2);
+    --accent-text: #F8F8F8;
+    --missing: #f0b79b;
+    --missing-soft: rgba(163, 59, 22, .16);
+    --code-bg: #172126;
+    --code-text: #F8F8F8;
+    --inline-code-bg: #37474F;
+    --shadow: 0 18px 46px rgba(0, 0, 0, .24);
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Microsoft YaHei UI", "Segoe UI Variable", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    linear-gradient(135deg, var(--primary-mute), rgba(88, 201, 185, .13) 42%, rgba(157, 200, 200, .28)),
+    var(--page);
+  text-rendering: optimizeLegibility;
+}
+a { color: inherit; }
+.page { min-height: 100vh; }
+.topbar {
+  position: relative;
+  background: var(--nav);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(42, 75, 76, .08);
+}
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, var(--teal), var(--teal-bright), var(--primary));
+}
+.topbar-inner {
+  width: min(1680px, 100%);
+  margin: 0 auto;
+  padding: 22px clamp(14px, 2.4vw, 34px) 0;
+}
+.title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.topbar h1 {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.15;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+.copy-command {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  min-width: 96px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-soft);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+.copy-command:hover {
+  border-color: var(--teal-bright);
+  background: var(--teal-bright);
+}
+.copy-command:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+.copy-command:active { transform: translateY(1px); }
+.copy-command.copied {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+.copy-command.failed {
+  border-color: var(--missing);
+  background: var(--missing-soft);
+  color: var(--missing);
+}
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  overflow-x: auto;
+  padding: 0;
+}
+.tab {
+  flex: 0 0 auto;
+  min-width: 92px;
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-mute);
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.3;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+.tab:hover { background: var(--teal-bright); border-color: var(--teal-bright); }
+.tab:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+.tab.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+main {
+  width: 100%;
+  margin: 0;
+  padding: 0 0 52px;
+}
+.doc {
+  margin: 0 0 20px;
+  overflow: hidden;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: none;
+}
+.doc[hidden] { display: none; }
+.content {
+  padding: 16px clamp(14px, 2vw, 26px) 24px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.content > :first-child { margin-top: 0; }
+.content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
+  margin: .85em 0 .35em;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+.content h1 {
+  font-size: 24px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 7px;
+}
+.content h2 { font-size: 21px; }
+.content h3 { font-size: 18px; }
+.content p { margin: .45em 0; }
+ul, ol { padding-left: 25px; }
+li { margin: .2em 0; }
+blockquote {
+  margin: 14px 0;
+  padding: 11px 14px;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+code {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: var(--inline-code-bg);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: .92em;
+}
+pre {
+  margin: 16px 0;
+  padding: 15px;
+  border-radius: var(--radius);
+  overflow: auto;
+  background: var(--code-bg);
+  color: var(--code-text);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+pre code { padding: 0; background: transparent; color: inherit; }
+.missing {
+  display: inline-block;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--missing-soft);
+  color: var(--missing);
+  font-weight: 700;
+}
+.taskbox {
+  display: inline-block;
+  width: 1.25em;
+  color: var(--accent);
+  font-weight: 700;
+}
+hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .doc:not([hidden]) {
+    animation: panel-in .18s ease-out;
+  }
+  @keyframes panel-in {
+    from { opacity: .82; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+@media (max-width: 820px) {
+  .topbar-inner { padding-top: 18px; }
+  .title-row { display: block; }
+  .copy-command { display: inline-block; margin-top: 10px; }
+  main { padding-top: 0; }
+}
+@media (max-width: 560px) {
+  .tabs { gap: 8px; }
+  .tab { min-width: 82px; padding: 9px 11px; }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="title-row">
+          <div>
+            <div class="eyebrow">OpenSpec Review</div>
+            <h1>replace-client-authority-with-server-frame-authority</h1>
+          </div>
+          <button class="copy-command" type="button" aria-label="复制执行命令">复制命令</button>
+        </div>
+        <nav class="tabs" role="tablist" aria-label="OpenSpec 产物页签">
+          <a class="tab" id="tab-doc-1-proposal-md" role="tab" href="#doc-1-proposal-md" data-tab="doc-1-proposal-md" aria-controls="doc-1-proposal-md">提案</a><a class="tab" id="tab-doc-2-design-md" role="tab" href="#doc-2-design-md" data-tab="doc-2-design-md" aria-controls="doc-2-design-md">设计</a><a class="tab" id="tab-doc-3-tasks-md" role="tab" href="#doc-3-tasks-md" data-tab="doc-3-tasks-md" aria-controls="doc-3-tasks-md">任务</a><a class="tab" id="tab-doc-4-specs-server-authoritative-frame-sync-spec-md" role="tab" href="#doc-4-specs-server-authoritative-frame-sync-spec-md" data-tab="doc-4-specs-server-authoritative-frame-sync-spec-md" aria-controls="doc-4-specs-server-authoritative-frame-sync-spec-md">规格：server-authoritative-frame-sync</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="doc" id="doc-1-proposal-md" data-panel="doc-1-proposal-md" role="tabpanel" aria-labelledby="tab-doc-1-proposal-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>为什么</h2>
+<p>当前 Fire 客户端已经具备本地输入固化、命令缓存、快照和回滚基础，但权威命令接收、冲突检测、追帧重算、服务端广播接线尚未闭环；本地玩家实际仍由客户端先行决定，联网时容易出现不同客户端执行帧、输入内容或实体状态不一致。</p>
+<p>需要以 <code>E:\EUGIT\UnityLockStepDemo\UnityLockStepDemo\LockStepDemo\Client\Assets\Script</code> 中的 <code>SyncFrameWork</code> / <code>SyncGameLogic</code> / <code>SyncClientLogic</code> 和 <code>Core</code> 网络输入分发为基准，把 Fire 修正为“客户端只上报帧输入并做预测，服务端汇总/广播权威帧命令，客户端按权威命令回滚重算”的模式。</p>
+<h2>变更内容</h2>
+<ul>
+<li>新增服务端权威帧命令接线：客户端本地输入先记录为预测命令并上行，最终以服务端回传的同帧命令为准。</li>
+<li>新增客户端 <code>StartSyncMsg</code> / <code>CommandMsg</code> 或单条 <code>CommandComponent</code> / <code>PursueMsg</code> / <code>AffirmMsg</code> 处理流程，对齐基准 Demo 的 <code>SyncSystem&lt;T&gt;</code> 职责。</li>
+<li>将 <code>PlayerInputCommandSystem</code> 从“本地输入直接成为最终命令”调整为“本地输入只产生预测/待确认命令；存在权威命令时优先使用权威命令”。</li>
+<li>在 <code>BattleWorld</code> 注册同步接线系统，使权威命令缓存、冲突检测、回滚重算和提前预测成为世界生命周期的一部分。</li>
+<li>补齐服务端协议与命令聚合计划：服务端按逻辑帧收集玩家输入，缺帧时用默认/预测输入补齐，并向所有客户端广播同一帧的权威命令。</li>
+<li>增加验证用例，覆盖双客户端同输入一致、迟到权威命令触发回滚、one-shot 输入不被预测重复、断线/缺帧默认命令不导致不同步。</li>
+<li><strong>BREAKING</strong>：帧同步逻辑不再接受“客户端本地命令直接视为最终结果”的行为；联网模式下本地结果必须允许被服务端权威命令纠正。</li>
+</ul>
+<h2>能力</h2>
+<h3>新增能力</h3>
+<ul>
+<li><code>server-authoritative-frame-sync</code>: 定义服务端权威帧命令、客户端预测回滚、确认/追帧和一致性验证的行为契约。</li>
+</ul>
+<h3>修改能力</h3>
+<ul>
+<li>无。</li>
+</ul>
+<h2>影响</h2>
+<ul>
+<li>客户端受影响范围：</li>
+<li><code>UnityProject/Assets/GameScripts/HotFix/GameLogic/Module/FrameSync/</code></li>
+<li><code>UnityProject/Assets/GameScripts/HotFix/GameLogic/Module/Network/</code></li>
+<li><code>UnityProject/Assets/GameScripts/HotFix/GameLogic/Context/BattleContext.cs</code></li>
+<li>服务端受影响范围：</li>
+<li><code>Server/LockStepDemo/Service/ServiceLogic/</code></li>
+<li><code>Server/LockStepDemo/Service/Game/CommandMessageService.cs</code></li>
+<li><code>Server/LockStepDemo/Service/Message/SyncMessage.cs</code></li>
+<li><code>Server/LockStepDemo/Generate/Protocol/</code></li>
+<li>需要保持的架构约束：</li>
+<li>逻辑帧固定步长，逻辑层只使用确定性数据。</li>
+<li><code>PlayerMoveComponent</code> / <code>PlayerStateComponent</code> 等可回滚状态必须继续通过 <code>DeepCopy()</code> 快照隔离。</li>
+<li>表现层只读逻辑结果，不得反写确定性逻辑状态。</li>
+<li>网络协议中的方向、位置和命令字段必须使用定点/可序列化结构，不直接传 Unity <code>Vector3</code> 或浮点逻辑结果。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-2-design-md" data-panel="doc-2-design-md" role="tabpanel" aria-labelledby="tab-doc-2-design-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>背景</h2>
+<p>Fire 当前帧同步角色链路已经完成了确定性移动、状态推导、命令缓存和快照回滚的基础：</p>
+<ul>
+<li><code>BattleContext</code> 创建 <code>BattleWorld</code>，生成本地玩家实体，并立即 <code>IsStart = true</code>。</li>
+<li><code>PlayerInputCollectSystem</code> 在渲染帧采集 Unity 输入，写入 <code>PlayerInputComponent</code>。</li>
+<li><code>PlayerInputCommandSystem</code> 在逻辑帧把本地输入固化到本地实体 <code>PlayerCommandRecordComponent</code>；非本地实体缺命令时预测。</li>
+<li><code>PlayerMoveSystem</code> / <code>PlayerStateSystem</code> 只按实体帧命令推进逻辑。</li>
+<li><code>WorldBase</code> 已支持 <code>Record</code>、<code>RevertToFrame</code>、<code>Recalc</code>、<code>ClearBefore</code>、<code>ClearAfter</code> 和创建/销毁回滚缓存。</li>
+<li><code>SyncMessage.cs</code> 已定义 <code>StartSyncMsg</code>、<code>CommandMsg</code>、<code>PursueMsg</code>、<code>AffirmMsg</code> 等协议结构。</li>
+</ul>
+<p>缺口是：权威命令没有进入 <code>BattleWorld</code> 生命周期，本地命令会被视为当前帧的事实来源；服务端旧 LockStepDemo 虽有 <code>PlayerInputSystem</code>、<code>CommandMessageService&lt;T&gt;</code>、<code>ServiceSyncSystem</code> 等权威帧聚合雏形，但 Fire 客户端新角色命令尚未对齐接入。</p>
+<p>基准工程的关键思路不是搬代码，而是迁移职责：</p>
+<ul>
+<li>客户端 <code>SyncSystem&lt;T&gt;</code>：处理开始同步、权威命令、确认、追帧、冲突检测、回滚重算、提前预测。</li>
+<li>客户端 <code>CommandSyncSystem&lt;T&gt;</code>：本地输入只作为预测命令上行，非本地实体只吃缓存/预测。</li>
+<li>服务端 <code>PlayerInputSystem</code>：每个服务端逻辑帧选择玩家真实输入或默认/预测输入，并把服务端确定的命令广播出去。</li>
+<li>服务端 <code>CommandMessageService&lt;T&gt;</code>：接收客户端输入、确认、迟到命令追帧、广播权威命令。</li>
+</ul>
+<h2>目标 / 非目标</h2>
+<p><strong>目标：</strong></p>
+<ul>
+<li>把联网模式的权威来源改为服务端帧命令，客户端只负责输入上行、预测和回滚。</li>
+<li>保留 Fire 已有 <code>BattleWorld</code>、<code>PlayerCommandRecordComponent</code>、<code>WorldBase</code> 回滚和 <code>FrameConfig</code> 固定逻辑帧机制。</li>
+<li>新增客户端同步接线系统，能处理 <code>StartSyncMsg</code>、权威命令、<code>PursueMsg</code>、<code>AffirmMsg</code>。</li>
+<li>让 <code>PlayerInputCommandSystem</code> 优先消费权威/缓存命令，本地输入只在缺权威命令时形成预测。</li>
+<li>对齐服务端命令聚合：服务端按帧给所有玩家广播同一份权威命令序列。</li>
+<li>增加可重复验证，证明双客户端同帧输入、迟到输入、缺帧预测和 one-shot 输入都不会导致逻辑分叉。</li>
+</ul>
+<p><strong>非目标：</strong></p>
+<ul>
+<li>不在本 change 内重写角色移动、碰撞、状态机、动画表现和资源加载。</li>
+<li>不把 Fire 客户端回退到 Demo 旧目录结构。</li>
+<li>不把 Unity <code>Transform</code>、<code>Vector3</code> 或表现层状态纳入帧同步协议。</li>
+<li>不要求第一阶段实现复杂反作弊校验；本 change 只先建立“服务端帧命令权威”的同步边界。</li>
+</ul>
+<h2>决策</h2>
+<h3>Decision: 以“权威命令接线系统”补齐 <code>BattleWorld</code></h3>
+<p>新增客户端同步系统，建议命名为 <code>FrameAuthoritySyncSystem</code> 或 <code>PlayerCommandAuthoritySystem</code>，注册在 <code>BattleWorld.GetSystemTypes()</code> 中，职责对应 Demo 的 <code>SyncSystem&lt;T&gt;</code>：</p>
+<ul>
+<li>订阅 <code>GameModule.Network.MessageReceived</code> 或一个轻量的协议分发适配器。</li>
+<li>接收 <code>StartSyncMsg</code> 后设置 <code>FrameCount</code>、<code>EntityIndex</code>、<code>SyncRule</code>、<code>FrameConfig/FrameSyncModule.IntervalTime</code>、<code>ConnectStatusComponent.aheadFrame</code>，再启动世界或从暂停状态恢复。</li>
+<li>接收权威命令后写入对应实体的 <code>PlayerCommandRecordComponent</code>。</li>
+<li>当权威命令帧小于等于当前 <code>WorldBase.FrameCount</code> 时，与预测命令 <code>EqualsCmd</code> 对比；冲突则从该帧回滚重算。</li>
+<li>接收 <code>PursueMsg</code> 后从 <code>recalcFrame</code> 追帧，并按 <code>frame + advanceCount</code> 继续提前预测。</li>
+<li>接收 <code>AffirmMsg</code> 后清理本地 <code>unConfirmFrame</code> 并更新 RTT。</li>
+</ul>
+<p>备选方案是直接修改 <code>PlayerInputCommandSystem</code> 承担网络处理。放弃该方案，因为它会把“输入固化”和“网络权威/回滚调度”耦合在同一个系统，后续难以测试，也容易破坏表现/逻辑分层。</p>
+<h3>Decision: 命令传输做适配层，内部统一为 <code>CommandComponent</code></h3>
+<p>Fire 已有 <code>CommandMsg</code> 批量结构，Demo 当前活跃路径更多使用单条泛型 <code>T : PlayerCommandBase</code>。为了避免协议改造一次做太大，客户端新增一个命令传输适配层：</p>
+<ul>
+<li>上行本地预测命令时发送 <code>CommandComponent</code> 或现有协议生成器支持的等价消息。</li>
+<li>下行可接受单条 <code>CommandComponent</code> 或 <code>CommandMsg</code>，进入同步系统前统一转换为 <code>CommandComponent</code> 列表。</li>
+<li><code>CommandInfo.FromCommand</code> / <code>ToCommand</code> 继续保持深拷贝，避免网络层复用对象污染历史帧。</li>
+</ul>
+<p>备选方案是强制改成只使用 <code>CommandMsg</code> 批量包。放弃该方案作为第一阶段硬要求，因为服务端现有 <code>CommandMessageService&lt;T&gt;</code> 已围绕单条命令工作，先加适配能降低迁移风险；后续可以把批量包作为带宽优化。</p>
+<h3>Decision: 客户端本地输入只产生预测命令</h3>
+<p><code>PlayerInputCommandSystem</code> 保留“每个逻辑帧为本地实体生成命令”的职责，但语义改为：</p>
+<ul>
+<li>若同帧已有权威命令或网络缓存命令，优先使用缓存命令。</li>
+<li>若缺失权威命令，才用 <code>PlayerInputComponent.ToCommand(...)</code> 生成预测命令并记录为待确认。</li>
+<li>预测命令必须上行服务端，并进入 <code>ConnectStatusComponent.unConfirmFrame</code>。</li>
+<li>非本地实体只使用权威命令或预测命令，不读取本地 <code>PlayerInputComponent</code>。</li>
+<li>回滚重算期间不发送网络消息，不触发表现副作用。</li>
+</ul>
+<p>备选方案是等服务端命令到齐才推进逻辑。放弃该方案，因为会牺牲手感；当前项目已有预测和回滚基础，应保留客户端提前帧体验。</p>
+<h3>Decision: 服务端负责每帧补齐输入并广播权威命令</h3>
+<p>服务端沿用旧 LockStepDemo 的职责划分：</p>
+<ul>
+<li><code>CommandMessageService&lt;T&gt;</code> 接收客户端输入，立即回 <code>AffirmMsg</code>。</li>
+<li>若输入帧仍在未来，加入该连接的命令队列，并向其他客户端广播。</li>
+<li>若输入帧已落后服务端当前帧，服务端发送 <code>PursueMsg</code> 让该客户端回滚/追帧。</li>
+<li><code>PlayerInputSystem</code> 每个服务端逻辑帧为每个连接实体选择真实命令或默认/预测命令，设置 <code>id/frame</code> 后写入服务端世界。</li>
+<li>服务端缺输入时生成预测命令并广播给所有客户端，使所有客户端对该帧拥有同一权威输入。</li>
+</ul>
+<p>备选方案是服务端只转发客户端输入、不在缺帧时补齐。放弃该方案，因为任何客户端收不到某玩家同帧命令时都会各自预测，预测差异会扩大成不同步。</p>
+<h3>Decision: 网络模式下由 <code>StartSyncMsg</code> 决定世界起跑</h3>
+<p><code>BattleContext</code> 可以继续负责加载 Player prefab 和创建 <code>BattleWorld</code>，但联网模式下不应把本地世界立即视为权威起跑：</p>
+<ul>
+<li>离线/本地调试模式可继续直接 <code>IsStart = true</code>。</li>
+<li>联网模式应在实体、相机和表现对象就绪后等待服务端 <code>StartSyncMsg</code>。</li>
+<li><code>StartSyncMsg</code> 到达后设置帧号、提前帧数、间隔、实体索引，并执行必要的实体同步缓存。</li>
+</ul>
+<p>备选方案是维持当前立即启动，再收到 <code>StartSyncMsg</code> 后强行修正。放弃该方案，因为起跑帧不一致会让第一批输入和快照窗口很难解释。</p>
+<h2>风险 / 取舍</h2>
+<ul>
+<li>[Risk] 当前客户端协议生成/反序列化路径与服务端生成协议不完全一致 → 先实现命令适配层，并用单条 <code>CommandComponent</code> 与 <code>CommandMsg</code> 双路径测试覆盖。</li>
+<li>[Risk] 回滚到已清理帧会失败或产生错误表现 → <code>ConnectStatusComponent.ClearFrame</code> 必须作为硬保护，超过窗口时记录错误并触发重新同步策略。</li>
+<li>[Risk] one-shot 输入在预测帧重复触发 → 保持 <code>CommandComponent.ClearOneShotInputs()</code>，并给 <code>jump/toggleLock/platformJump</code> 写预测测试。</li>
+<li>[Risk] <code>WorldBase.Recalc</code> 期间发送网络消息或表现事件 → 同步系统和输入系统必须检查 <code>m_world.m_isRecalc</code>，回滚重算只改确定性数据。</li>
+<li>[Risk] 服务端和客户端命令字段不一致 → 先对齐 <code>CommandComponent</code> / <code>PlayerCommandBase</code> 字段，再更新协议生成物和测试。</li>
+<li>[Risk] 旧服务端 <code>SyncRule.Status</code> 默认路径与新客户端 <code>SyncRule.Frame</code> 语义冲突 → 匹配/建房阶段明确设置 <code>SyncRule.Frame</code>，并在 <code>StartSyncMsg</code> 中下发。</li>
+</ul>
+<h2>迁移计划</h2>
+<ol>
+<li>客户端先新增协议/网络适配层和 <code>FrameAuthoritySyncSystem</code>，但用开关保持现有本地调试模式可跑。</li>
+<li>调整 <code>PlayerInputCommandSystem</code> 的命令优先级：权威缓存优先，本地输入只预测。</li>
+<li>在 <code>BattleWorld</code> 注册同步系统，并让 <code>BattleContext</code> 在联网模式等待 <code>StartSyncMsg</code>。</li>
+<li>对齐服务端 <code>CommandComponent</code> 字段、<code>StartSyncMsg.SyncRule</code>、缺帧预测和权威广播。</li>
+<li>补齐单元测试和双客户端模拟测试。</li>
+<li>验证通过后，把联网入口默认切到服务端权威路径；离线调试保留显式本地模式。</li>
+</ol>
+<p>回退策略：如果服务端权威路径验证失败，可以通过联网开关回到本地调试模式；已新增的协议适配和同步系统不影响离线 <code>BattleWorld</code> 基础移动验证。</p>
+<h2>待确认问题</h2>
+<ul>
+<li>Fire 当前客户端协议生成链路是否已经能直接序列化 <code>CommandComponent</code>，还是需要优先落到 <code>CommandMsg</code> 批量包。</li>
+<li>多玩家实体 ID 的最终来源是服务端 <code>SyncEntityMsg</code>，还是客户端登录/匹配阶段已有稳定 playerId。</li>
+<li>第一阶段是否需要状态哈希/DebugMsg 校验。建议作为验证增强项，不阻塞服务端权威命令闭环。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-3-tasks-md" data-panel="doc-3-tasks-md" role="tabpanel" aria-labelledby="tab-doc-3-tasks-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>1. 协议与传输边界</h2>
+<ul>
+<li><span class="taskbox">□</span>1.1 对齐客户端与服务端 <code>CommandComponent</code> / <code>PlayerCommandBase</code> 字段，确认 <code>moveDir</code>、<code>skillDir</code>、<code>jump</code>、<code>toggleLock</code>、<code>platformJump</code>、<code>speedGear</code>、<code>element1</code>、<code>element2</code>、<code>isFire</code> 都可序列化且 <code>EqualsCmd</code> 覆盖完整。</li>
+<li><span class="taskbox">□</span>1.2 新增或整理客户端命令传输适配层，把单条 <code>CommandComponent</code> 和 <code>CommandMsg</code> 统一转换为 <code>CommandComponent</code> 列表。</li>
+<li><span class="taskbox">□</span>1.3 为上行预测命令补齐 <code>id</code>、<code>frame</code>、<code>time</code> 字段，并通过 <code>GameModule.Network</code> 发送到服务端。</li>
+<li><span class="taskbox">□</span>1.4 确认服务端生成协议包含 <code>StartSyncMsg</code>、<code>CommandComponent</code> 或 <code>CommandMsg</code>、<code>PursueMsg</code>、<code>AffirmMsg</code>，缺失时更新协议定义与生成物。</li>
+</ul>
+<h2>2. 客户端权威命令接线</h2>
+<ul>
+<li><span class="taskbox">□</span>2.1 新增 <code>FrameAuthoritySyncSystem</code>（或等价命名），订阅网络消息并分发 <code>StartSyncMsg</code>、权威命令、<code>PursueMsg</code>、<code>AffirmMsg</code>。</li>
+<li><span class="taskbox">□</span>2.2 实现 <code>StartSyncMsg</code> 处理：设置 <code>BattleWorld.FrameCount</code>、<code>EntityIndex</code>、<code>SyncRule</code>、<code>GameModule.FrameSync.IntervalTime</code>、<code>ConnectStatusComponent.aheadFrame</code> 并启动世界。</li>
+<li><span class="taskbox">□</span>2.3 实现 <code>AffirmMsg</code> 处理：清理 <code>ConnectStatusComponent.unConfirmFrame</code> 并更新 RTT。</li>
+<li><span class="taskbox">□</span>2.4 实现权威命令记录：按实体写入 <code>PlayerCommandRecordComponent</code>，并用深拷贝避免网络对象污染历史缓存。</li>
+<li><span class="taskbox">□</span>2.5 实现权威命令冲突检测：历史帧命令与预测命令不一致时标记冲突并触发回滚重算。</li>
+<li><span class="taskbox">□</span>2.6 实现 <code>PursueMsg</code> 处理：确认消息、从 <code>recalcFrame</code> 重算，并提前预测到 <code>frame + advanceCount</code>。</li>
+<li><span class="taskbox">□</span>2.7 将权威接线系统注册进 <code>BattleWorld.GetSystemTypes()</code>，确保它在输入命令固化和逻辑系统推进前完成可用命令缓存更新。</li>
+</ul>
+<h2>3. 客户端输入语义调整</h2>
+<ul>
+<li><span class="taskbox">□</span>3.1 调整 <code>PlayerInputCommandSystem</code>：同帧已有权威/缓存命令时优先使用缓存命令，本地输入只在缺失权威命令时生成预测命令。</li>
+<li><span class="taskbox">□</span>3.2 本地预测命令生成后加入待确认队列并上行服务端；<code>m_world.m_isRecalc</code> 为 true 时不得发送网络消息。</li>
+<li><span class="taskbox">□</span>3.3 保持非本地实体只读取权威缓存或预测命令，不读取 <code>PlayerInputComponent</code>。</li>
+<li><span class="taskbox">□</span>3.4 确保预测命令延续持续输入但清空 <code>jump</code>、<code>toggleLock</code>、<code>platformJump</code> 等 one-shot 字段。</li>
+<li><span class="taskbox">□</span>3.5 调整联网模式下 <code>BattleContext</code> 起跑逻辑：玩家表现和实体可先准备，确定性逻辑等待 <code>StartSyncMsg</code>；离线调试模式保留本地直接启动。</li>
+</ul>
+<h2>4. 服务端权威帧聚合</h2>
+<ul>
+<li><span class="taskbox">□</span>4.1 对齐 <code>Server/LockStepDemo/Service/Game/CommandMessageService.cs</code>，接收 Fire 客户端命令后立即回 <code>AffirmMsg</code>。</li>
+<li><span class="taskbox">□</span>4.2 服务端收到未来帧输入时缓存命令，并在该帧广播给所有客户端。</li>
+<li><span class="taskbox">□</span>4.3 服务端收到迟到输入时发送 <code>PursueMsg</code>，包含 <code>recalcFrame</code>、当前服务端帧、提前帧数和服务端时间。</li>
+<li><span class="taskbox">□</span>4.4 对齐 <code>PlayerInputSystem</code>：每个服务端逻辑帧为每个玩家选择真实命令或预测/默认命令，写入服务端世界。</li>
+<li><span class="taskbox">□</span>4.5 服务端缺输入时生成权威预测命令并广播给所有客户端，预测命令必须清空 one-shot 字段。</li>
+<li><span class="taskbox">□</span>4.6 <code>ServiceSyncSystem</code> 下发 <code>StartSyncMsg</code> 时明确设置 <code>SyncRule.Frame</code>、逻辑帧间隔、实体索引和提前帧数。</li>
+</ul>
+<h2>5. 回滚与一致性验证</h2>
+<ul>
+<li><span class="taskbox">□</span>5.1 为 <code>PlayerCommandRecordComponent</code> 增加或更新单元测试：记录/读取均为深拷贝，同帧覆盖不会污染历史对象。</li>
+<li><span class="taskbox">□</span>5.2 增加 one-shot 预测测试：连续缺权威命令时 <code>jump</code>、<code>toggleLock</code>、<code>platformJump</code> 不重复触发。</li>
+<li><span class="taskbox">□</span>5.3 增加客户端回滚测试：预测命令与权威命令冲突时从冲突帧重算，重算结果与权威重放一致。</li>
+<li><span class="taskbox">□</span>5.4 增加服务端缺帧测试：玩家未上报输入时服务端生成默认/预测权威命令并广播。</li>
+<li><span class="taskbox">□</span>5.5 增加双客户端模拟测试：两个客户端接收同一 <code>StartSyncMsg</code> 和同一权威命令序列后，可回滚组件状态一致。</li>
+<li><span class="taskbox">□</span>5.6 运行客户端可用的 <code>dotnet build GameLogic.csproj</code> 或等价编译验证，并运行服务端测试项目 <code>Server/LockStepDemo.Tests</code>。</li>
+</ul>
+<h2>6. 文档与验收</h2>
+<ul>
+<li><span class="taskbox">□</span>6.1 更新 <code>.knowledge/architecture/网络同步.md</code>，说明服务端权威命令、确认、追帧和回滚接线已经闭环。</li>
+<li><span class="taskbox">□</span>6.2 更新 <code>.knowledge/modules/玩家帧同步ECS.md</code>，把“本地记录不是联网完成”改为新的联网权威流程说明。</li>
+<li><span class="taskbox">□</span>6.3 更新 <code>.knowledge/pitfalls/回滚踩坑.md</code>，追加“客户端预测命令不能当确定命令”的排查与预防条目。</li>
+<li><span class="taskbox">□</span>6.4 运行 <code>openspec validate replace-client-authority-with-server-frame-authority --strict</code>。</li>
+<li><span class="taskbox">□</span>6.5 刷新 <code>Temp/openspec-html/replace-client-authority-with-server-frame-authority/index.html</code> 供审阅。</li>
+</ul>
+  </div>
+</section> <section class="doc" id="doc-4-specs-server-authoritative-frame-sync-spec-md" data-panel="doc-4-specs-server-authoritative-frame-sync-spec-md" role="tabpanel" aria-labelledby="tab-doc-4-specs-server-authoritative-frame-sync-spec-md" tabindex="0" hidden>
+  <div class="content">
+    <h2>新增需求</h2>
+<h3>需求：联网帧同步以服务端帧命令为权威</h3>
+<p>系统 SHALL 在联网模式下把服务端下发的同帧命令作为确定性逻辑的最终输入来源；客户端本地采集的输入 SHALL 仅作为预测命令和上行数据使用，不得在收到权威命令前被标记为确定帧结果。</p>
+<h4>场景：本地输入先预测但不成为确定帧</h4>
+<ul>
+<li><strong>当</strong> 本地玩家在逻辑帧 F 产生移动或动作输入</li>
+<li><strong>则</strong> 客户端记录一份帧号为 F 的预测命令并上行服务端</li>
+<li><strong>并且</strong> 客户端不得仅因为本地预测命令存在就把 F 标记为服务端确认帧</li>
+</ul>
+<h4>场景：权威命令覆盖本地预测</h4>
+<ul>
+<li><strong>当</strong> 客户端收到服务端下发的玩家 P 在逻辑帧 F 的权威命令</li>
+<li><strong>则</strong> 客户端 MUST 将该命令写入 P 的 <code>PlayerCommandRecordComponent</code></li>
+<li><strong>并且</strong> 后续逻辑或重算 SHALL 读取该权威命令而不是旧预测命令</li>
+</ul>
+<h3>需求：客户端处理同步开始消息</h3>
+<p>系统 SHALL 在联网模式下通过 <code>StartSyncMsg</code> 启动或校准 <code>BattleWorld</code>，并使用消息中的帧号、提前帧数、逻辑帧间隔、实体索引和同步规则作为世界起跑配置。</p>
+<h4>场景：收到 StartSyncMsg 后启动世界</h4>
+<ul>
+<li><strong>当</strong> 客户端收到 <code>StartSyncMsg(frame=S, advanceCount=A, intervalTime=I, createEntityIndex=E, SyncRule=Frame)</code></li>
+<li><strong>则</strong> <code>BattleWorld.FrameCount</code> SHALL 设置为 S</li>
+<li><strong>并且</strong> <code>GameModule.FrameSync.IntervalTime</code> SHALL 设置为 I</li>
+<li><strong>并且</strong> <code>BattleWorld.EntityIndex</code> SHALL 设置为 E</li>
+<li><strong>并且</strong> <code>ConnectStatusComponent.aheadFrame</code> SHALL 设置为 A</li>
+<li><strong>并且</strong> <code>BattleWorld.SyncRule</code> SHALL 设置为 <code>Frame</code></li>
+<li><strong>并且</strong> <code>BattleWorld.IsStart</code> SHALL 为 true</li>
+</ul>
+<h4>场景：联网模式等待服务端起跑</h4>
+<ul>
+<li><strong>当</strong> <code>BattleContext</code> 已加载玩家表现对象且当前为联网模式</li>
+<li><strong>则</strong> 客户端 SHALL 等待 <code>StartSyncMsg</code> 后再推进确定性逻辑帧</li>
+</ul>
+<h3>需求：客户端上行预测命令并跟踪确认</h3>
+<p>系统 SHALL 在本地玩家每个预测逻辑帧生成命令后发送给服务端，并用确认队列跟踪尚未被服务端确认的帧。</p>
+<h4>场景：发送本地预测命令</h4>
+<ul>
+<li><strong>当</strong> 本地玩家在逻辑帧 F 生成预测 <code>CommandComponent</code></li>
+<li><strong>则</strong> 客户端 SHALL 设置命令的 <code>id</code>、<code>frame</code> 和 <code>time</code></li>
+<li><strong>并且</strong> 客户端 SHALL 通过网络模块发送该命令或等价 <code>CommandMsg</code></li>
+<li><strong>并且</strong> <code>ConnectStatusComponent.unConfirmFrame</code> SHALL 包含 F</li>
+</ul>
+<h4>场景：收到确认后清理待确认帧</h4>
+<ul>
+<li><strong>当</strong> 客户端收到 <code>AffirmMsg(frame=F, time=T, id=P)</code></li>
+<li><strong>则</strong> 客户端 SHALL 从 <code>ConnectStatusComponent.unConfirmFrame</code> 移除 F</li>
+<li><strong>并且</strong> 客户端 SHALL 根据当前客户端时间和 T 更新 RTT</li>
+</ul>
+<h3>需求：客户端检测权威命令冲突并回滚重算</h3>
+<p>系统 SHALL 在收到历史帧权威命令时比较该命令与本地预测命令；若任一影响逻辑的字段不一致，客户端 MUST 回滚到冲突帧前一帧，并用权威命令重放到当前帧。</p>
+<h4>场景：历史权威命令与预测一致</h4>
+<ul>
+<li><strong>当</strong> 客户端当前 <code>BattleWorld.FrameCount</code> 为 C 且 C &gt;= F</li>
+<li><strong>并且</strong> 收到逻辑帧 F 的权威命令与本地记录命令 <code>EqualsCmd</code> 一致</li>
+<li><strong>则</strong> 客户端 SHALL 保留当前世界状态</li>
+<li><strong>并且</strong> 客户端 MAY 将 F 标记为已确认帧</li>
+</ul>
+<h4>场景：历史权威命令与预测不一致</h4>
+<ul>
+<li><strong>当</strong> 客户端当前 <code>BattleWorld.FrameCount</code> 为 C 且 C &gt;= F</li>
+<li><strong>并且</strong> 收到逻辑帧 F 的权威命令与本地记录命令 <code>EqualsCmd</code> 不一致</li>
+<li><strong>则</strong> 客户端 MUST 调用回滚流程恢复到 F-1 帧快照</li>
+<li><strong>并且</strong> 客户端 MUST 使用 F 到 C 的已缓存权威命令或预测命令重新计算</li>
+<li><strong>并且</strong> 客户端 MUST 在重算完成后清理被覆盖的旧快照</li>
+</ul>
+<h4>场景：冲突帧早于清理窗口</h4>
+<ul>
+<li><strong>当</strong> 客户端收到冲突帧 F 且 F &lt;= <code>ConnectStatusComponent.ClearFrame</code></li>
+<li><strong>则</strong> 客户端 MUST 不执行越界回滚</li>
+<li><strong>并且</strong> 客户端 SHALL 记录错误并触发重新同步或断线保护策略</li>
+</ul>
+<h3>需求：客户端处理追帧消息</h3>
+<p>系统 SHALL 在收到 <code>PursueMsg</code> 时确认消息、从 <code>recalcFrame</code> 开始回滚重算，并按照服务端指定的目标帧继续提前预测。</p>
+<h4>场景：收到 PursueMsg 后追帧</h4>
+<ul>
+<li><strong>当</strong> 客户端收到 <code>PursueMsg(recalcFrame=R, frame=S, advanceCount=A, serverTime=T, id=P)</code></li>
+<li><strong>则</strong> 客户端 SHALL 立即发送 <code>AffirmMsg(frame=S, time=T, id=P)</code></li>
+<li><strong>并且</strong> 当 R 大于 <code>ConnectStatusComponent.ClearFrame</code> 时，客户端 MUST 从 R 开始重算</li>
+<li><strong>并且</strong> 客户端 SHALL 推进预测到 S + A</li>
+<li><strong>并且</strong> <code>ConnectStatusComponent.aheadFrame</code> SHALL 更新为 A</li>
+</ul>
+<h3>需求：服务端按逻辑帧聚合并广播权威命令</h3>
+<p>服务端 SHALL 在每个服务端逻辑帧为每个参战玩家选择一条权威命令；若某玩家真实输入未到达，服务端 MUST 使用该玩家上一条持续输入或默认输入生成预测命令，并向所有客户端广播服务端确定的命令。</p>
+<h4>场景：服务端收到未来帧输入</h4>
+<ul>
+<li><strong>当</strong> 服务端收到玩家 P 的输入命令且命令帧 F 大于服务端当前帧</li>
+<li><strong>则</strong> 服务端 SHALL 缓存该命令</li>
+<li><strong>并且</strong> 服务端 SHALL 向发送方返回 <code>AffirmMsg</code></li>
+</ul>
+<h4>场景：服务端逻辑帧输入到齐</h4>
+<ul>
+<li><strong>当</strong> 服务端推进到逻辑帧 F 且所有参战玩家都有 F 帧输入</li>
+<li><strong>则</strong> 服务端 SHALL 将这些输入作为 F 帧权威命令写入服务端世界</li>
+<li><strong>并且</strong> 服务端 SHALL 向所有客户端广播同一组 F 帧权威命令</li>
+</ul>
+<h4>场景：服务端逻辑帧缺少玩家输入</h4>
+<ul>
+<li><strong>当</strong> 服务端推进到逻辑帧 F 且玩家 P 缺少 F 帧真实输入</li>
+<li><strong>则</strong> 服务端 MUST 为 P 生成 F 帧默认或预测命令</li>
+<li><strong>并且</strong> 服务端 SHALL 向所有客户端广播该预测命令作为 F 帧权威命令</li>
+</ul>
+<h4>场景：服务端收到迟到输入</h4>
+<ul>
+<li><strong>当</strong> 服务端收到玩家 P 的输入命令且命令帧 F 小于或等于服务端当前帧</li>
+<li><strong>则</strong> 服务端 SHALL 发送 <code>PursueMsg</code> 给 P</li>
+<li><strong>并且</strong> <code>PursueMsg.recalcFrame</code> SHALL 指向需要客户端重算的帧</li>
+</ul>
+<h3>需求：权威命令预测不得重复 one-shot 输入</h3>
+<p>系统 SHALL 在客户端和服务端生成预测命令时延续持续性输入，但 MUST 清空 <code>jump</code>、<code>toggleLock</code>、<code>platformJump</code> 等 one-shot 字段，除非该帧存在真实输入或服务端权威命令。</p>
+<h4>场景：客户端预测连续移动</h4>
+<ul>
+<li><strong>当</strong> 玩家上一帧命令包含移动方向且下一帧缺少权威命令</li>
+<li><strong>则</strong> 客户端预测命令 SHALL 延续移动方向和速度档</li>
+<li><strong>并且</strong> 客户端预测命令 MUST 清空 one-shot 字段</li>
+</ul>
+<h4>场景：服务端预测缺帧输入</h4>
+<ul>
+<li><strong>当</strong> 服务端为缺输入玩家生成预测命令</li>
+<li><strong>则</strong> 服务端预测命令 SHALL 延续持续性输入</li>
+<li><strong>并且</strong> 服务端预测命令 MUST 清空 one-shot 字段</li>
+</ul>
+<h3>需求：回滚重算期间禁止不可回退副作用</h3>
+<p>系统 SHALL 在 <code>WorldBase.m_isRecalc</code> 为 true 期间只修改确定性逻辑状态，不得发送新的输入命令、播放表现层特效、触发音效或写入表现层对象作为确定性结果。</p>
+<h4>场景：重算期间不发送输入</h4>
+<ul>
+<li><strong>当</strong> 客户端正在执行回滚重算</li>
+<li><strong>则</strong> 本地输入系统 MUST 不向服务端发送新的历史帧命令</li>
+</ul>
+<h4>场景：重算期间表现层只读</h4>
+<ul>
+<li><strong>当</strong> 客户端正在执行回滚重算</li>
+<li><strong>则</strong> 表现层系统 MUST 不把 Transform、动画或特效状态写回确定性组件</li>
+</ul>
+<h3>需求：同步一致性必须可验证</h3>
+<p>系统 SHALL 提供自动化验证，覆盖权威命令接收、冲突回滚、缺帧预测、确认队列和 one-shot 清理；验证结果 MUST 能证明两个客户端在同一权威命令序列下得到一致的逻辑状态。</p>
+<h4>场景：双客户端同权威命令一致</h4>
+<ul>
+<li><strong>当</strong> 两个客户端从同一 <code>StartSyncMsg</code> 启动并接收相同权威命令序列</li>
+<li><strong>则</strong> 两个客户端在相同逻辑帧的可回滚组件状态 SHALL 一致</li>
+</ul>
+<h4>场景：迟到命令触发回滚后恢复一致</h4>
+<ul>
+<li><strong>当</strong> 客户端先用预测命令推进，随后收到同帧不同的服务端权威命令</li>
+<li><strong>则</strong> 客户端 MUST 回滚重算</li>
+<li><strong>并且</strong> 重算后的可回滚组件状态 SHALL 与从权威命令直接重放的结果一致</li>
+</ul>
+  </div>
+</section>
+    </main>
+  </div>
+  <script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('[data-tab]'));
+  const panels = Array.from(document.querySelectorAll('[data-panel]'));
+  const panelIds = new Set(panels.map((panel) => panel.id));
+  const copyButton = document.querySelector('.copy-command');
+  const applyCommand = "/prompts:opsx-apply replace-client-authority-with-server-frame-authority";
+
+  async function copyText(text) {
+    const errors = [];
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+    if (copyWithEvent(text)) { return; }
+    if (copyWithTextarea(text)) { return; }
+    throw errors[0] || new Error('copy command rejected');
+  }
+
+  function copyWithEvent(text) {
+    const handler = (event) => {
+      event.clipboardData.setData('text/plain', text);
+      event.preventDefault();
+    };
+    document.addEventListener('copy', handler, true);
+    try {
+      return document.execCommand('copy');
+    } catch (error) {
+      return false;
+    } finally {
+      document.removeEventListener('copy', handler, true);
+    }
+  }
+
+  function copyWithTextarea(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    try {
+      return document.execCommand('copy');
+    } catch (error) {
+      return false;
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+
+  function showCopyState(state, label) {
+    if (!copyButton) { return; }
+    copyButton.textContent = label;
+    copyButton.classList.toggle('copied', state === 'copied');
+    copyButton.classList.toggle('failed', state === 'failed');
+    window.clearTimeout(copyButton.copyTimer);
+    copyButton.copyTimer = window.setTimeout(() => {
+      copyButton.textContent = '复制命令';
+      copyButton.classList.remove('copied', 'failed');
+    }, 1600);
+  }
+
+  function activate(id, updateHash) {
+    const targetId = panelIds.has(id) ? id : (tabs[0] && tabs[0].dataset.tab);
+    if (!targetId) { return; }
+    let activeTab = null;
+    tabs.forEach((tab) => {
+      const active = tab.dataset.tab === targetId;
+      tab.classList.toggle('active', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      tab.setAttribute('tabindex', active ? '0' : '-1');
+      if (active) { activeTab = tab; }
+    });
+    panels.forEach((panel) => { panel.hidden = panel.id !== targetId; });
+    if (updateHash && window.location.hash !== '#' + targetId) {
+      history.pushState(null, '', '#' + targetId);
+    }
+    return activeTab;
+  }
+
+  if (copyButton) {
+    copyButton.addEventListener('click', async () => {
+      try {
+        await copyText(applyCommand);
+        showCopyState('copied', '已复制');
+      } catch (error) {
+        showCopyState('failed', '复制失败');
+      }
+    });
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', (event) => {
+      event.preventDefault();
+      activate(tab.dataset.tab, true);
+    });
+    tab.addEventListener('keydown', (event) => {
+      const current = tabs.indexOf(tab);
+      let next = current;
+      if (event.key === 'ArrowRight') { next = (current + 1) % tabs.length; }
+      else if (event.key === 'ArrowLeft') { next = (current - 1 + tabs.length) % tabs.length; }
+      else if (event.key === 'Home') { next = 0; }
+      else if (event.key === 'End') { next = tabs.length - 1; }
+      else { return; }
+      event.preventDefault();
+      const activeTab = activate(tabs[next].dataset.tab, true);
+      if (activeTab) { activeTab.focus(); }
+    });
+  });
+  window.addEventListener('hashchange', () => activate(window.location.hash.slice(1), false));
+  activate(window.location.hash.slice(1), false);
+})();
+  </script>
+</body>
+</html>
